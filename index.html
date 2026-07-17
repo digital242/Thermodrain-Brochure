@@ -570,8 +570,7 @@
     <nav id="siteNav">
       <a href="#classes">Load Classes</a>
       <a href="#configurator">Configurator</a>
-      <a href="#explorer">Products</a>
-      <a href="#build" class="cta">Build Notes</a>
+      <a href="#explorer" class="cta">Products</a>
     </nav>
   </div>
 </header>
@@ -728,25 +727,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ============ BUILD NOTES ============ -->
-  <section class="section" id="build">
-    <div class="sec-head" data-reveal>
-      <span class="eyebrow">For the team</span>
-      <h2 class="title">Before this goes into Figma</h2>
-    </div>
-    <div class="callout" data-reveal data-delay="1">
-      <div class="h">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>
-        Notes &amp; corrections
-      </div>
-      <ul>
-        <li>Product photos are pulled from the existing brochure and mapped to load classes for demo purposes — swap in final per-class photography once shot, or keep one photo per product and drop the class-swap where the cover doesn't visually change across classes.</li>
-        <li>Page 6's <b>"Applicable Load Bearing"</b> table has a data slip worth fixing: it lists <span class="mono">F600</span> / <span class="mono">F400</span> rows (not standard BS EN 124 classes) and shows C250 at 90&nbsp;Ton — the Load Testing paragraph on the same page correctly states C250&nbsp;=&nbsp;25&nbsp;tons. This prototype uses the correct standard values (A15 / B125 / C250 / D400 / E600 / F900).</li>
-        <li>In Figma: build each product as a component with 6 variants (one per load class) driven by a shared variable, or — cleaner for a real interactive PDF — a single component whose fill/image swaps via variable binding, wired with "Change to" + Smart Animate on click.</li>
-      </ul>
     </div>
   </section>
 
