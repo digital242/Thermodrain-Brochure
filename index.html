@@ -34,10 +34,11 @@
 
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
+  html{-webkit-text-size-adjust:100%; text-size-adjust:100%;}
   body{
     margin:0; background:var(--paper); color:var(--ink);
     font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased;
-    line-height:1.5;
+    line-height:1.5; overflow-x:hidden;
   }
   .mono{font-family:'IBM Plex Mono',monospace;}
   a{color:inherit;}
@@ -130,9 +131,35 @@
     transition:transform .16s var(--ease), box-shadow .16s, background .16s;
   }
   header.site nav a.cta:hover{background:var(--gold-soft); color:#0b1c3f; transform:translateY(-2px); box-shadow:0 12px 24px -8px rgba(246,188,22,.75);}
+  .nav-toggle{
+    display:none; width:44px; height:44px; flex:none; cursor:pointer;
+    border:1px solid rgba(246,188,22,.3); background:rgba(246,188,22,.08); border-radius:11px;
+    align-items:center; justify-content:center; flex-direction:column; gap:5px;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .nav-toggle span{display:block; width:20px; height:2px; background:var(--gold); border-radius:2px;
+    transition:transform .28s var(--ease), opacity .18s;}
+  .nav-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0;}
+  .nav-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
   @media (max-width:720px){
-    header.site nav a:not(.cta){display:none;}
-    header.site .bar{padding:14px 18px;}
+    header.site .bar{padding:13px 16px;}
+    header.site .logo{font-size:19px;}
+    .nav-toggle{display:flex;}
+    header.site nav{
+      position:absolute; top:100%; left:0; right:0;
+      flex-direction:column; align-items:stretch; gap:5px;
+      background:rgba(9,22,50,.98); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+      padding:14px 16px 20px; border-bottom:1px solid rgba(246,188,22,.28);
+      box-shadow:0 24px 44px -18px rgba(0,0,0,.75);
+      transform:translateY(-14px); opacity:0; visibility:hidden; pointer-events:none;
+      transition:opacity .26s var(--ease), transform .26s var(--ease), visibility .26s;
+    }
+    header.site.nav-open nav{transform:none; opacity:1; visibility:visible; pointer-events:auto;}
+    header.site nav a{padding:14px 15px; font-size:13px; border-radius:10px;}
+    header.site nav a:not(.cta){background:rgba(255,255,255,.035);}
+    header.site nav a:not(.cta)::after{display:none;}
+    header.site nav a.cta{margin-left:0; text-align:center; margin-top:5px;}
   }
 
   /* ============ HERO ============ */
@@ -254,6 +281,17 @@
   }
   .hero-visual .glyph-sm{font-size:.42em; letter-spacing:.34em; color:var(--gold); font-weight:700; margin-top:.5em;}
   @media (max-width:900px){ .hero-visual{max-width:340px; margin:0 auto;} }
+  @media (max-width:560px){
+    .hero-inner{padding:44px 20px 52px; gap:30px;}
+    .hero .kicker{white-space:normal;}
+    .hero-actions{flex-direction:column; align-items:stretch; gap:12px; margin-bottom:34px;}
+    .hero-actions .btn{width:100%; justify-content:center; padding:15px 22px;}
+    .hero-stats{flex-direction:column; gap:0; width:100%;}
+    .hero-stats .stat{padding:15px 0; padding-right:0; border-top:1px solid rgba(174,187,216,.16);}
+    .hero-stats .stat:last-child{border-bottom:1px solid rgba(174,187,216,.16);}
+    .hero-stats .stat:not(:last-child)::after{display:none;}
+    .hero-visual{max-width:200px;}
+  }
 
   /* ============ TRUST STRIP ============ */
   .trust{
@@ -262,6 +300,10 @@
   .trust-inner{
     max-width:1200px; margin:0 auto; padding:20px 26px; display:flex; flex-wrap:wrap;
     align-items:center; justify-content:space-between; gap:18px;
+  }
+  @media (max-width:620px){
+    .trust-inner{display:grid; grid-template-columns:1fr 1fr; gap:16px 14px; padding:20px;}
+    .trust-inner .badge{font-size:11.5px;}
   }
   .trust-inner .badge{
     display:flex; align-items:center; gap:10px; color:#9fb0d4;
@@ -465,6 +507,18 @@
   .thickness-bar-bg{height:12px; background:var(--paper-2); border-radius:100px; overflow:hidden; box-shadow:inset 0 1px 2px rgba(17,42,94,.12);}
   .thickness-bar-fg{height:100%; background:linear-gradient(90deg,var(--gold),var(--red)); border-radius:100px; transition:width .4s cubic-bezier(.65,0,.35,1);}
 
+  @media (max-width:560px){
+    .panel{padding:22px;}
+    .stepper{width:100%;}
+    .stepper .val{flex:1; min-width:0;}
+    .toggle-row{gap:10px;}
+    .toggle-btn{flex:1; text-align:center;}
+    .readout{grid-template-columns:1fr 1fr; gap:16px 14px;}
+    .readout .v{font-size:15px; word-break:break-word;}
+    .chart-note{padding:16px 22px;}
+    .canvas-wrap{padding:18px; min-height:280px;}
+  }
+
   /* ============ CALLOUT / NOTES ============ */
   .callout{
     background:linear-gradient(180deg,#fff,#fbfcfe); border:1px solid var(--line);
@@ -510,7 +564,10 @@
     <span class="logo on-dark">
       <span class="lw">THERM</span><span class="ring"></span><span class="lw">DRAIN<span class="reg">®</span></span>
     </span>
-    <nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-controls="siteNav" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="siteNav">
       <a href="#classes">Load Classes</a>
       <a href="#configurator">Configurator</a>
       <a href="#explorer">Products</a>
@@ -890,6 +947,23 @@ document.getElementById('year').textContent = new Date().getFullYear();
   const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 12);
   onScroll();
   window.addEventListener('scroll', onScroll, {passive:true});
+})();
+
+/* ---------- Mobile navigation menu ---------- */
+(function(){
+  const header = document.querySelector('header.site');
+  const btn = document.getElementById('navToggle');
+  const nav = document.getElementById('siteNav');
+  if(!btn || !nav) return;
+  const close = () => { header.classList.remove('nav-open'); btn.setAttribute('aria-expanded','false'); };
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = header.classList.toggle('nav-open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  nav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+  document.addEventListener('click', (e) => { if(!header.contains(e.target)) close(); });
+  window.addEventListener('resize', () => { if(window.innerWidth > 720) close(); });
 })();
 </script>
 </body>
