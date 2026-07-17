@@ -426,6 +426,77 @@
   }
   .chart-note b{color:var(--navy-deep);}
 
+  /* ---- Cutting type selector ---- */
+  .cut-grid{display:grid; grid-template-columns:repeat(6,1fr); gap:8px;}
+  .cut-btn{
+    display:flex; flex-direction:column; align-items:center; gap:6px; padding:9px 4px 7px;
+    border:1px solid var(--line); background:#fff; border-radius:10px; cursor:pointer;
+    transition:border-color .14s, box-shadow .14s, transform .14s; box-shadow:var(--shadow-sm);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .cut-btn:hover{border-color:var(--navy); transform:translateY(-2px);}
+  .cut-btn.active{border-color:var(--navy-deep); box-shadow:0 8px 18px -8px rgba(17,42,94,.5); background:linear-gradient(180deg,#fff,#f4f7fc);}
+  .cut-btn svg{width:100%; height:auto; max-width:46px;}
+  .cut-btn .cl{font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; color:var(--ink-soft);}
+  .cut-btn.active .cl{color:var(--navy-deep);}
+  .cut-legend{display:flex; gap:18px; margin-top:13px; flex-wrap:wrap;}
+  .cut-legend .li{display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--ink-soft); font-weight:500;}
+  .cut-legend .sw{width:22px; height:14px; border-radius:3px; flex:none;}
+  .cut-legend .sw.closed{background:#dbe4f5; border:1.5px solid var(--navy);}
+  .cut-legend .sw.open{background:#fff; border:1.5px dashed var(--gold);}
+  .dim-hint{text-transform:none; letter-spacing:0; color:var(--muted); font-weight:500;}
+  @media (max-width:520px){ .cut-grid{grid-template-columns:repeat(3,1fr);} }
+
+  /* ---- Size guide ---- */
+  .size-guide{border-top:1px solid var(--line); padding:0 32px; background:var(--white);}
+  .size-guide summary{
+    list-style:none; cursor:pointer; padding:17px 0; display:flex; align-items:center; gap:10px;
+    font-family:'Archivo',sans-serif; font-weight:700; font-size:14px; color:var(--navy-ink);
+  }
+  .size-guide summary::-webkit-details-marker{display:none;}
+  .size-guide summary svg{flex:none; color:var(--navy);}
+  .size-guide summary .chev{margin-left:auto; transition:transform .22s var(--ease); color:var(--muted);}
+  .size-guide[open] summary .chev{transform:rotate(180deg);}
+  .size-guide .sg-body{padding:0 0 22px; font-size:13px; color:var(--ink-soft); line-height:1.6;}
+  .sg-steps{margin:2px 0 0; padding-left:20px;}
+  .sg-steps li{margin-bottom:7px;} .sg-steps li:last-child{margin-bottom:0;}
+  .sg-steps b{color:var(--navy-deep);}
+  .sg-sub{font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:700; margin:18px 0 10px;}
+  .size-chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .size-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; color:var(--navy-deep);
+    background:var(--paper-2); border:1px solid var(--line); border-radius:6px; padding:5px 8px; cursor:pointer;
+    transition:all .12s;
+  }
+  .size-chip:hover{background:var(--navy); color:#fff; border-color:var(--navy);}
+
+  /* ---- Feedback ---- */
+  .fb{border-top:1px solid var(--line); padding:20px 32px 24px; background:var(--paper);}
+  .fb-q{font-family:'Archivo',sans-serif; font-weight:700; font-size:14px; color:var(--navy-ink); margin-bottom:13px; display:flex; align-items:center; gap:9px;}
+  .fb-actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+  .fb-btn{
+    display:inline-flex; align-items:center; gap:7px; padding:9px 16px; border-radius:9px; cursor:pointer;
+    border:1px solid var(--line); background:#fff; font-family:'Inter',sans-serif; font-weight:600; font-size:13px;
+    color:var(--ink-soft); transition:all .14s; box-shadow:var(--shadow-sm); -webkit-tap-highlight-color:transparent;
+  }
+  .fb-btn:hover{border-color:var(--navy); color:var(--navy-deep); transform:translateY(-1px);}
+  .fb-btn.sel{background:var(--navy-deep); border-color:var(--navy-deep); color:#fff;}
+  .fb-form{margin-top:14px; display:none;}
+  .fb-form.show{display:block;}
+  .fb-form textarea{
+    width:100%; border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-family:'Inter',sans-serif;
+    font-size:13px; color:var(--ink); resize:vertical; min-height:70px; box-shadow:var(--shadow-sm);
+  }
+  .fb-form textarea:focus{outline:none; border-color:var(--navy); box-shadow:0 0 0 3px rgba(28,63,134,.12);}
+  .fb-send{
+    margin-top:10px; padding:10px 20px; border:none; border-radius:9px; background:var(--red); color:#fff;
+    font-family:'Archivo',sans-serif; font-weight:700; font-size:13px; cursor:pointer; transition:background .14s, transform .12s;
+  }
+  .fb-send:hover{background:var(--red-deep); transform:translateY(-1px);}
+  .fb-thanks{display:none; align-items:center; gap:9px; color:var(--navy-deep); font-weight:600; font-size:13.5px; margin-top:2px;}
+  .fb-thanks.show{display:flex;}
+  @media (max-width:520px){ .size-guide, .fb{padding-left:22px; padding-right:22px;} }
+
   /* ---- Load class explorer ---- */
   .product-stage{
     position:relative; border-radius:12px; overflow:hidden; aspect-ratio:4/3;
@@ -661,11 +732,22 @@
             </div>
           </div>
 
+          <div class="dim-row">
+            <div class="dim-label">Cutting type <span class="dim-hint">· how the edges are finished</span></div>
+            <div class="cut-grid" id="cutGrid"></div>
+            <div class="cut-legend">
+              <span class="li"><span class="sw closed"></span> Closed / flush edge</span>
+              <span class="li"><span class="sw open"></span> Open / tooth edge</span>
+            </div>
+          </div>
+
           <div class="readout">
             <div><div class="k">Overall size</div><div class="v" id="roSize">1001 × 406 mm</div></div>
             <div><div class="k">Panel area</div><div class="v" id="roArea">0.41 m²</div></div>
             <div><div class="k">Height class</div><div class="v" id="roHeight">30 mm</div></div>
             <div><div class="k">Aspect ratio</div><div class="v" id="roRatio">2.46 : 1</div></div>
+            <div><div class="k">Cutting type</div><div class="v" id="roCut">Type I</div></div>
+            <div><div class="k">Edge finish</div><div class="v" id="roEdge">Closed all sides</div></div>
           </div>
         </div>
 
@@ -674,6 +756,43 @@
         </div>
       </div>
       <div class="chart-note">Length &amp; width step through the exact values published in the Thermodrain size chart (<b>48 mm → 2393 mm</b>). Values outside that list aren't offered, matching the physical catalogue.</div>
+
+      <details class="size-guide">
+        <summary>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-4.6-4.6a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4Z"/><path d="m7.5 10.5 2 2"/><path d="m10.5 7.5 2 2"/><path d="m13.5 4.5 2 2"/></svg>
+          How to choose your size
+          <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="sg-body">
+          <ol class="sg-steps">
+            <li><b>Step the Length and Width</b> to the panel you need — each tap moves to the next real catalogue size, so you can only pick sizes we actually manufacture.</li>
+            <li><b>Set the bar height</b> (30 mm or 40 mm) — taller bars carry heavier loads and longer spans.</li>
+            <li><b>Pick a cutting type (I–VI)</b> to match your channel: a <b>closed / flush edge</b> gives a finished border, an <b>open / tooth edge</b> lets bars run out so panels butt together or drop over a frame. The preview redraws so you can see the exact edge.</li>
+            <li>Note your <b>Overall size</b> and <b>Edge finish</b> from the summary, then send them with your enquiry.</li>
+          </ol>
+          <div class="sg-sub">Available lengths &amp; widths (mm) — tap to set length</div>
+          <div class="size-chips" id="sizeChips"></div>
+        </div>
+      </details>
+
+      <div class="fb">
+        <div class="fb-q">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A5 5 0 0 0 10 16h4a5 5 0 0 0 2.1 4"/><path d="M12 2a7 7 0 0 0-7 7c0 2.6 1.4 4.3 2.6 5.4A5 5 0 0 1 9 17h6a5 5 0 0 1 1.4-2.6C17.6 13.3 19 11.6 19 9a7 7 0 0 0-7-7Z"/></svg>
+          Did this help you find the right size?
+        </div>
+        <div class="fb-actions">
+          <button type="button" class="fb-btn" data-fb="up">👍&nbsp; Yes, perfect fit</button>
+          <button type="button" class="fb-btn" data-fb="down">👎&nbsp; Not quite</button>
+        </div>
+        <div class="fb-form" id="fbForm">
+          <textarea id="fbText" placeholder="Optional — tell us the size or edge finish you were after, so we can improve our range."></textarea>
+          <button type="button" class="fb-send" id="fbSend">Send feedback</button>
+        </div>
+        <div class="fb-thanks" id="fbThanks">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Thanks — your feedback helps us improve our size range.
+        </div>
+      </div>
     </div>
   </section>
 
@@ -800,7 +919,18 @@ classOrder.forEach(c => {
 let lenIdx = sizeChart.indexOf(1001);
 let widIdx = sizeChart.indexOf(406);
 let barHeight = 30;
+let cutIdx = 0;
 const clampIdx = i => Math.max(0, Math.min(sizeChart.length-1, i));
+
+// Cutting types (I–VI). edges: 1 = closed/flush side, 0 = open/tooth side [top,right,bottom,left]
+const cutTypes = [
+  {n:'I',   sum:'Closed all sides',        edges:{t:1,r:1,b:1,l:1}},
+  {n:'II',  sum:'Open left & right',       edges:{t:1,r:0,b:1,l:0}},
+  {n:'III', sum:'Open top & bottom',       edges:{t:0,r:1,b:0,l:1}},
+  {n:'IV',  sum:'Open right edge',         edges:{t:1,r:0,b:1,l:1}},
+  {n:'V',   sum:'Open top & right',        edges:{t:0,r:0,b:1,l:1}},
+  {n:'VI',  sum:'Open all sides (tooth)',  edges:{t:0,r:0,b:0,l:0}}
+];
 
 function renderGrating(){
   const L = sizeChart[lenIdx], W = sizeChart[widIdx];
@@ -810,6 +940,8 @@ function renderGrating(){
   document.getElementById('roArea').textContent = ((L*W)/1e6).toFixed(2) + ' m²';
   document.getElementById('roHeight').textContent = barHeight + ' mm';
   document.getElementById('roRatio').textContent = (L/W).toFixed(2) + ' : 1';
+  document.getElementById('roCut').textContent = 'Type ' + cutTypes[cutIdx].n;
+  document.getElementById('roEdge').textContent = cutTypes[cutIdx].sum;
 
   document.getElementById('lenMinus').disabled = lenIdx === 0;
   document.getElementById('lenPlus').disabled  = lenIdx === sizeChart.length-1;
@@ -827,6 +959,29 @@ function renderGrating(){
   const cell = barHeight === 30 ? 13 : 17;
   const shadow = barHeight === 30 ? 4 : 6;
 
+  // Edge rendering: closed sides get a solid frame line, open sides get comb "teeth".
+  const E = cutTypes[cutIdx].edges;
+  const tcol = '#0e2554', tooth = barHeight === 30 ? 7 : 9;
+  const closedLine = (x1,y1,x2,y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${tcol}" stroke-width="3.2" stroke-linecap="round"/>`;
+  function teeth(side){
+    let s='';
+    if(side==='t' || side==='b'){
+      const y = side==='t' ? originY : originY+boxH, d = side==='t' ? -1 : 1;
+      for(let x=originX+cell/2; x<originX+boxW-1; x+=cell)
+        s += `<line x1="${x}" y1="${y}" x2="${x}" y2="${y+d*tooth}" stroke="${tcol}" stroke-width="3" stroke-linecap="round"/>`;
+    } else {
+      const x = side==='l' ? originX : originX+boxW, d = side==='l' ? -1 : 1;
+      for(let y=originY+cell/2; y<originY+boxH-1; y+=cell)
+        s += `<line x1="${x}" y1="${y}" x2="${x+d*tooth}" y2="${y}" stroke="${tcol}" stroke-width="3" stroke-linecap="round"/>`;
+    }
+    return s;
+  }
+  const edgeArt =
+    (E.t ? closedLine(originX,originY,originX+boxW,originY)               : teeth('t')) +
+    (E.b ? closedLine(originX,originY+boxH,originX+boxW,originY+boxH)     : teeth('b')) +
+    (E.l ? closedLine(originX,originY,originX,originY+boxH)               : teeth('l')) +
+    (E.r ? closedLine(originX+boxW,originY,originX+boxW,originY+boxH)     : teeth('r'));
+
   document.getElementById('gratingSvg').innerHTML = `
     <defs>
       <pattern id="mesh" width="${cell}" height="${cell}" patternUnits="userSpaceOnUse">
@@ -839,8 +994,9 @@ function renderGrating(){
       </linearGradient>
     </defs>
     <rect x="${originX+shadow}" y="${originY+shadow}" width="${boxW}" height="${boxH}" rx="4" fill="rgba(11,28,63,.16)"/>
-    <rect x="${originX}" y="${originY}" width="${boxW}" height="${boxH}" rx="4" fill="url(#mesh)" stroke="#0e2554" stroke-width="2.5"/>
+    <rect x="${originX}" y="${originY}" width="${boxW}" height="${boxH}" rx="4" fill="url(#mesh)"/>
     <rect x="${originX}" y="${originY}" width="${boxW}" height="${boxH}" rx="4" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+    ${edgeArt}
     <line x1="${originX}" y1="${originY-16}" x2="${originX+boxW}" y2="${originY-16}" stroke="#a7b0c0" stroke-width="1.2"/>
     <line x1="${originX}" y1="${originY-21}" x2="${originX}" y2="${originY-11}" stroke="#a7b0c0" stroke-width="1.2"/>
     <line x1="${originX+boxW}" y1="${originY-21}" x2="${originX+boxW}" y2="${originY-11}" stroke="#a7b0c0" stroke-width="1.2"/>
@@ -863,7 +1019,77 @@ function toggleH(){
   document.getElementById('h40').classList.toggle('active', barHeight===40);
   renderGrating();
 }
+
+/* ---- Cutting type selector ---- */
+function cutSVG(E){
+  const S=48, m=8, N=3, a=m, bx=S-m, g=(bx-a)/N, col='#1c3f86', th=4;
+  let s=`<svg viewBox="0 0 ${S} ${S}" width="46" height="46" aria-hidden="true">`;
+  for(let i=1;i<N;i++){
+    s+=`<line x1="${a+i*g}" y1="${a}" x2="${a+i*g}" y2="${bx}" stroke="${col}" stroke-width="1.5"/>`;
+    s+=`<line x1="${a}" y1="${a+i*g}" x2="${bx}" y2="${a+i*g}" stroke="${col}" stroke-width="1.5"/>`;
+  }
+  const line=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="2.4" stroke-linecap="round"/>`;
+  const tk=(side)=>{ let r='';
+    if(side==='t'||side==='b'){ const y=side==='t'?a:bx, d=side==='t'?-1:1;
+      for(let i=0;i<N;i++){ const x=a+g/2+i*g; r+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+d*th}" stroke="${col}" stroke-width="2.2" stroke-linecap="round"/>`; } }
+    else{ const x=side==='l'?a:bx, d=side==='l'?-1:1;
+      for(let i=0;i<N;i++){ const y=a+g/2+i*g; r+=`<line x1="${x}" y1="${y}" x2="${x+d*th}" y2="${y}" stroke="${col}" stroke-width="2.2" stroke-linecap="round"/>`; } }
+    return r; };
+  s+= E.t?line(a,a,bx,a):tk('t');
+  s+= E.b?line(a,bx,bx,bx):tk('b');
+  s+= E.l?line(a,a,a,bx):tk('l');
+  s+= E.r?line(bx,a,bx,bx):tk('r');
+  return s+'</svg>';
+}
+const cutGrid = document.getElementById('cutGrid');
+cutTypes.forEach((t,i)=>{
+  const btn=document.createElement('button');
+  btn.type='button'; btn.className='cut-btn'+(i===cutIdx?' active':'');
+  btn.setAttribute('aria-label','Cutting type '+t.n+' — '+t.sum);
+  btn.title='Type '+t.n+' — '+t.sum;
+  btn.innerHTML = cutSVG(t.edges)+`<span class="cl">${t.n}</span>`;
+  btn.addEventListener('click',()=>{
+    cutIdx=i;
+    [...cutGrid.children].forEach((el,idx)=>el.classList.toggle('active',idx===i));
+    renderGrating();
+  });
+  cutGrid.appendChild(btn);
+});
+
+/* ---- Size chart chips ---- */
+const sizeChips = document.getElementById('sizeChips');
+sizeChart.forEach(v=>{
+  const c=document.createElement('button');
+  c.type='button'; c.className='size-chip'; c.textContent=v;
+  c.title='Set length to '+v+' mm';
+  c.addEventListener('click',()=>{ lenIdx=sizeChart.indexOf(v); renderGrating(); });
+  sizeChips.appendChild(c);
+});
+
 renderGrating();
+
+/* ---- Size feedback (stored locally; wire to a backend when live) ---- */
+(function(){
+  const actions=document.querySelector('.fb-actions'), form=document.getElementById('fbForm');
+  const thanks=document.getElementById('fbThanks'), text=document.getElementById('fbText'), send=document.getElementById('fbSend');
+  const btns=document.querySelectorAll('.fb-btn'); let choice=null;
+  try{ if(localStorage.getItem('td_size_feedback')==='sent'){ actions.style.display='none'; thanks.classList.add('show'); } }catch(e){}
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    choice=b.dataset.fb;
+    btns.forEach(x=>x.classList.toggle('sel',x===b));
+    form.classList.add('show'); text.focus();
+  }));
+  send.addEventListener('click',()=>{
+    const entry={choice,comment:text.value.trim(),size:document.getElementById('roSize').textContent,
+                 edge:document.getElementById('roEdge').textContent,at:new Date().toISOString()};
+    try{
+      const log=JSON.parse(localStorage.getItem('td_size_feedback_log')||'[]'); log.push(entry);
+      localStorage.setItem('td_size_feedback_log',JSON.stringify(log));
+      localStorage.setItem('td_size_feedback','sent');
+    }catch(e){}
+    actions.style.display='none'; form.classList.remove('show'); thanks.classList.add('show');
+  });
+})();
 
 /* ---------- Load class explorer ---------- */
 const lcSlider = document.getElementById('lcSlider');
