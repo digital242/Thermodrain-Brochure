@@ -959,48 +959,53 @@ function renderGrating(){
   const cell = barHeight === 30 ? 13 : 17;
   const bar = Math.max(2, Math.round(cell * 0.3)); // bar thickness — the rest of each cell is an open hole
 
-  // Edge rendering: closed sides get a solid frame line, open sides get comb "teeth".
+  // Build the lattice from explicit bar positions, then derive teeth from the SAME arrays,
+  // so every tooth is an exact continuation of an internal bar (guaranteed alignment).
   const E = cutTypes[cutIdx].edges;
-  const tcol = '#0e2554', tooth = barHeight === 30 ? 7 : 9;
-  const closedLine = (x1,y1,x2,y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${tcol}" stroke-width="3.2" stroke-linecap="round"/>`;
-  // Teeth are the protruding ends of the internal bars, so they line up exactly with
-  // the lattice: top/bottom teeth sit on the vertical bars, left/right on the horizontal bars.
-  function teeth(side){
-    let s='';
-    if(side==='t' || side==='b'){
-      const y = side==='t' ? originY-tooth : originY+boxH;
-      for(let x=originX; x<originX+boxW-0.5; x+=cell)
-        s += `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${bar}" height="${tooth}" fill="${tcol}"/>`;
-    } else {
-      const x = side==='l' ? originX-tooth : originX+boxW;
-      for(let y=originY; y<originY+boxH-0.5; y+=cell)
-        s += `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${tooth}" height="${bar}" fill="${tcol}"/>`;
-    }
-    return s;
-  }
-  const edgeArt =
-    (E.t ? closedLine(originX,originY,originX+boxW,originY)               : teeth('t')) +
-    (E.b ? closedLine(originX,originY+boxH,originX+boxW,originY+boxH)     : teeth('b')) +
-    (E.l ? closedLine(originX,originY,originX,originY+boxH)               : teeth('l')) +
-    (E.r ? closedLine(originX+boxW,originY,originX+boxW,originY+boxH)     : teeth('r'));
+  const tooth = barHeight === 30 ? 7 : 9;
+  const oX = +originX.toFixed(2), oY = +originY.toFixed(2), bW = +boxW.toFixed(2), bH = +boxH.toFixed(2);
+  const rX = +(originX+boxW).toFixed(2), rY = +(originY+boxH).toFixed(2);
+  const xs = [], ys = [];                                   // vertical- & horizontal-bar positions
+  for(let x=originX; x < rX-0.5; x+=cell) xs.push(+x.toFixed(2));
+  for(let y=originY; y < rY-0.5; y+=cell) ys.push(+y.toFixed(2));
+
+  let bars='', hi='';
+  xs.forEach(x=>{ bars+=`<rect x="${x}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`;
+                  hi  +=`<rect x="${x}" y="${oY}" width="0.8" height="${bH}" fill="rgba(255,255,255,.18)"/>`; });
+  ys.forEach(y=>{ bars+=`<rect x="${oX}" y="${y}" width="${bW}" height="${bar}" fill="url(#barH)"/>`;
+                  hi  +=`<rect x="${oX}" y="${y}" width="${bW}" height="0.8" fill="rgba(255,255,255,.14)"/>`; });
+
+  const rail = {
+    t:`<rect x="${oX}" y="${oY}" width="${bW}" height="${bar}" fill="url(#barH)"/>`,
+    b:`<rect x="${oX}" y="${+(rY-bar).toFixed(2)}" width="${bW}" height="${bar}" fill="url(#barH)"/>`,
+    l:`<rect x="${oX}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`,
+    r:`<rect x="${+(rX-bar).toFixed(2)}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`
+  };
+  const teethOf = {
+    t: xs.map(x=>`<rect x="${x}" y="${+(oY-tooth).toFixed(2)}" width="${bar}" height="${tooth}" fill="url(#barV)"/>`).join(''),
+    b: xs.map(x=>`<rect x="${x}" y="${rY}" width="${bar}" height="${tooth}" fill="url(#barV)"/>`).join(''),
+    l: ys.map(y=>`<rect x="${+(oX-tooth).toFixed(2)}" y="${y}" width="${tooth}" height="${bar}" fill="url(#barH)"/>`).join(''),
+    r: ys.map(y=>`<rect x="${rX}" y="${y}" width="${tooth}" height="${bar}" fill="url(#barH)"/>`).join('')
+  };
+  let openTeeth='', rails='';
+  (E.t ? rails+=rail.t : openTeeth+=teethOf.t);
+  (E.b ? rails+=rail.b : openTeeth+=teethOf.b);
+  (E.l ? rails+=rail.l : openTeeth+=teethOf.l);
+  (E.r ? rails+=rail.r : openTeeth+=teethOf.r);
 
   document.getElementById('gratingSvg').innerHTML = `
     <defs>
       <linearGradient id="barH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#335cab"/><stop offset="1" stop-color="#112e66"/></linearGradient>
       <linearGradient id="barV" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#335cab"/><stop offset="1" stop-color="#112e66"/></linearGradient>
-      <!-- Hollow grating: each tile draws only the top & left bar, so the rest is an open hole -->
-      <pattern id="mesh" width="${cell}" height="${cell}" patternUnits="userSpaceOnUse" patternTransform="translate(${originX} ${originY})">
-        <rect x="0" y="0" width="${cell}" height="${bar}" fill="url(#barH)"/>
-        <rect x="0" y="0" width="${bar}" height="${cell}" fill="url(#barV)"/>
-        <rect x="0" y="0" width="${cell}" height="0.9" fill="rgba(255,255,255,.22)"/>
-        <rect x="0" y="0" width="0.9" height="${cell}" fill="rgba(255,255,255,.16)"/>
-      </pattern>
+      <clipPath id="gclip"><rect x="${oX}" y="${oY}" width="${bW}" height="${bH}" rx="4"/></clipPath>
       <filter id="ds" x="-25%" y="-25%" width="150%" height="150%">
         <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#0b1c3f" flood-opacity="0.28"/>
       </filter>
     </defs>
-    <rect x="${originX}" y="${originY}" width="${boxW}" height="${boxH}" rx="4" fill="url(#mesh)" filter="url(#ds)"/>
-    ${edgeArt}
+    <g filter="url(#ds)">
+      ${openTeeth}
+      <g clip-path="url(#gclip)">${bars}${rails}${hi}</g>
+    </g>
     <line x1="${originX}" y1="${originY-16}" x2="${originX+boxW}" y2="${originY-16}" stroke="#a7b0c0" stroke-width="1.2"/>
     <line x1="${originX}" y1="${originY-21}" x2="${originX}" y2="${originY-11}" stroke="#a7b0c0" stroke-width="1.2"/>
     <line x1="${originX+boxW}" y1="${originY-21}" x2="${originX+boxW}" y2="${originY-11}" stroke="#a7b0c0" stroke-width="1.2"/>
