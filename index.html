@@ -963,16 +963,18 @@ function renderGrating(){
   const E = cutTypes[cutIdx].edges;
   const tcol = '#0e2554', tooth = barHeight === 30 ? 7 : 9;
   const closedLine = (x1,y1,x2,y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${tcol}" stroke-width="3.2" stroke-linecap="round"/>`;
+  // Teeth are the protruding ends of the internal bars, so they line up exactly with
+  // the lattice: top/bottom teeth sit on the vertical bars, left/right on the horizontal bars.
   function teeth(side){
     let s='';
     if(side==='t' || side==='b'){
-      const y = side==='t' ? originY : originY+boxH, d = side==='t' ? -1 : 1;
-      for(let x=originX+cell/2; x<originX+boxW-1; x+=cell)
-        s += `<line x1="${x}" y1="${y}" x2="${x}" y2="${y+d*tooth}" stroke="${tcol}" stroke-width="3" stroke-linecap="round"/>`;
+      const y = side==='t' ? originY-tooth : originY+boxH;
+      for(let x=originX; x<originX+boxW-0.5; x+=cell)
+        s += `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${bar}" height="${tooth}" fill="${tcol}"/>`;
     } else {
-      const x = side==='l' ? originX : originX+boxW, d = side==='l' ? -1 : 1;
-      for(let y=originY+cell/2; y<originY+boxH-1; y+=cell)
-        s += `<line x1="${x}" y1="${y}" x2="${x+d*tooth}" y2="${y}" stroke="${tcol}" stroke-width="3" stroke-linecap="round"/>`;
+      const x = side==='l' ? originX-tooth : originX+boxW;
+      for(let y=originY; y<originY+boxH-0.5; y+=cell)
+        s += `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${tooth}" height="${bar}" fill="${tcol}"/>`;
     }
     return s;
   }
