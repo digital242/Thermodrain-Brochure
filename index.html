@@ -957,7 +957,7 @@ function renderGrating(){
   const boxW = L * scale, boxH = W * scale;
   const originX = (VW - boxW) / 2, originY = (VH - boxH) / 2 + 6;
   const cell = barHeight === 30 ? 13 : 17;
-  const shadow = barHeight === 30 ? 4 : 6;
+  const bar = Math.max(2, Math.round(cell * 0.3)); // bar thickness — the rest of each cell is an open hole
 
   // Edge rendering: closed sides get a solid frame line, open sides get comb "teeth".
   const E = cutTypes[cutIdx].edges;
@@ -984,18 +984,20 @@ function renderGrating(){
 
   document.getElementById('gratingSvg').innerHTML = `
     <defs>
-      <pattern id="mesh" width="${cell}" height="${cell}" patternUnits="userSpaceOnUse">
-        <rect width="${cell}" height="${cell}" fill="#122a5c"/>
-        <rect x="1.5" y="1.5" width="${cell-3}" height="${cell-3}" rx="1.5" fill="#284d92"/>
-        <rect x="1.5" y="1.5" width="${cell-3}" height="${(cell-3)/2}" rx="1.5" fill="#3159a3"/>
+      <linearGradient id="barH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#335cab"/><stop offset="1" stop-color="#112e66"/></linearGradient>
+      <linearGradient id="barV" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#335cab"/><stop offset="1" stop-color="#112e66"/></linearGradient>
+      <!-- Hollow grating: each tile draws only the top & left bar, so the rest is an open hole -->
+      <pattern id="mesh" width="${cell}" height="${cell}" patternUnits="userSpaceOnUse" patternTransform="translate(${originX} ${originY})">
+        <rect x="0" y="0" width="${cell}" height="${bar}" fill="url(#barH)"/>
+        <rect x="0" y="0" width="${bar}" height="${cell}" fill="url(#barV)"/>
+        <rect x="0" y="0" width="${cell}" height="0.9" fill="rgba(255,255,255,.22)"/>
+        <rect x="0" y="0" width="0.9" height="${cell}" fill="rgba(255,255,255,.16)"/>
       </pattern>
-      <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#1c3f86"/><stop offset="1" stop-color="#0e2b56"/>
-      </linearGradient>
+      <filter id="ds" x="-25%" y="-25%" width="150%" height="150%">
+        <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#0b1c3f" flood-opacity="0.28"/>
+      </filter>
     </defs>
-    <rect x="${originX+shadow}" y="${originY+shadow}" width="${boxW}" height="${boxH}" rx="4" fill="rgba(11,28,63,.16)"/>
-    <rect x="${originX}" y="${originY}" width="${boxW}" height="${boxH}" rx="4" fill="url(#mesh)"/>
-    <rect x="${originX}" y="${originY}" width="${boxW}" height="${boxH}" rx="4" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+    <rect x="${originX}" y="${originY}" width="${boxW}" height="${boxH}" rx="4" fill="url(#mesh)" filter="url(#ds)"/>
     ${edgeArt}
     <line x1="${originX}" y1="${originY-16}" x2="${originX+boxW}" y2="${originY-16}" stroke="#a7b0c0" stroke-width="1.2"/>
     <line x1="${originX}" y1="${originY-21}" x2="${originX}" y2="${originY-11}" stroke="#a7b0c0" stroke-width="1.2"/>
