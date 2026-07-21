@@ -395,10 +395,18 @@
   .stepper button:active:not(:disabled){background:var(--navy-deep);}
   .stepper button:disabled{opacity:.3; cursor:not-allowed;}
   .stepper .val{
-    min-width:128px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:16px; font-weight:600;
-    color:var(--navy-ink); border-left:1px solid var(--line); border-right:1px solid var(--line); line-height:46px;
+    min-width:128px; height:46px; display:flex; align-items:center; justify-content:center; gap:5px;
+    border-left:1px solid var(--line); border-right:1px solid var(--line);
   }
   .stepper .val small{color:var(--muted); font-weight:500; font-size:12px;}
+  .szin{
+    width:74px; border:none; background:transparent; text-align:right; padding:0;
+    font-family:'IBM Plex Mono',monospace; font-size:16px; font-weight:600; color:var(--navy-ink);
+    -moz-appearance:textfield; appearance:textfield;
+  }
+  .szin::-webkit-outer-spin-button, .szin::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+  .szin:focus{outline:none;}
+  .szin::selection{background:rgba(28,63,134,.18);}
   .toggle-row{display:flex; gap:10px;}
   .toggle-btn{
     padding:11px 20px; border:1px solid var(--line); background:#fff; border-radius:10px; cursor:pointer;
@@ -698,7 +706,7 @@
     <div class="sec-head" data-reveal>
       <span class="eyebrow">Concept 01</span>
       <h2 class="title">Grating size configurator</h2>
-      <p class="lede">Step length and width through Thermodrain's actual catalogue sizes and switch bar height — the panel redraws live at true proportions.</p>
+      <p class="lede">Type any length and width (or step one grating section at a time) and switch bar height — the panel redraws live at true proportions.</p>
     </div>
 
     <div class="demo" data-reveal data-delay="1">
@@ -707,20 +715,20 @@
           <div class="panel-head"><span class="idx">01</span><h3>Configure your grating</h3></div>
 
           <div class="dim-row">
-            <div class="dim-label">Length</div>
+            <div class="dim-label">Length <span class="dim-hint">· type any size · 50–2400 mm</span></div>
             <div class="stepper">
-              <button id="lenMinus" aria-label="Decrease length">−</button>
-              <div class="val"><span id="lenVal">1001</span> <small>mm</small></div>
-              <button id="lenPlus" aria-label="Increase length">+</button>
+              <button id="lenMinus" aria-label="Remove one section from length">−</button>
+              <div class="val"><input id="lenVal" class="szin" type="number" min="50" max="2400" step="50" value="1000" inputmode="numeric" aria-label="Length in millimetres"><small>mm</small></div>
+              <button id="lenPlus" aria-label="Add one section to length">+</button>
             </div>
           </div>
 
           <div class="dim-row">
-            <div class="dim-label">Width</div>
+            <div class="dim-label">Width <span class="dim-hint">· type any size · 50–2400 mm</span></div>
             <div class="stepper">
-              <button id="widMinus" aria-label="Decrease width">−</button>
-              <div class="val"><span id="widVal">406</span> <small>mm</small></div>
-              <button id="widPlus" aria-label="Increase width">+</button>
+              <button id="widMinus" aria-label="Remove one section from width">−</button>
+              <div class="val"><input id="widVal" class="szin" type="number" min="50" max="2400" step="50" value="400" inputmode="numeric" aria-label="Width in millimetres"><small>mm</small></div>
+              <button id="widPlus" aria-label="Add one section to width">+</button>
             </div>
           </div>
 
@@ -745,7 +753,7 @@
             <div><div class="k">Overall size</div><div class="v" id="roSize">1001 × 406 mm</div></div>
             <div><div class="k">Panel area</div><div class="v" id="roArea">0.41 m²</div></div>
             <div><div class="k">Height class</div><div class="v" id="roHeight">30 mm</div></div>
-            <div><div class="k">Aspect ratio</div><div class="v" id="roRatio">2.46 : 1</div></div>
+            <div><div class="k">Grid</div><div class="v" id="roGrid">20 × 8 sections</div></div>
             <div><div class="k">Cutting type</div><div class="v" id="roCut">Type I</div></div>
             <div><div class="k">Edge finish</div><div class="v" id="roEdge">Closed all sides</div></div>
           </div>
@@ -755,7 +763,7 @@
           <svg id="gratingSvg" width="490" height="470" viewBox="0 0 490 470" role="img" aria-label="Grating preview"></svg>
         </div>
       </div>
-      <div class="chart-note">Length &amp; width step through the exact values published in the Thermodrain size chart (<b>48 mm → 2393 mm</b>). Values outside that list aren't offered, matching the physical catalogue.</div>
+      <div class="chart-note">Type any length &amp; width from <b>50 mm to 2400 mm</b>, or use <b>−/+</b> to add or remove one grating section (<b>50 mm</b>) at a time. The panel redraws live at true proportions.</div>
 
       <details class="size-guide">
         <summary>
@@ -765,12 +773,12 @@
         </summary>
         <div class="sg-body">
           <ol class="sg-steps">
-            <li><b>Step the Length and Width</b> to the panel you need — each tap moves to the next real catalogue size, so you can only pick sizes we actually manufacture.</li>
+            <li><b>Set the Length and Width</b> — type an exact size (50–2400 mm), or use <b>−/+</b> to add or remove one grating section (50 mm) at a time.</li>
             <li><b>Set the bar height</b> (30 mm or 40 mm) — taller bars carry heavier loads and longer spans.</li>
             <li><b>Pick a cutting type (I–VI)</b> to match your channel: a <b>closed / flush edge</b> gives a finished border, an <b>open / tooth edge</b> lets bars run out so panels butt together or drop over a frame. The preview redraws so you can see the exact edge.</li>
             <li>Note your <b>Overall size</b> and <b>Edge finish</b> from the summary, then send them with your enquiry.</li>
           </ol>
-          <div class="sg-sub">Available lengths &amp; widths (mm) — tap to set length</div>
+          <div class="sg-sub">Common sizes (mm) — tap to set length</div>
           <div class="size-chips" id="sizeChips"></div>
         </div>
       </details>
@@ -916,11 +924,11 @@ classOrder.forEach(c => {
 });
 
 /* ---------- Grating configurator ---------- */
-let lenIdx = sizeChart.indexOf(1001);
-let widIdx = sizeChart.indexOf(406);
+const MIN = 50, MAX = 2400, MODULE = 50;   // one +/- click = one MODULE-wide grating section
+let lenMM = 1000, widMM = 400;
 let barHeight = 30;
 let cutIdx = 0;
-const clampIdx = i => Math.max(0, Math.min(sizeChart.length-1, i));
+const clampMM = v => Math.max(MIN, Math.min(MAX, Math.round(v)));
 
 // Cutting types (I–VI). edges: 1 = closed/flush side, 0 = open/tooth side [top,right,bottom,left]
 const cutTypes = [
@@ -933,65 +941,64 @@ const cutTypes = [
 ];
 
 function renderGrating(){
-  const L = sizeChart[lenIdx], W = sizeChart[widIdx];
-  document.getElementById('lenVal').textContent = L;
-  document.getElementById('widVal').textContent = W;
+  const L = lenMM, W = widMM;
+  const nx = Math.max(1, Math.round(L / MODULE));   // number of sections along the length
+  const ny = Math.max(1, Math.round(W / MODULE));   // number of sections along the width
+
+  const li = document.getElementById('lenVal'), wi = document.getElementById('widVal');
+  if(document.activeElement !== li) li.value = L;    // don't fight the user while they type
+  if(document.activeElement !== wi) wi.value = W;
   document.getElementById('roSize').textContent = L + ' × ' + W + ' mm';
   document.getElementById('roArea').textContent = ((L*W)/1e6).toFixed(2) + ' m²';
   document.getElementById('roHeight').textContent = barHeight + ' mm';
-  document.getElementById('roRatio').textContent = (L/W).toFixed(2) + ' : 1';
+  document.getElementById('roGrid').textContent = nx + ' × ' + ny + ' sections';
   document.getElementById('roCut').textContent = 'Type ' + cutTypes[cutIdx].n;
   document.getElementById('roEdge').textContent = cutTypes[cutIdx].sum;
 
-  document.getElementById('lenMinus').disabled = lenIdx === 0;
-  document.getElementById('lenPlus').disabled  = lenIdx === sizeChart.length-1;
-  document.getElementById('widMinus').disabled = widIdx === 0;
-  document.getElementById('widPlus').disabled  = widIdx === sizeChart.length-1;
+  document.getElementById('lenMinus').disabled = L <= MIN;
+  document.getElementById('lenPlus').disabled  = L >= MAX;
+  document.getElementById('widMinus').disabled = W <= MIN;
+  document.getElementById('widPlus').disabled  = W >= MAX;
 
   const VW = 490, VH = 470;
-  // Constant mm -> px scale (never recomputed from L or W), so length and
-  // width are fully independent and the panel is always drawn true-to-scale.
-  // Sized so the largest catalogue panel (2393 mm) fits the frame on both axes.
-  const PPMM = 0.18;
-  const scale = PPMM;
-  const boxW = L * scale, boxH = W * scale;
+  // Constant mm -> px scale so length and width stay independent and true-to-scale;
+  // sized so the largest panel (2400 mm) fits the frame on both axes.
+  const PPMM = 0.17;   // leaves room for teeth + dimension labels even at the 2400 mm max
+  const boxW = L * PPMM, boxH = W * PPMM;
   const originX = (VW - boxW) / 2, originY = (VH - boxH) / 2 + 6;
-  const cell = barHeight === 30 ? 13 : 17;
-  const bar = Math.max(2, Math.round(cell * 0.3)); // bar thickness — the rest of each cell is an open hole
+  const bar = barHeight === 40 ? 4 : 3;   // bar thickness (taller bars render a touch heavier)
 
-  // Build the lattice from explicit bar positions, then derive teeth from the SAME arrays,
-  // so every tooth is an exact continuation of an internal bar (guaranteed alignment).
+  // Even, symmetric grid: choose a whole number of columns/rows so every hole is equal and
+  // both edges match — no thin leftover cell on the far right or bottom.
   const E = cutTypes[cutIdx].edges;
-  const tooth = barHeight === 30 ? 7 : 9;
-  const oX = +originX.toFixed(2), oY = +originY.toFixed(2), bW = +boxW.toFixed(2), bH = +boxH.toFixed(2);
-  const rX = +(originX+boxW).toFixed(2), rY = +(originY+boxH).toFixed(2);
-  const xs = [], ys = [];                                   // vertical- & horizontal-bar positions
-  for(let x=originX; x < rX-0.5; x+=cell) xs.push(+x.toFixed(2));
-  for(let y=originY; y < rY-0.5; y+=cell) ys.push(+y.toFixed(2));
+  const tooth = barHeight === 40 ? 9 : 7;
+  const DG = 22, TK = 5, LB = 6;   // dimension-line gap from the panel edge (clears teeth), tick half-length, label gap
+  const oX=+originX.toFixed(2), oY=+originY.toFixed(2), bW=+boxW.toFixed(2), bH=+boxH.toFixed(2);
+  const rX=+(originX+boxW).toFixed(2), rY=+(originY+boxH).toFixed(2);
+  const cx=boxW/nx, cy=boxH/ny, f=n=>(+n).toFixed(2);
+  const clampX=x=>Math.min(Math.max(x,originX),originX+boxW-bar);
+  const clampY=y=>Math.min(Math.max(y,originY),originY+boxH-bar);
 
+  // interior lattice, centred on the grid lines, clipped to the panel
   let bars='', hi='';
-  xs.forEach(x=>{ bars+=`<rect x="${x}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`;
-                  hi  +=`<rect x="${x}" y="${oY}" width="0.8" height="${bH}" fill="rgba(255,255,255,.18)"/>`; });
-  ys.forEach(y=>{ bars+=`<rect x="${oX}" y="${y}" width="${bW}" height="${bar}" fill="url(#barH)"/>`;
-                  hi  +=`<rect x="${oX}" y="${y}" width="${bW}" height="0.8" fill="rgba(255,255,255,.14)"/>`; });
+  for(let i=1;i<nx;i++){ const x=f(originX+i*cx-bar/2);
+    bars+=`<rect x="${x}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`;
+    hi  +=`<rect x="${x}" y="${oY}" width="0.8" height="${bH}" fill="rgba(255,255,255,.18)"/>`; }
+  for(let j=1;j<ny;j++){ const y=f(originY+j*cy-bar/2);
+    bars+=`<rect x="${oX}" y="${y}" width="${bW}" height="${bar}" fill="url(#barH)"/>`;
+    hi  +=`<rect x="${oX}" y="${y}" width="${bW}" height="0.8" fill="rgba(255,255,255,.14)"/>`; }
 
-  const rail = {
-    t:`<rect x="${oX}" y="${oY}" width="${bW}" height="${bar}" fill="url(#barH)"/>`,
-    b:`<rect x="${oX}" y="${+(rY-bar).toFixed(2)}" width="${bW}" height="${bar}" fill="url(#barH)"/>`,
-    l:`<rect x="${oX}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`,
-    r:`<rect x="${+(rX-bar).toFixed(2)}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`
-  };
-  const teethOf = {
-    t: xs.map(x=>`<rect x="${x}" y="${+(oY-tooth).toFixed(2)}" width="${bar}" height="${tooth}" fill="url(#barV)"/>`).join(''),
-    b: xs.map(x=>`<rect x="${x}" y="${rY}" width="${bar}" height="${tooth}" fill="url(#barV)"/>`).join(''),
-    l: ys.map(y=>`<rect x="${+(oX-tooth).toFixed(2)}" y="${y}" width="${tooth}" height="${bar}" fill="url(#barH)"/>`).join(''),
-    r: ys.map(y=>`<rect x="${rX}" y="${y}" width="${tooth}" height="${bar}" fill="url(#barH)"/>`).join('')
-  };
-  let openTeeth='', rails='';
-  (E.t ? rails+=rail.t : openTeeth+=teethOf.t);
-  (E.b ? rails+=rail.b : openTeeth+=teethOf.b);
-  (E.l ? rails+=rail.l : openTeeth+=teethOf.l);
-  (E.r ? rails+=rail.r : openTeeth+=teethOf.r);
+  // closed edges → flush rails; open edges → teeth aligned to the same grid lines
+  const railV=x=>`<rect x="${f(x)}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`;
+  const railH=y=>`<rect x="${oX}" y="${f(y)}" width="${bW}" height="${bar}" fill="url(#barH)"/>`;
+  const teethTB=atY=>{ let s=''; for(let i=0;i<=nx;i++) s+=`<rect x="${f(clampX(originX+i*cx-bar/2))}" y="${f(atY)}" width="${bar}" height="${tooth}" fill="url(#barV)"/>`; return s; };
+  const teethLR=atX=>{ let s=''; for(let j=0;j<=ny;j++) s+=`<rect x="${f(atX)}" y="${f(clampY(originY+j*cy-bar/2))}" width="${tooth}" height="${bar}" fill="url(#barH)"/>`; return s; };
+
+  let rails='', openTeeth='';
+  if(E.t) rails+=railH(oY);     else openTeeth+=teethTB(originY-tooth);
+  if(E.b) rails+=railH(rY-bar); else openTeeth+=teethTB(rY);
+  if(E.l) rails+=railV(oX);     else openTeeth+=teethLR(originX-tooth);
+  if(E.r) rails+=railV(rX-bar); else openTeeth+=teethLR(rX);
 
   document.getElementById('gratingSvg').innerHTML = `
     <defs>
@@ -1006,21 +1013,37 @@ function renderGrating(){
       ${openTeeth}
       <g clip-path="url(#gclip)">${bars}${rails}${hi}</g>
     </g>
-    <line x1="${originX}" y1="${originY-16}" x2="${originX+boxW}" y2="${originY-16}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <line x1="${originX}" y1="${originY-21}" x2="${originX}" y2="${originY-11}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <line x1="${originX+boxW}" y1="${originY-21}" x2="${originX+boxW}" y2="${originY-11}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <text x="${originX+boxW/2}" y="${originY-22}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600" fill="#4b5566">${L} mm</text>
-    <line x1="${originX-16}" y1="${originY}" x2="${originX-16}" y2="${originY+boxH}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <line x1="${originX-21}" y1="${originY}" x2="${originX-11}" y2="${originY}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <line x1="${originX-21}" y1="${originY+boxH}" x2="${originX-11}" y2="${originY+boxH}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <text x="${originX-26}" y="${originY+boxH/2}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600" fill="#4b5566" transform="rotate(-90 ${originX-26} ${originY+boxH/2})">${W} mm</text>
+    <line x1="${originX}" y1="${originY-DG}" x2="${originX+boxW}" y2="${originY-DG}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <line x1="${originX}" y1="${originY-DG-TK}" x2="${originX}" y2="${originY-DG+TK}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <line x1="${originX+boxW}" y1="${originY-DG-TK}" x2="${originX+boxW}" y2="${originY-DG+TK}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <text x="${originX+boxW/2}" y="${originY-DG-LB}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600" fill="#4b5566">${L} mm</text>
+    <line x1="${originX-DG}" y1="${originY}" x2="${originX-DG}" y2="${originY+boxH}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <line x1="${originX-DG-TK}" y1="${originY}" x2="${originX-DG+TK}" y2="${originY}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <line x1="${originX-DG-TK}" y1="${originY+boxH}" x2="${originX-DG+TK}" y2="${originY+boxH}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <text x="${originX-DG-LB}" y="${originY+boxH/2}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600" fill="#4b5566" transform="rotate(-90 ${originX-DG-LB} ${originY+boxH/2})">${W} mm</text>
   `;
 }
 
-document.getElementById('lenMinus').onclick = () => { lenIdx = clampIdx(lenIdx-1); renderGrating(); };
-document.getElementById('lenPlus').onclick  = () => { lenIdx = clampIdx(lenIdx+1); renderGrating(); };
-document.getElementById('widMinus').onclick = () => { widIdx = clampIdx(widIdx-1); renderGrating(); };
-document.getElementById('widPlus').onclick  = () => { widIdx = clampIdx(widIdx+1); renderGrating(); };
+document.getElementById('lenMinus').onclick = () => { lenMM = clampMM(lenMM - MODULE); renderGrating(); };
+document.getElementById('lenPlus').onclick  = () => { lenMM = clampMM(lenMM + MODULE); renderGrating(); };
+document.getElementById('widMinus').onclick = () => { widMM = clampMM(widMM - MODULE); renderGrating(); };
+document.getElementById('widPlus').onclick  = () => { widMM = clampMM(widMM + MODULE); renderGrating(); };
+
+// Type a size directly: live preview while typing, snapped into the 50–2400 mm range on blur/Enter.
+(function(){
+  const li = document.getElementById('lenVal'), wi = document.getElementById('widVal');
+  function wire(el, get, set){
+    el.addEventListener('input', () => {
+      const v = parseInt(el.value, 10);
+      if(!isNaN(v)){ set(Math.max(1, Math.min(MAX, v))); renderGrating(); }
+    });
+    const commit = () => { set(clampMM(parseInt(el.value, 10) || get())); el.value = get(); renderGrating(); };
+    el.addEventListener('blur', commit);
+    el.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); el.blur(); } });
+  }
+  wire(li, () => lenMM, v => lenMM = v);
+  wire(wi, () => widMM, v => widMM = v);
+})();
 document.getElementById('h30').onclick = () => { barHeight=30; toggleH(); };
 document.getElementById('h40').onclick = () => { barHeight=40; toggleH(); };
 function toggleH(){
@@ -1071,7 +1094,7 @@ sizeChart.forEach(v=>{
   const c=document.createElement('button');
   c.type='button'; c.className='size-chip'; c.textContent=v;
   c.title='Set length to '+v+' mm';
-  c.addEventListener('click',()=>{ lenIdx=sizeChart.indexOf(v); renderGrating(); });
+  c.addEventListener('click',()=>{ lenMM=clampMM(v); renderGrating(); });
   sizeChips.appendChild(c);
 });
 
