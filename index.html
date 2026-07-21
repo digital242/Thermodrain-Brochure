@@ -976,8 +976,6 @@ function renderGrating(){
   const oX=+originX.toFixed(2), oY=+originY.toFixed(2), bW=+boxW.toFixed(2), bH=+boxH.toFixed(2);
   const rX=+(originX+boxW).toFixed(2), rY=+(originY+boxH).toFixed(2);
   const cx=boxW/nx, cy=boxH/ny, f=n=>(+n).toFixed(2);
-  const clampX=x=>Math.min(Math.max(x,originX),originX+boxW-bar);
-  const clampY=y=>Math.min(Math.max(y,originY),originY+boxH-bar);
 
   // interior lattice, centred on the grid lines, clipped to the panel
   let bars='', hi='';
@@ -991,8 +989,9 @@ function renderGrating(){
   // closed edges → flush rails; open edges → teeth aligned to the same grid lines
   const railV=x=>`<rect x="${f(x)}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`;
   const railH=y=>`<rect x="${oX}" y="${f(y)}" width="${bW}" height="${bar}" fill="url(#barH)"/>`;
-  const teethTB=atY=>{ let s=''; for(let i=0;i<=nx;i++) s+=`<rect x="${f(clampX(originX+i*cx-bar/2))}" y="${f(atY)}" width="${bar}" height="${tooth}" fill="url(#barV)"/>`; return s; };
-  const teethLR=atX=>{ let s=''; for(let j=0;j<=ny;j++) s+=`<rect x="${f(atX)}" y="${f(clampY(originY+j*cy-bar/2))}" width="${tooth}" height="${bar}" fill="url(#barH)"/>`; return s; };
+  // teeth only on the interior bars (skip the outermost bar on each side) so the corners stay clean
+  const teethTB=atY=>{ let s=''; for(let i=1;i<nx;i++) s+=`<rect x="${f(originX+i*cx-bar/2)}" y="${f(atY)}" width="${bar}" height="${tooth}" fill="url(#barV)"/>`; return s; };
+  const teethLR=atX=>{ let s=''; for(let j=1;j<ny;j++) s+=`<rect x="${f(atX)}" y="${f(originY+j*cy-bar/2)}" width="${tooth}" height="${bar}" fill="url(#barH)"/>`; return s; };
 
   let rails='', openTeeth='';
   if(E.t) rails+=railH(oY);     else openTeeth+=teethTB(originY-tooth);
