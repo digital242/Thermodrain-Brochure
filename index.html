@@ -963,7 +963,7 @@ function renderGrating(){
   const VW = 490, VH = 470;
   // Constant mm -> px scale so length and width stay independent and true-to-scale;
   // sized so the largest panel (2400 mm) fits the frame on both axes.
-  const PPMM = 0.18;
+  const PPMM = 0.17;   // leaves room for teeth + dimension labels even at the 2400 mm max
   const boxW = L * PPMM, boxH = W * PPMM;
   const originX = (VW - boxW) / 2, originY = (VH - boxH) / 2 + 6;
   const bar = barHeight === 40 ? 4 : 3;   // bar thickness (taller bars render a touch heavier)
@@ -972,6 +972,7 @@ function renderGrating(){
   // both edges match — no thin leftover cell on the far right or bottom.
   const E = cutTypes[cutIdx].edges;
   const tooth = barHeight === 40 ? 9 : 7;
+  const DG = 22, TK = 5, LB = 6;   // dimension-line gap from the panel edge (clears teeth), tick half-length, label gap
   const oX=+originX.toFixed(2), oY=+originY.toFixed(2), bW=+boxW.toFixed(2), bH=+boxH.toFixed(2);
   const rX=+(originX+boxW).toFixed(2), rY=+(originY+boxH).toFixed(2);
   const cx=boxW/nx, cy=boxH/ny, f=n=>(+n).toFixed(2);
@@ -1012,14 +1013,14 @@ function renderGrating(){
       ${openTeeth}
       <g clip-path="url(#gclip)">${bars}${rails}${hi}</g>
     </g>
-    <line x1="${originX}" y1="${originY-16}" x2="${originX+boxW}" y2="${originY-16}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <line x1="${originX}" y1="${originY-21}" x2="${originX}" y2="${originY-11}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <line x1="${originX+boxW}" y1="${originY-21}" x2="${originX+boxW}" y2="${originY-11}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <text x="${originX+boxW/2}" y="${originY-22}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600" fill="#4b5566">${L} mm</text>
-    <line x1="${originX-16}" y1="${originY}" x2="${originX-16}" y2="${originY+boxH}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <line x1="${originX-21}" y1="${originY}" x2="${originX-11}" y2="${originY}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <line x1="${originX-21}" y1="${originY+boxH}" x2="${originX-11}" y2="${originY+boxH}" stroke="#a7b0c0" stroke-width="1.2"/>
-    <text x="${originX-26}" y="${originY+boxH/2}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600" fill="#4b5566" transform="rotate(-90 ${originX-26} ${originY+boxH/2})">${W} mm</text>
+    <line x1="${originX}" y1="${originY-DG}" x2="${originX+boxW}" y2="${originY-DG}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <line x1="${originX}" y1="${originY-DG-TK}" x2="${originX}" y2="${originY-DG+TK}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <line x1="${originX+boxW}" y1="${originY-DG-TK}" x2="${originX+boxW}" y2="${originY-DG+TK}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <text x="${originX+boxW/2}" y="${originY-DG-LB}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600" fill="#4b5566">${L} mm</text>
+    <line x1="${originX-DG}" y1="${originY}" x2="${originX-DG}" y2="${originY+boxH}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <line x1="${originX-DG-TK}" y1="${originY}" x2="${originX-DG+TK}" y2="${originY}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <line x1="${originX-DG-TK}" y1="${originY+boxH}" x2="${originX-DG+TK}" y2="${originY+boxH}" stroke="#a7b0c0" stroke-width="1.2"/>
+    <text x="${originX-DG-LB}" y="${originY+boxH/2}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600" fill="#4b5566" transform="rotate(-90 ${originX-DG-LB} ${originY+boxH/2})">${W} mm</text>
   `;
 }
 
