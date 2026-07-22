@@ -703,12 +703,44 @@
   .cmp tbody td:first-child{font-weight:600; color:var(--ink-soft); background:var(--paper);}
   .cmp tbody tr:last-child td{border-bottom:none;}
   .cmp td.col-frp{background:rgba(246,188,22,.07); font-weight:700; color:var(--navy-ink);}
+  .cmp-sub{font-family:'Archivo',sans-serif; font-weight:800; font-size:18px; color:var(--navy-ink); margin:38px 0 16px;}
 
   /* ============ APPLICATIONS ============ */
   .app-chips{display:flex; flex-wrap:wrap; gap:10px;}
   .app-chip{display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:100px; background:var(--white); border:1px solid var(--line); box-shadow:var(--shadow-sm); font-size:13.5px; font-weight:600; color:var(--navy-ink); transition:transform .16s var(--ease), border-color .16s;}
   .app-chip:hover{transform:translateY(-2px); border-color:var(--navy);}
   .app-chip .adot{width:8px; height:8px; border-radius:50%; background:var(--red); flex:none;}
+
+  /* ============ ACCORDION (RANGE) ============ */
+  .acc{border:1px solid var(--line); border-radius:14px; background:var(--white); box-shadow:var(--shadow-sm); margin-bottom:12px; overflow:hidden;}
+  .acc summary{list-style:none; cursor:pointer; padding:20px 22px; display:flex; align-items:center; gap:14px; font-family:'Archivo',sans-serif; font-weight:800; font-size:16px; color:var(--navy-ink);}
+  .acc summary::-webkit-details-marker{display:none;}
+  .acc summary .num{font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; color:#fff; background:var(--navy); width:30px; height:30px; border-radius:8px; display:grid; place-items:center; flex:none;}
+  .acc summary .chev{margin-left:auto; color:var(--muted); transition:transform .22s var(--ease); flex:none;}
+  .acc[open] summary .chev{transform:rotate(180deg);}
+  .acc[open] summary{border-bottom:1px solid var(--line-soft);}
+  .acc .acc-body{padding:20px 22px 24px; font-size:14px; color:var(--ink-soft); line-height:1.65;}
+  .acc .acc-body > p{margin:0 0 14px;}
+  .acc .meta{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;}
+  .acc .meta .tag{font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; color:var(--navy-deep); background:rgba(28,63,134,.07); border:1px solid var(--line); border-radius:6px; padding:5px 9px;}
+  .acc .acc-body ul{margin:0; padding-left:20px;}
+  .acc .acc-body li{margin-bottom:7px;} .acc .acc-body li:last-child{margin-bottom:0;}
+  .acc .sub{font-size:11px; text-transform:uppercase; letter-spacing:.11em; color:var(--muted); font-weight:700; margin:18px 0 9px;}
+  .acc .sizes{display:flex; flex-wrap:wrap; gap:6px;}
+  .acc .sizes .sz{font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; color:var(--navy-deep); background:var(--paper-2); border:1px solid var(--line); border-radius:6px; padding:5px 8px;}
+
+  /* ============ DO'S & DON'TS ============ */
+  .dodont{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px;}
+  @media (max-width:640px){ .dodont{grid-template-columns:1fr;} }
+  .dobox{border:1px solid var(--line); border-radius:14px; padding:22px 24px; background:var(--white); box-shadow:var(--shadow-sm);}
+  .dobox h4{font-family:'Archivo',sans-serif; font-weight:800; font-size:15px; margin:0 0 14px;}
+  .dobox.do h4{color:#1c7a4a;} .dobox.dont h4{color:var(--red);}
+  .dobox ul{list-style:none; margin:0; padding:0;}
+  .dobox li{position:relative; padding-left:26px; margin-bottom:11px; font-size:13.5px; color:var(--ink-soft); line-height:1.5;}
+  .dobox li:last-child{margin-bottom:0;}
+  .dobox li::before{position:absolute; left:0; top:-1px; font-weight:800;}
+  .dobox.do li::before{content:"✓"; color:#1c7a4a;}
+  .dobox.dont li::before{content:"✕"; color:var(--red);}
 
   footer.site{background:var(--navy-ink); color:#aebbd8; margin-top:0;}
   footer.site .fin{
@@ -743,7 +775,7 @@
     <nav id="siteNav">
       <a href="#about">About</a>
       <a href="#why">Why FRP</a>
-      <a href="#configurator">Configurator</a>
+      <a href="#configurator">Grating configurator</a>
       <a href="#explorer">Products</a>
       <a href="#contact" class="cta">Contact</a>
     </nav>
@@ -790,8 +822,10 @@
   <div class="tabbar-inner">
     <button type="button" class="tab" data-tab="about">About</button>
     <button type="button" class="tab" data-tab="why">Why FRP</button>
-    <button type="button" class="tab" data-tab="configurator">Configurator</button>
+    <button type="button" class="tab" data-tab="configurator">Grating configurator</button>
     <button type="button" class="tab" data-tab="explorer">Products</button>
+    <button type="button" class="tab" data-tab="range">Range</button>
+    <button type="button" class="tab" data-tab="loads">Load classes</button>
     <button type="button" class="tab" data-tab="compare">Compare</button>
     <button type="button" class="tab" data-tab="applications">Applications</button>
   </div>
@@ -809,7 +843,8 @@
     <div class="about-grid" data-reveal data-delay="1">
       <div>
         <p>Backed by a strong design, R&amp;D and technical team, we engineer covers and gratings for sewerage, electrical, telecom and cable networks — built to outperform cast iron, ductile iron and RCC in strength-to-weight, corrosion resistance and service life.</p>
-        <p>Our in-house testing facility runs one of the largest load-testing machines in the segment, rated to 90&nbsp;tons, and every product is tested to BS&nbsp;EN&nbsp;124, IS&nbsp;1726 and AASHTO&nbsp;M306. A 250-strong team and a 40,000&nbsp;sq&nbsp;ft manufacturing facility support a growing export presence worldwide.</p>
+        <p>Our in-house testing facility runs one of the largest load-testing machines in the segment, rated to 90&nbsp;tons, and every product is tested to BS&nbsp;EN&nbsp;124, IS&nbsp;1726 and AASHTO&nbsp;M306. A 250-strong team and a 40,000&nbsp;sq&nbsp;ft manufacturing facility (over a 1,60,000&nbsp;sq&nbsp;ft factory area) support a growing export presence worldwide.</p>
+        <p>Beyond drainage, our R&amp;D has produced FRP windmill nacelle covers for the wind-power industry and MECHWOOD — a man-made artificial wood with zero wooden ingredients. An in-house CNC machining shop and stringent third-party testing keep quality consistent across the range.</p>
       </div>
       <div class="stat-tiles">
         <div class="stat-tile"><div class="st-n">1993</div><div class="st-l">Established in Navi Mumbai, India</div></div>
@@ -867,6 +902,11 @@
         <div class="fic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M12 2v3M12 19v3M22 12h-3M5 12H2"/><path d="m19 5-2 2M7 17l-2 2M19 19l-2-2M7 7 5 5"/></svg></div>
         <h3>Tested to F900 (90&nbsp;T)</h3>
         <p>Load-tested to BS&nbsp;EN&nbsp;124, IS&nbsp;1726 &amp; AASHTO from 2.5&nbsp;T up to F900 — with zero permanent set.</p>
+      </div>
+      <div class="feature-card" data-reveal data-delay="2">
+        <div class="fic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2v6a2 2 0 0 0 .2.9L18 16a2 2 0 0 1-1.8 3H7.8A2 2 0 0 1 6 16l3.8-7.1A2 2 0 0 0 10 8V2"/><path d="M8.5 2h7M7 16h10"/></svg></div>
+        <h3>Thermoset chemistry</h3>
+        <p>Cures at a 175&nbsp;°C exothermic temperature into a thermoset — non-reversible, can't be melted or reprocessed. It resists theft, won't soften in extreme sun, and performs in extreme hot &amp; cold.</p>
       </div>
     </div>
   </section>
@@ -1036,6 +1076,237 @@
     </div>
   </section>
 
+  <!-- ============ RANGE (PRODUCT DETAILS) ============ -->
+  <section class="section tab-panel" id="range">
+    <div class="sec-head" data-reveal>
+      <span class="eyebrow">Full range</span>
+      <h2 class="title">Every THERMODRAIN product</h2>
+      <p class="lede">The complete FRP/GRP/composite range — covers, gratings, gully &amp; tank covers, chambers, drain channels and accessories. Tap any product for its salient features and sizes.</p>
+    </div>
+    <div data-reveal data-delay="1">
+
+      <details class="acc" open>
+        <summary><span class="num">01</span>Solid Top Manhole Covers<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <div class="meta"><span class="tag">2.5 T – F900 (90 T)</span><span class="tag">Circular / Square / Rectangular</span><span class="tag">Double seal</span></div>
+          <p>Tested to BS EN 124, IS 1726 &amp; AASHTO M306 — better performing than cast iron, ductile iron and RCC.</p>
+          <ul>
+            <li>Self-pigmented &amp; non-brittle — no painting required.</li>
+            <li>Key locking or bolt locking arrangement available.</li>
+            <li>HSPA / stainless-steel socket keyholes with closed bottoms (not through-and-through).</li>
+            <li>Zero permanent set across all sizes &amp; load bearings.</li>
+          </ul>
+          <div class="sub">Frame clear opening — sizes</div>
+          <p style="margin:0;">Circular Ø400–Ø1400 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span class="num">02</span>Multiple Covers with Frame<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <div class="meta"><span class="tag">2.5 T – F900 (90 T)</span><span class="tag">Odd-size chambers</span></div>
+          <p>Designed and manufactured to the existing chamber size — ideal for odd-size chambers. An industrial revolution over CI, DI and RCC.</p>
+          <ul>
+            <li>MS frame, epoxy-painted, with removable supports.</li>
+            <li>Optional bolt-locking arrangement.</li>
+            <li>HSPA / stainless-steel closed-bottom keyholes.</li>
+            <li>Self-pigmented, non-brittle, zero permanent set.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span class="num">03</span>Recess (Fill-in) Covers<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <div class="meta"><span class="tag">2.5 T – D400 (40 T)</span><span class="tag">Circular / Square / Rectangular</span><span class="tag">65 mm recess</span></div>
+          <p>65 mm depth is provided for fixing cement, blocks, tiles or other materials so the cover blends into the surrounding floor.</p>
+          <ul>
+            <li>Lighter and easier to use than conventional materials.</li>
+            <li>Closed-bottom keyholes; zero permanent set in all sizes &amp; load bearings.</li>
+          </ul>
+          <div class="sub">Frame clear opening — sizes</div>
+          <p style="margin:0;">Circular Ø500–Ø1000 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span class="num">04</span>Air &amp; Water Tight Covers<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <div class="meta"><span class="tag">2.5 T – F900 (90 T)</span><span class="tag">Double seal</span><span class="tag">No bolting</span></div>
+          <p>Tested to BS EN 124, IS 1726 &amp; AASHTO M306 — better than CI, DI and RCC.</p>
+          <ul>
+            <li>Available without bolting.</li>
+            <li>Locally-found replaceable gasket in case of damage.</li>
+            <li>No foul smell or seepage.</li>
+          </ul>
+          <div class="sub">Frame clear opening — sizes</div>
+          <p style="margin:0;">Circular Ø400–Ø1000 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span class="num">05</span>Gratings<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <div class="meta"><span class="tag">30 mm &amp; 40 mm height</span><span class="tag">One-piece moulded</span><span class="tag">Zero filler</span></div>
+          <ul>
+            <li>ZERO filler content — no air pockets, no painting or coating required.</li>
+            <li>High impact resistance vs. filled gratings.</li>
+            <li>Self-pigmented, not painted.</li>
+            <li>One-piece moulded, jointless interwoven construction.</li>
+          </ul>
+          <div class="sub">Areas of application</div>
+          <p style="margin:0 0 4px;">Swimming pools · industrial plants · podiums · basement car parks · storm-water drain trenches · cable trenches.</p>
+          <div class="sub">Size chart — 30 &amp; 40 mm height (mm)</div>
+          <div class="sizes" id="gratingChart"></div>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span class="num">06</span>Tree Gratings<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <ul>
+            <li>Self-pigmented, non-painted.</li>
+            <li>Available in two-piece or four-piece for easy installation.</li>
+            <li>Protect the soil and let pedestrians walk near the tree without compacting it.</li>
+            <li>Allow rainwater to penetrate the soil.</li>
+            <li>Artistic designs improve landscaping and aesthetics.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span class="num">07</span>Water Gully Covers (with / without frame)<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <div class="meta"><span class="tag">2.5 T – E600 (60 T)</span><span class="tag">Circular / Square / Rectangular</span></div>
+          <ul>
+            <li>Minimum opening is more than 30% of the clear opening for smooth water flow.</li>
+            <li>Zero permanent set in all sizes &amp; load bearings; self-pigmented / non-painted.</li>
+          </ul>
+          <div class="sub">Areas of application</div>
+          <p style="margin:0 0 4px;">Industrial plants · podiums · basement car parks · storm-water drain trenches.</p>
+          <div class="sub">Frame clear opening — sizes</div>
+          <p style="margin:0;">Square 300×300–900×900 · Ø600 round · Rectangular incl. 335×930, 500×600, 900×600 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span class="num">08</span>Hinged Overhead &amp; U.G. Water Tank Covers<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <div class="meta"><span class="tag">500 kg overhead</span><span class="tag">2.5 – 60 T underground</span><span class="tag">Single seal</span></div>
+          <p>180° opening with hinge &amp; locking arrangement.</p>
+          <ul>
+            <li>Provision for gasket fitting; self-pigmented / non-painted.</li>
+            <li>550 kg covers have locking as a standard feature.</li>
+            <li>No moss or algae formation.</li>
+          </ul>
+          <div class="sub">Frame opening — sizes</div>
+          <p style="margin:0;">Ø600 · Ø750 · 600×600 · 750×750 mm.</p>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span class="num">09</span>L-Angles<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <ul>
+            <li>Corrosion &amp; chemical resistant; self-pigmented (no painting).</li>
+            <li>Non-conductive (thermally &amp; electrically), non-magnetic, EM-transparent.</li>
+            <li>Lightweight, high-strength &amp; durable, impact resistant.</li>
+            <li>Dimensional stability, long life cycle, low maintenance.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span class="num">10</span>Chambers<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <div class="meta"><span class="tag">Load tested up to 60 T</span><span class="tag">ASTM D3753 / IS 12592-2008</span><span class="tag">100% corrosion-free</span></div>
+          <ul>
+            <li>High-strength chambers from specially-prepared resin; UV stabilised.</li>
+            <li>Take any type of traffic load and withstand earth vibrations from traffic.</li>
+            <li>Completely leak-proof and relocatable; can be used as inspection chambers.</li>
+            <li>Readily mounted by digging, concreting the bottom &amp; fixing.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span class="num">11</span>Drain Channels with Grating / Gully Cover<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <div class="meta"><span class="tag">1-piece (≤ 30 m)</span><span class="tag">2-piece (short &amp; long runs)</span></div>
+          <div class="sub">Installation method</div>
+          <ul>
+            <li>Prepare a trench 200 mm wider than the channel; check soil compaction (add a concrete bed if needed, sloped 1 mm/m for gravity flow).</li>
+            <li>Lay the channel from the starting point towards the exit; silicone-seal the joints and connectors (90° bend, tee, four-way tee).</li>
+            <li>Backfill around the network with concrete &amp; soil, compact to the grating level, then place the gratings / gully covers.</li>
+          </ul>
+          <div class="sub">Out-to-out channel sizes</div>
+          <div class="sizes"><span class="sz">128 × 155 × 1000</span><span class="sz">167 × 155 × 1000</span><span class="sz">326 × 300 × 1000</span><span class="sz">525 × 300 × 1000</span></div>
+          <div class="sub">Advantages vs. cement / concrete channels</div>
+          <p style="margin:0;">Fast to install · minimal manpower &amp; labour cost · no water-proofing · no separate MS/FRP angles for gratings · no hidden cost.</p>
+        </div>
+      </details>
+
+      <details class="acc">
+        <summary><span class="num">12</span>Lifting Accessories<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="acc-body">
+          <p>Lifters ensure manhole covers are lifted with ease and without damage — for circular, square or rectangular covers.</p>
+          <div class="sub">Sizes applicable</div>
+          <p style="margin:0;">Square / Rectangular: all sizes 300×300 to 1500×1500 · Circular: all sizes Ø300 to Ø900 mm.</p>
+        </div>
+      </details>
+
+    </div>
+  </section>
+
+  <!-- ============ LOAD CLASSES ============ -->
+  <section class="section tab-panel" id="loads">
+    <div class="sec-head" data-reveal>
+      <span class="eyebrow">Load classes &amp; testing</span>
+      <h2 class="title">Rated from A15 to F900</h2>
+      <p class="lede">Every THERMODRAIN product is load-tested to BS EN 124, IS 1726 &amp; AASHTO M306 — from 2.5 tons up to F900 (90 tons) — including a permanent-set (multiple-loading) test.</p>
+    </div>
+    <div class="cmp" data-reveal data-delay="1">
+      <div class="cmp-scroll">
+        <table>
+          <thead><tr><th>Class</th><th class="hl">Load</th><th>Installation areas</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>A15</td><td class="col-frp">1.5 T · 15 kN</td><td>Pedestrian &amp; pedal-cyclist areas only</td><td>Bicycle ways, pedestrian ways</td></tr>
+            <tr><td>B125</td><td class="col-frp">12.5 T · 125 kN</td><td>Footways, pedestrian areas, light duty</td><td>Car parking areas</td></tr>
+            <tr><td>C250</td><td class="col-frp">25 T · 250 kN</td><td>Kerbside channels &amp; high wheel-load zones</td><td>Kerbside parking areas</td></tr>
+            <tr><td>D400</td><td class="col-frp">40 T · 400 kN</td><td>Carriageways &amp; parking for all road vehicles</td><td>Roadways, vehicle traffic</td></tr>
+            <tr><td>E600</td><td class="col-frp">60 T · 600 kN</td><td>Heavy-duty &amp; high wheel-load zones</td><td>Sea ports, docks</td></tr>
+            <tr><td>F900</td><td class="col-frp">90 T · 900 kN</td><td>Extreme wheel-load zones</td><td>Airport aprons, runways</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="callout" data-reveal data-delay="1" style="margin-top:24px;">
+      <div class="h">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+        Load testing &amp; permanent set
+      </div>
+      We run one of the largest load-testing machines in the segment — rated to <b>90 tons</b>. Permanent set is a multiple-loading test that measures any permanent deformation in the cover after repeated loading within a short time, as specified in BS&nbsp;EN&nbsp;124. Permanent set is <b>zero</b> across all THERMODRAIN sizes and load classes.
+    </div>
+    <div class="dodont" data-reveal data-delay="2">
+      <div class="dobox do">
+        <h4>Do's</h4>
+        <ul>
+          <li>Install the frame correctly with complete civil support.</li>
+          <li>Apply load on the frame only after grouting is completed.</li>
+          <li>Handle the cover with care during transport and fitting.</li>
+        </ul>
+      </div>
+      <div class="dobox dont">
+        <h4>Don'ts</h4>
+        <ul>
+          <li>Don't apply load before the grouting has fully set.</li>
+          <li>Don't throw or drop the material.</li>
+          <li>Don't skip the civil support around the frame.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ COMPARISON ============ -->
   <section class="section tab-panel" id="compare">
     <div class="sec-head" data-reveal>
@@ -1058,6 +1329,26 @@
             <tr><td>Painting</td><td class="col-frp">Never — self-pigmented</td><td>Regular intervals</td><td>—</td></tr>
             <tr><td>Service life</td><td class="col-frp">20–30 years</td><td>Corrosion-limited</td><td>2–3 years</td></tr>
             <tr><td>Freight cost</td><td class="col-frp">Low</td><td>High</td><td>High</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3 class="cmp-sub" data-reveal>THERMODRAIN FRP / GRP gratings vs mild-steel gratings</h3>
+    <div class="cmp" data-reveal>
+      <div class="cmp-scroll">
+        <table>
+          <thead><tr><th></th><th class="hl">THERMODRAIN FRP / GRP grating</th><th>Mild-steel grating</th></tr></thead>
+          <tbody>
+            <tr><td>Strength-to-weight</td><td class="col-frp">High</td><td>Low</td></tr>
+            <tr><td>Theft risk</td><td class="col-frp">None — no scrap value</td><td>High</td></tr>
+            <tr><td>Weight &amp; handling</td><td class="col-frp">Light — easy to handle</td><td>Heavy — needs manpower</td></tr>
+            <tr><td>Under moving vehicles</td><td class="col-frp">Doesn't permanently bend</td><td>Permanently bends</td></tr>
+            <tr><td>Corrosion (sea / sewage)</td><td class="col-frp">Immune</td><td>Corrodes</td></tr>
+            <tr><td>Algae formation</td><td class="col-frp">None</td><td>Forms easily on metal</td></tr>
+            <tr><td>Finish</td><td class="col-frp">Dark grey or any colour</td><td>Standard appearance</td></tr>
+            <tr><td>Painting</td><td class="col-frp">Never — self-pigmented</td><td>Periodic, to prevent rust</td></tr>
+            <tr><td>Maintenance</td><td class="col-frp">None</td><td>Regular</td></tr>
           </tbody>
         </table>
       </div>
@@ -1508,6 +1799,13 @@ document.getElementById('year').textContent = new Date().getFullYear();
   nav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
   document.addEventListener('click', (e) => { if(!header.contains(e.target)) close(); });
   window.addEventListener('resize', () => { if(window.innerWidth > 720) close(); });
+})();
+
+/* ---------- Grating size chart (Range tab) ---------- */
+(function(){
+  const el = document.getElementById('gratingChart');
+  if(!el) return;
+  sizeChart.forEach(v => { const s = document.createElement('span'); s.className = 'sz'; s.textContent = v; el.appendChild(s); });
 })();
 
 /* ---------- Content tabs ---------- */
