@@ -651,6 +651,23 @@
   .callout li:last-child{margin-bottom:0;}
 
   /* ============ FOOTER ============ */
+  /* ============ TABS ============ */
+  .tabbar{position:sticky; top:var(--hh,62px); z-index:40; background:rgba(245,246,249,.92); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  .tabbar-inner{max-width:1200px; margin:0 auto; padding:0 26px; display:flex; gap:2px; overflow-x:auto; scrollbar-width:none;}
+  .tabbar-inner::-webkit-scrollbar{display:none;}
+  .tab{
+    flex:none; border:none; background:none; cursor:pointer; padding:16px 16px; position:relative;
+    font-family:'IBM Plex Mono',monospace; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; font-weight:600;
+    color:var(--muted); transition:color .16s; white-space:nowrap; -webkit-tap-highlight-color:transparent;
+  }
+  .tab:hover{color:var(--navy-deep);}
+  .tab.active{color:var(--navy-ink);}
+  .tab::after{content:""; position:absolute; left:16px; right:16px; bottom:0; height:3px; background:var(--red); border-radius:3px 3px 0 0; transform:scaleX(0); transition:transform .22s var(--ease);}
+  .tab.active::after{transform:scaleX(1);}
+  main .tab-panel{display:none; border-top:none;}
+  main .tab-panel.active{display:block;}
+  @media (max-width:720px){ .tabbar-inner{padding:0 10px;} .tab{padding:14px 12px; font-size:12px;} .tab::after{left:12px; right:12px;} }
+
   /* ============ ABOUT ============ */
   .about-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:start;}
   @media (max-width:820px){ .about-grid{grid-template-columns:1fr; gap:30px;} }
@@ -743,7 +760,7 @@
       <p class="sub" data-reveal data-delay="2">Two live, interactive concepts for the Thermodrain product brochure — a real-catalogue grating size configurator and a load-class product explorer. Click, step and switch; every panel redraws at true proportions.</p>
       <div class="hero-actions" data-reveal data-delay="2">
         <a href="#configurator" class="btn btn-primary">Try the configurator →</a>
-        <a href="#explorer" class="btn btn-ghost">Explore load classes</a>
+        <a href="#explorer" class="btn btn-ghost">Browse products</a>
       </div>
       <div class="hero-stats" data-reveal data-delay="3">
         <div class="stat"><div class="n">60<small>+</small></div><div class="l">Catalogue grating sizes</div></div>
@@ -768,10 +785,22 @@
   </div>
 </div>
 
+<!-- ============ TAB BAR ============ -->
+<div class="tabbar" id="tabbar">
+  <div class="tabbar-inner">
+    <button type="button" class="tab" data-tab="about">About</button>
+    <button type="button" class="tab" data-tab="why">Why FRP</button>
+    <button type="button" class="tab" data-tab="configurator">Configurator</button>
+    <button type="button" class="tab" data-tab="explorer">Products</button>
+    <button type="button" class="tab" data-tab="compare">Compare</button>
+    <button type="button" class="tab" data-tab="applications">Applications</button>
+  </div>
+</div>
+
 <main>
 
   <!-- ============ ABOUT ============ -->
-  <section class="section" id="about">
+  <section class="section tab-panel" id="about">
     <div class="sec-head" data-reveal>
       <span class="eyebrow">About us</span>
       <h2 class="title">30 years of composite engineering</h2>
@@ -792,7 +821,7 @@
   </section>
 
   <!-- ============ WHY FRP ============ -->
-  <section class="section" id="why">
+  <section class="section tab-panel" id="why">
     <div class="sec-head" data-reveal>
       <span class="eyebrow">Why FRP / GRP</span>
       <h2 class="title">Built to outlast iron &amp; concrete</h2>
@@ -843,7 +872,7 @@
   </section>
 
   <!-- ============ CONCEPT 01 · CONFIGURATOR ============ -->
-  <section class="section" id="configurator">
+  <section class="section tab-panel" id="configurator">
     <div class="sec-head" data-reveal>
       <span class="eyebrow">Concept 01</span>
       <h2 class="title">Grating size configurator</h2>
@@ -946,7 +975,7 @@
   </section>
 
   <!-- ============ CONCEPT 02 · LOAD CLASS EXPLORER ============ -->
-  <section class="section" id="explorer">
+  <section class="section tab-panel" id="explorer">
     <div class="sec-head" data-reveal>
       <span class="eyebrow">Product finder</span>
       <h2 class="title">Choose your product, size &amp; load class</h2>
@@ -1008,7 +1037,7 @@
   </section>
 
   <!-- ============ COMPARISON ============ -->
-  <section class="section" id="compare">
+  <section class="section tab-panel" id="compare">
     <div class="sec-head" data-reveal>
       <span class="eyebrow">Comparison</span>
       <h2 class="title">THERMODRAIN FRP vs traditional materials</h2>
@@ -1036,7 +1065,7 @@
   </section>
 
   <!-- ============ APPLICATIONS ============ -->
-  <section class="section" id="applications">
+  <section class="section tab-panel" id="applications">
     <div class="sec-head" data-reveal>
       <span class="eyebrow">Applications</span>
       <h2 class="title">Where THERMODRAIN is installed</h2>
@@ -1479,6 +1508,41 @@ document.getElementById('year').textContent = new Date().getFullYear();
   nav.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
   document.addEventListener('click', (e) => { if(!header.contains(e.target)) close(); });
   window.addEventListener('resize', () => { if(window.innerWidth > 720) close(); });
+})();
+
+/* ---------- Content tabs ---------- */
+(function(){
+  const header = document.querySelector('header.site');
+  const tabbar = document.getElementById('tabbar');
+  const tabs = [...document.querySelectorAll('.tab')];
+  const panels = [...document.querySelectorAll('.tab-panel')];
+  if(!tabs.length || !tabbar) return;
+  const ids = panels.map(p => p.id);
+
+  const setHH = () => document.documentElement.style.setProperty('--hh', header.offsetHeight + 'px');
+  setHH(); window.addEventListener('resize', setHH);
+
+  function showTab(id, scroll, writeHash){
+    if(!ids.includes(id)) return false;
+    panels.forEach(p => p.classList.toggle('active', p.id === id));
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === id));
+    document.getElementById(id).querySelectorAll('[data-reveal]').forEach(el => el.classList.add('in'));
+    if(writeHash !== false && history.replaceState) history.replaceState(null, '', '#' + id);
+    if(scroll) window.scrollTo({ top: tabbar.offsetTop - header.offsetHeight, behavior: 'smooth' });
+    return true;
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab, true)));
+
+  // in-page links that target a panel switch tabs instead of jumping
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    const id = a.getAttribute('href').slice(1);
+    if(ids.includes(id)) a.addEventListener('click', e => { e.preventDefault(); showTab(id, true); });
+  });
+
+  // activate the initial tab without moving the page off the hero
+  const start = ids.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'about';
+  showTab(start, false, false);
 })();
 </script>
 </body>
