@@ -1480,7 +1480,7 @@ const classOrder = ['A15','B125','C250','D400','E600','F900'];
 /* Per-product photo overrides: productPhotos[productName][loadClass] = dataURI.
    When a product has an entry for the selected class its photo is shown; otherwise
    the explorer falls back to the shared `photos` set above. */
-const productPhotos = {"Multiple Covers":{"A15":"images/mc-A15.jpg","B125":"images/mc-B125.jpg","C250":"images/mc-C250.jpg","D400":"images/mc-D400.jpg","E600":"images/mc-E600.jpg","F900":"images/mc-F900.jpg"},"Recess Cover":{"A15":"images/rc-A15.jpg","B125":"images/rc-B125.jpg","C250":"images/rc-C250.jpg","D400":"images/rc-D400.jpg"},"Water Gully Cover":{"A15":"images/wg-A15.jpg","B125":"images/wg-B125.jpg","C250":"images/wg-C250.jpg","D400":"images/wg-D400.jpg","E600":"images/wg-E600.jpg","F900":"images/wg-F900.jpg"},"Air & Water Tight Cover":{"A15":"images/aw-A15.jpg","B125":"images/aw-B125.jpg","C250":"images/aw-C250.jpg","D400":"images/aw-D400.jpg","E600":"images/aw-E600.jpg","F900":"images/aw-F900.jpg"}};
+const productPhotos = {"Multiple Covers":{"A15":"images/mc-A15.webp","B125":"images/mc-B125.webp","C250":"images/mc-C250.webp","D400":"images/mc-D400.webp","E600":"images/mc-E600.webp","F900":"images/mc-F900.webp"},"Recess Cover":{"A15":"images/rc-A15.webp","B125":"images/rc-B125.webp","C250":"images/rc-C250.webp","D400":"images/rc-D400.webp"},"Water Gully Cover":{"A15":"images/wg-A15.webp","B125":"images/wg-B125.webp","C250":"images/wg-C250.webp","D400":"images/wg-D400.webp","E600":"images/wg-E600.webp","F900":"images/wg-F900.webp"},"Air & Water Tight Cover":{"A15":"images/aw-A15.webp","B125":"images/aw-B125.webp","C250":"images/aw-C250.webp","D400":"images/aw-D400.webp","E600":"images/aw-E600.webp","F900":"images/aw-F900.webp"}};
 
 /* Product range & sizes — frame clear opening, from the Thermodrain price list.
    Sizes are grouped by shape; `photo` maps to a load-class key for the demo image. */
@@ -1518,7 +1518,7 @@ const products = [
     {g:'Circular', s:['Ø 600','Ø 750']},
     {g:'Square',   s:['600 × 600','750 × 750']}
   ]},
-  {name:'Gratings', photo:'E600', noClass:true, img:'images/grating-1.jpg', sizes:[
+  {name:'Gratings', photo:'E600', noClass:true, img:'images/grating-1.webp', sizes:[
     {g:'', s:['Custom size — on request']}
   ]},
   {name:'Chambers', photo:'D400', sizes:[
@@ -1526,7 +1526,7 @@ const products = [
   ]}
 ];
 let curProd = 0;
-const photos = {"A15":"images/st-A15.jpg","B125":"images/st-B125.jpg","C250":"images/st-C250.jpg","D400":"images/st-D400.jpg","E600":"images/st-E600.jpg","F900":"images/st-F900.jpg"};
+const photos = {"A15":"images/st-A15.webp","B125":"images/st-B125.webp","C250":"images/st-C250.webp","D400":"images/st-D400.webp","E600":"images/st-E600.webp","F900":"images/st-F900.webp"};
 /* ---------- Grating configurator ---------- */
 const MIN = 50, MAX = 2400, MODULE = 50;   // one +/- click = one MODULE-wide grating section
 let lenMM = 1000, widMM = 400;
@@ -1774,7 +1774,16 @@ function applyClassLimits(){
     `Rated range · <b>${classData['A15'].ton} T</b> (A15) → <b>${classData[top].ton} T</b> (${top})`;
 }
 
-prodSel.addEventListener('change', () => { curProd=+prodSel.value; fillSizes(); applyClassLimits(); selectClass(products[curProd].photo); });
+// Warm the browser cache with a product's photos so switching load class is instant.
+function preloadProduct(i){
+  const p = products[i], pset = productPhotos[p.name], urls = [];
+  if(p.img) urls.push(p.img);
+  if(pset) urls.push(...Object.values(pset));
+  else classOrder.forEach(c => { if(photos[c]) urls.push(photos[c]); });
+  urls.forEach(u => { const im = new Image(); im.src = u; });
+}
+
+prodSel.addEventListener('change', () => { curProd=+prodSel.value; fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo); });
 sizeSel.addEventListener('change', render);
 lcSlider.addEventListener('input', () => selectClass(classOrder[+lcSlider.value]));
 document.querySelectorAll('.lc-ic').forEach(ic => {
@@ -1871,19 +1880,20 @@ function render(){
     '&body=' + encodeURIComponent(bodyLines.join('\n'));
 }
 
-prodSel.value = curProd; fillSizes(); applyClassLimits(); selectClass(products[curProd].photo);
+document.getElementById('classPhoto').decoding = 'async';
+prodSel.value = curProd; fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo);
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
 /* ---------- Factory gallery (About) ---------- */
-const factoryPhotos = [{"src":"images/factory-1.jpg","cap":"Factory entrance — Navi Mumbai"},{"src":"images/factory-2.jpg","cap":"Moulding & curing press line"},{"src":"images/factory-3.jpg","cap":"Production floor & raw material"},{"src":"images/factory-4.jpg","cap":"Finished covers & gratings"},{"src":"images/factory-5.jpg","cap":"In-house load testing to F900"},{"src":"images/factory-6.jpg","cap":"Export packing — goods of Indian origin"},{"src":"images/factory-7.jpg","cap":"On-site staff canteen"},{"src":"images/factory-8.jpg","cap":"Manufacturing sheds & yard"},{"src":"images/factory-9.jpg","cap":"Office & facility grounds"}];
+const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance — Navi Mumbai"},{"src":"images/factory-2.webp","cap":"Moulding & curing press line"},{"src":"images/factory-3.webp","cap":"Production floor & raw material"},{"src":"images/factory-4.webp","cap":"Finished covers & gratings"},{"src":"images/factory-5.webp","cap":"In-house load testing to F900"},{"src":"images/factory-6.webp","cap":"Export packing — goods of Indian origin"},{"src":"images/factory-7.webp","cap":"On-site staff canteen"},{"src":"images/factory-8.webp","cap":"Manufacturing sheds & yard"},{"src":"images/factory-9.webp","cap":"Office & facility grounds"}];
 (function(){
   const wrap = document.getElementById('factorySection');
   const gal = document.getElementById('factoryGallery');
   if(!wrap || !gal || !factoryPhotos.length) return;
   gal.innerHTML = factoryPhotos.map(p => {
     const cap = (p.cap || '').replace(/"/g,'&quot;');
-    return `<figure><img loading="lazy" src="${p.src}" alt="Thermodrain factory${cap?' — '+cap:''}">${p.cap?`<figcaption>${p.cap}</figcaption>`:''}</figure>`;
+    return `<figure><img loading="lazy" decoding="async" src="${p.src}" alt="Thermodrain factory${cap?' — '+cap:''}">${p.cap?`<figcaption>${p.cap}</figcaption>`:''}</figure>`;
   }).join('');
   wrap.hidden = false;
 })();
