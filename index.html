@@ -680,6 +680,16 @@
   .stat-tile .st-n small{font-size:15px; color:var(--red); font-weight:800;}
   .stat-tile .st-l{font-size:12.5px; color:var(--ink-soft); margin-top:8px; line-height:1.4; font-weight:500;}
 
+  /* ============ FACTORY GALLERY ============ */
+  .factory-gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  @media (max-width:820px){ .factory-gallery{grid-template-columns:repeat(2,1fr); gap:12px;} }
+  @media (max-width:480px){ .factory-gallery{grid-template-columns:1fr;} }
+  .factory-gallery figure{position:relative; margin:0; border-radius:var(--radius); overflow:hidden; border:1px solid var(--line); box-shadow:var(--shadow-sm); background:var(--white); aspect-ratio:4/3;}
+  .factory-gallery img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s var(--ease);}
+  .factory-gallery figure:hover img{transform:scale(1.05);}
+  .factory-gallery figcaption{position:absolute; left:0; right:0; bottom:0; padding:22px 14px 12px; font-size:12.5px; font-weight:600; color:#fff; background:linear-gradient(to top, rgba(11,20,38,.82), rgba(11,20,38,0)); opacity:0; transform:translateY(6px); transition:opacity .3s, transform .3s;}
+  .factory-gallery figure:hover figcaption{opacity:1; transform:translateY(0);}
+
   /* ============ FEATURE GRID ============ */
   .feature-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
   @media (max-width:900px){ .feature-grid{grid-template-columns:repeat(2,1fr);} }
@@ -852,6 +862,12 @@
         <div class="stat-tile"><div class="st-n">90<small>T</small></div><div class="st-l">In-house load-testing capacity</div></div>
         <div class="stat-tile"><div class="st-n">40,000<small>ft²</small></div><div class="st-l">Manufacturing facility</div></div>
       </div>
+    </div>
+
+    <div id="factorySection" hidden>
+      <h3 class="cmp-sub" data-reveal>Inside our factory</h3>
+      <p class="lede" data-reveal style="margin-bottom:22px;">A look inside our ISO&nbsp;9001:2015 manufacturing facility in Navi Mumbai — moulding, curing, load-testing and export packing under one roof.</p>
+      <div class="factory-gallery" id="factoryGallery" data-reveal data-delay="1"></div>
     </div>
   </section>
 
@@ -1798,6 +1814,19 @@ function render(){
 prodSel.value = curProd; fillSizes(); selectClass(products[curProd].photo);
 
 document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---------- Factory gallery (About) ---------- */
+const factoryPhotos = [];
+(function(){
+  const wrap = document.getElementById('factorySection');
+  const gal = document.getElementById('factoryGallery');
+  if(!wrap || !gal || !factoryPhotos.length) return;
+  gal.innerHTML = factoryPhotos.map(p => {
+    const cap = (p.cap || '').replace(/"/g,'&quot;');
+    return `<figure><img loading="lazy" src="${p.src}" alt="Thermodrain factory${cap?' — '+cap:''}">${p.cap?`<figcaption>${p.cap}</figcaption>`:''}</figure>`;
+  }).join('');
+  wrap.hidden = false;
+})();
 
 /* ---------- Scroll reveal ---------- */
 (function(){
