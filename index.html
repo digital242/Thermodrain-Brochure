@@ -1084,7 +1084,7 @@
             <div class="sel-wrap"><select id="sizeSel" class="sel"></select></div>
           </div>
 
-          <div class="lc">
+          <div class="lc" id="lcBlock">
             <div class="lc-top">
               <span class="lc-step" id="lcStep">4</span>
               <span class="lc-label">3 · Load class</span>
@@ -1518,7 +1518,7 @@ const products = [
     {g:'Circular', s:['Ø 600','Ø 750']},
     {g:'Square',   s:['600 × 600','750 × 750']}
   ]},
-  {name:'Gratings', photo:'E600', sizes:[
+  {name:'Gratings', photo:'E600', noClass:true, img:'images/grating-1.jpg', sizes:[
     {g:'', s:['Custom size — on request']}
   ]},
   {name:'Chambers', photo:'D400', sizes:[
@@ -1755,7 +1755,17 @@ function availClasses(name){
   return list.length ? list : classOrder.slice();
 }
 function applyClassLimits(){
-  const avail = availClasses(products[curProd].name);
+  const p = products[curProd];
+  const lcBlock = document.getElementById('lcBlock');
+  const badge = document.getElementById('classBadge');
+  if(p.noClass){                       // product isn't load-class rated (e.g. Gratings)
+    lcBlock.style.display = 'none';
+    badge.style.display = 'none';
+    return;
+  }
+  lcBlock.style.display = '';
+  badge.style.display = '';
+  const avail = availClasses(p.name);
   const maxIdx = classOrder.indexOf(avail[avail.length-1]);
   lcSlider.max = maxIdx;
   document.querySelectorAll('.lc-ic').forEach((el,i) => { el.style.display = i > maxIdx ? 'none' : ''; });
@@ -1772,7 +1782,16 @@ document.querySelectorAll('.lc-ic').forEach(ic => {
 });
 
 function selectClass(c){
-  const avail = availClasses(products[curProd].name);
+  const cp = products[curProd];
+  if(cp.noClass){                      // no load-class control — just show the product photo
+    curClass = null;
+    const im = document.getElementById('classPhoto');
+    im.style.opacity = 0;
+    setTimeout(() => { im.src = cp.img; im.style.opacity = 1; }, 120);
+    render();
+    return;
+  }
+  const avail = availClasses(cp.name);
   if(avail.indexOf(c) === -1) c = avail[avail.length-1]; // clamp to product's top available class
   curClass = c;
   const idx = classOrder.indexOf(c);
@@ -1798,8 +1817,28 @@ function selectClass(c){
 }
 
 function render(){
-  const p = products[curProd], size = sizeSel.value, d = classData[curClass];
+  const p = products[curProd], size = sizeSel.value;
   const sizeLabel = /request|custom/i.test(size) ? size : size + ' mm';
+
+  if(p.noClass){                       // Gratings etc. — no load class
+    document.getElementById('stageTag').textContent = `${p.name} · ${size}`;
+    document.getElementById('classPhoto').alt = p.name;
+    document.getElementById('specTable').innerHTML = `
+      <div class="spec-row"><div class="k">Product</div><div class="v">${p.name}</div></div>
+      <div class="spec-row"><div class="k">Size</div><div class="v">${sizeLabel}</div></div>
+      <div class="spec-row"><div class="k">Load class</div><div class="v">Not applicable</div></div>
+      <div class="spec-row"><div class="k">Made to order</div><div class="v">Custom-engineered to opening</div></div>
+    `;
+    const subj = `Product enquiry — ${p.name}, ${size}`;
+    const lines = ['Hello Thermodrain team,','','Please send me a quotation for:','',
+      `Product: ${p.name}`, `Size: ${sizeLabel}`, '', 'Quantity: ', 'Delivery location: ', '', 'Thank you.'];
+    document.getElementById('inquiryBtn').href =
+      'mailto:thermodrain@frpmanholecover.com?subject=' + encodeURIComponent(subj) +
+      '&body=' + encodeURIComponent(lines.join('\n'));
+    return;
+  }
+
+  const d = classData[curClass];
   const badge = document.getElementById('classBadge');
   badge.textContent = curClass;
   badge.style.background = d.color;
