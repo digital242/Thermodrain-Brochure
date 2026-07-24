@@ -1461,6 +1461,11 @@ const classData = {
 };
 const classOrder = ['A15','B125','C250','D400','E600','F900'];
 
+/* Per-product photo overrides: productPhotos[productName][loadClass] = dataURI.
+   When a product has an entry for the selected class its photo is shown; otherwise
+   the explorer falls back to the shared `photos` set above. */
+const productPhotos = {};
+
 /* Product range & sizes — frame clear opening, from the Thermodrain price list.
    Sizes are grouped by shape; `photo` maps to a load-class key for the demo image. */
 const products = [
@@ -1742,8 +1747,10 @@ function selectClass(c){
   document.getElementById('lcUse').innerHTML = `<b>${d.use}</b> — ${d.ex}`;
 
   const img = document.getElementById('classPhoto');
+  const pset = productPhotos[products[curProd].name];
+  const src = (pset && pset[c]) || photos[c];
   img.style.opacity = 0;
-  setTimeout(() => { img.src = photos[c]; img.style.opacity = 1; }, 120);
+  setTimeout(() => { img.src = src; img.style.opacity = 1; }, 120);
 
   render();
 }
