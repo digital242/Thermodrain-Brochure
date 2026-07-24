@@ -335,6 +335,11 @@
   .lede{color:var(--ink-soft); font-size:15.5px; max-width:660px; margin:0; line-height:1.6;}
   .sec-head{margin-bottom:36px;}
 
+  /* emphasised section heading (e.g. Product finder) */
+  h2.title-hl{font-size:clamp(30px,4.2vw,46px); position:relative; display:block; padding-bottom:16px;}
+  h2.title-hl .hl-accent{background:linear-gradient(120deg,var(--red),#ff6a4d); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  h2.title-hl::after{content:''; position:absolute; left:0; bottom:0; width:80px; height:5px; border-radius:3px; background:linear-gradient(90deg,var(--red),var(--gold));}
+
   /* ============ LOAD CLASS STRIP ============ */
   .classgrid{
     display:grid; grid-template-columns:repeat(6,1fr); gap:14px;
@@ -1058,7 +1063,7 @@
   <section class="section tab-panel" id="explorer">
     <div class="sec-head" data-reveal>
       <span class="eyebrow">Product finder</span>
-      <h2 class="title">Choose your product, size &amp; load class</h2>
+      <h2 class="title title-hl">Choose your product, size &amp; <span class="hl-accent">load class</span></h2>
       <p class="lede">Pick a product and its size, then the load class — the photo and specification update to match. Full range on <a href="https://www.frpmanholecover.com/" target="_blank" rel="noopener" style="color:var(--red);font-weight:600;text-decoration:none;">frpmanholecover.com</a>.</p>
     </div>
 
