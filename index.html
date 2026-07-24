@@ -1103,7 +1103,7 @@
               <span class="lc-rate" id="lcRate">40 T · 400 kN</span>
             </div>
             <div class="lc-use" id="lcUse"></div>
-            <div class="lc-range">Full rated range · <b>1.5 T</b> (A15) → <b>90 T</b> (F900)</div>
+            <div class="lc-range" id="lcRange">Full rated range · <b>1.5 T</b> (A15) → <b>90 T</b> (F900)</div>
           </div>
 
           <div class="spec-table" id="specTable"></div>
@@ -1746,7 +1746,25 @@ function fillSizes(){
   sizeSel.selectedIndex = 0;
 }
 
-prodSel.addEventListener('change', () => { curProd=+prodSel.value; fillSizes(); selectClass(products[curProd].photo); });
+// Load classes a product actually has photos for. A product with its own
+// photo set is limited to those classes; products using the shared photo
+// set (e.g. Solid Top) keep the full range.
+function availClasses(name){
+  const pset = productPhotos[name];
+  const list = pset ? classOrder.filter(c => pset[c]) : classOrder.slice();
+  return list.length ? list : classOrder.slice();
+}
+function applyClassLimits(){
+  const avail = availClasses(products[curProd].name);
+  const maxIdx = classOrder.indexOf(avail[avail.length-1]);
+  lcSlider.max = maxIdx;
+  document.querySelectorAll('.lc-ic').forEach((el,i) => { el.style.display = i > maxIdx ? 'none' : ''; });
+  const top = avail[avail.length-1];
+  document.getElementById('lcRange').innerHTML =
+    `Rated range · <b>${classData['A15'].ton} T</b> (A15) → <b>${classData[top].ton} T</b> (${top})`;
+}
+
+prodSel.addEventListener('change', () => { curProd=+prodSel.value; fillSizes(); applyClassLimits(); selectClass(products[curProd].photo); });
 sizeSel.addEventListener('change', render);
 lcSlider.addEventListener('input', () => selectClass(classOrder[+lcSlider.value]));
 document.querySelectorAll('.lc-ic').forEach(ic => {
@@ -1754,13 +1772,16 @@ document.querySelectorAll('.lc-ic').forEach(ic => {
 });
 
 function selectClass(c){
+  const avail = availClasses(products[curProd].name);
+  if(avail.indexOf(c) === -1) c = avail[avail.length-1]; // clamp to product's top available class
   curClass = c;
   const idx = classOrder.indexOf(c);
+  const maxIdx = classOrder.indexOf(avail[avail.length-1]);
   const d = classData[c];
 
   // ---- load-class slider control ----
   lcSlider.value = idx;
-  lcSlider.style.setProperty('--pct', (idx/5*100) + '%');
+  lcSlider.style.setProperty('--pct', (maxIdx ? idx/maxIdx*100 : 0) + '%');
   document.querySelectorAll('.lc-ic').forEach((el,i) => el.classList.toggle('active', i===idx));
   document.getElementById('lcStep').textContent = idx + 1;
   document.getElementById('lcClass').textContent = c;
@@ -1811,7 +1832,7 @@ function render(){
     '&body=' + encodeURIComponent(bodyLines.join('\n'));
 }
 
-prodSel.value = curProd; fillSizes(); selectClass(products[curProd].photo);
+prodSel.value = curProd; fillSizes(); applyClassLimits(); selectClass(products[curProd].photo);
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
