@@ -383,6 +383,11 @@
   @media (max-width:520px){ .panel{padding:24px;} }
   .panel-controls{border-right:1px solid var(--line); background:linear-gradient(180deg,#fff, #fbfcfe);}
   @media (max-width:860px){ .panel-controls{border-right:none; border-bottom:1px solid var(--line);} }
+  /* Configurator: show the grating preview above the controls when stacked (mobile) */
+  @media (max-width:860px){
+    #configurator .canvas-wrap{order:-1; border-bottom:1px solid var(--line);}
+    #configurator .panel-controls{border-bottom:none;}
+  }
   .panel-head{display:flex; align-items:center; gap:10px; margin-bottom:24px;}
   .panel-head .idx{
     font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; color:#fff;
