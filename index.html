@@ -48,7 +48,7 @@
 
   /* ============ SCROLL REVEAL ============ */
   [data-reveal]{
-    opacity:0; transform:translateY(26px);
+    opacity:0; transform:translateY(34px);
     transition:opacity .7s var(--ease), transform .7s var(--ease);
     will-change:opacity, transform;
   }
@@ -835,14 +835,14 @@
 <!-- ============ TAB BAR ============ -->
 <div class="tabbar" id="tabbar">
   <div class="tabbar-inner">
-    <button type="button" class="tab" data-tab="about">About</button>
-    <button type="button" class="tab" data-tab="why">Why FRP</button>
-    <button type="button" class="tab" data-tab="configurator">Grating configurator</button>
     <button type="button" class="tab" data-tab="explorer">Products</button>
+    <button type="button" class="tab" data-tab="configurator">Grating configurator</button>
     <button type="button" class="tab" data-tab="range">Range</button>
     <button type="button" class="tab" data-tab="loads">Load classes</button>
-    <button type="button" class="tab" data-tab="compare">Compare</button>
     <button type="button" class="tab" data-tab="applications">Applications</button>
+    <button type="button" class="tab" data-tab="compare">Compare</button>
+    <button type="button" class="tab" data-tab="why">Why FRP</button>
+    <button type="button" class="tab" data-tab="about">About</button>
   </div>
 </div>
 
@@ -1978,9 +1978,11 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance â€
   });
 
   // activate the initial tab without moving the page off the hero
-  const start = ids.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'about';
+  const start = ids.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'explorer';
   showTab(start, false, false);
 })();
 </script>
+<!-- Vercel Web Analytics (anonymous traffic stats; enable Analytics in the Vercel project) -->
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
