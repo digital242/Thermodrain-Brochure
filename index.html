@@ -388,6 +388,11 @@
     #configurator .canvas-wrap{order:-1; border-bottom:1px solid var(--line);}
     #configurator .panel-controls{border-bottom:none;}
   }
+  /* Products finder: put the photo below the Specification (product/size) when stacked (mobile) */
+  @media (max-width:860px){
+    #explorer .demo-grid > .panel:first-child{order:2; border-top:1px solid var(--line);}
+    #explorer .demo-grid > .panel:last-child{order:1;}
+  }
   .panel-head{display:flex; align-items:center; gap:10px; margin-bottom:24px;}
   .panel-head .idx{
     font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; color:#fff;
