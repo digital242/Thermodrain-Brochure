@@ -715,6 +715,15 @@
   main .tab-panel.active{display:block;}
   @media (max-width:720px){ .tabbar-inner{padding:0 10px;} .tab{padding:14px 12px; font-size:12px;} .tab::after{left:12px; right:12px;} }
 
+  /* Mobile: one continuous page — every section stacked in tab order, tab bar becomes jump links */
+  @media (max-width:860px){
+    main{display:flex; flex-direction:column;}
+    main .tab-panel{display:block; scroll-margin-top:calc(var(--hh,62px) + var(--tabh,52px) + 6px);}
+    #explorer{order:1;} #configurator{order:2;} #range{order:3;} #loads{order:4;}
+    #applications{order:5;} #compare{order:6;} #why{order:7;} #about{order:8;}
+    main .tab-panel + .tab-panel{border-top:1px solid var(--line);}
+  }
+
   /* ============ ABOUT ============ */
   .about-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:start;}
   @media (max-width:820px){ .about-grid{grid-template-columns:1fr; gap:30px;} }
@@ -2071,7 +2080,13 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
   if(!tabs.length || !tabbar) return;
   const ids = panels.map(p => p.id);
 
-  const setHH = () => document.documentElement.style.setProperty('--hh', header.offsetHeight + 'px');
+  const seq = tabs.map(t => t.dataset.tab);          // left-to-right tab order = mobile stacking order
+  const oneCol = matchMedia('(max-width:860px)');    // mobile: one continuous page
+
+  const setHH = () => {
+    document.documentElement.style.setProperty('--hh', header.offsetHeight + 'px');
+    document.documentElement.style.setProperty('--tabh', tabbar.offsetHeight + 'px');
+  };
   setHH(); window.addEventListener('resize', setHH);
 
   function showTab(id, scroll, writeHash){
@@ -2084,23 +2099,52 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
     return true;
   }
 
-  tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab, true)));
+  // On mobile every section is already on the page — a tab/link just scrolls to it.
+  function jumpTo(id){
+    const el = document.getElementById(id);
+    if(el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  const activate = (id, scroll) => oneCol.matches ? jumpTo(id) : showTab(id, scroll);
 
-  // in-page links that target a panel switch tabs instead of jumping
+  tabs.forEach(t => t.addEventListener('click', () => activate(t.dataset.tab, true)));
+
+  // in-page links that target a panel switch tabs (desktop) or scroll to it (mobile)
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     const id = a.getAttribute('href').slice(1);
-    if(ids.includes(id)) a.addEventListener('click', e => { e.preventDefault(); showTab(id, true); });
+    if(ids.includes(id)) a.addEventListener('click', e => { e.preventDefault(); activate(id, true); });
   });
 
   // activate the initial tab without moving the page off the hero
   const start = ids.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'explorer';
   showTab(start, false, false);
 
-  /* ---------- Scroll past a panel to reach the next tab, one by one ---------- */
-  const seq = tabs.map(t => t.dataset.tab);          // left-to-right tab order
+  /* ---------- Mobile: highlight the tab of the section in view, and centre it ---------- */
+  const inner = tabbar.querySelector('.tabbar-inner');
+  function centerTab(at){
+    if(!at || !inner) return;
+    const target = at.offsetLeft - (inner.clientWidth - at.offsetWidth) / 2;
+    inner.scrollTo({ left: Math.max(0, target), behavior:'smooth' });
+  }
+  let spyActive = null, spyRaf = 0;
+  function spy(){
+    spyRaf = 0;
+    if(!oneCol.matches) return;
+    const line = header.offsetHeight + tabbar.offsetHeight + 8;
+    let cur = seq[0];
+    seq.forEach(id => { const el = document.getElementById(id); if(el && el.getBoundingClientRect().top <= line) cur = id; });
+    if(cur === spyActive) return;
+    spyActive = cur;
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === cur));
+    centerTab(tabs.find(t => t.dataset.tab === cur));
+  }
+  const queueSpy = () => { if(!spyRaf) spyRaf = requestAnimationFrame(spy); };
+  window.addEventListener('scroll', queueSpy, {passive:true});
+  oneCol.addEventListener('change', () => { spyActive = null; queueSpy(); });
+  queueSpy();
+
+  /* ---------- Desktop: scroll past a panel to reach the next tab, one by one ---------- */
   const footer = document.getElementById('contact');
   let navLock = false;
-
   const activeId  = () => (tabs.find(t => t.classList.contains('active')) || tabs[0]).dataset.tab;
   const panelTopY = () => tabbar.offsetTop - header.offsetHeight;
   const atBottom  = () => (window.scrollY + window.innerHeight) >= ((footer ? footer.offsetTop : document.body.scrollHeight) - 2);
@@ -2117,18 +2161,18 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
     return true;
   }
 
-  // desktop / trackpad
+  // desktop / trackpad — disabled on the mobile one-page layout
   window.addEventListener('wheel', e => {
-    if(navLock) return;
+    if(oneCol.matches || navLock) return;
     if(e.deltaY > 0 && atBottom())            { if(goRel(1))  e.preventDefault(); }
     else if(e.deltaY < 0 && atTop() && window.scrollY > 4) { if(goRel(-1)) e.preventDefault(); }
   }, {passive:false});
 
-  // touch — a swipe up at the panel bottom advances, a swipe down at the top goes back
+  // touch (tablet/desktop-width touch) — a swipe up at the panel bottom advances
   let ty0 = 0;
   window.addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, {passive:true});
   window.addEventListener('touchend', e => {
-    if(navLock) return;
+    if(oneCol.matches || navLock) return;
     const dy = e.changedTouches[0].clientY - ty0;
     if(Math.abs(dy) < 45) return;
     if(dy < 0 && atBottom())                 goRel(1);   // finger up → next tab
