@@ -570,6 +570,11 @@
   .swipe-hint::before{content:"⇄"; font-size:13px;}
   @keyframes hintFade{0%,70%{opacity:1;} 100%{opacity:0; visibility:hidden;}}
   @media (hover:none){ .swipe-hint{display:flex;} .stage-nav{opacity:.85;} }
+  .gallery-dots{position:absolute; left:0; right:0; bottom:13px; z-index:3; display:flex; gap:7px; justify-content:center;}
+  .gallery-dot{width:8px; height:8px; padding:0; border:none; border-radius:50%; cursor:pointer;
+    background:rgba(255,255,255,.42); box-shadow:0 1px 3px rgba(0,0,0,.4); transition:background .2s, transform .2s;}
+  .gallery-dot:hover{background:rgba(255,255,255,.75);}
+  .gallery-dot.on{background:#fff; transform:scale(1.3);}
   /* Product & size pickers */
   .picker{margin-bottom:16px;}
   .pick-label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:700; margin-bottom:8px;}
@@ -1141,7 +1146,8 @@
             <div class="stage-tag" id="stageTag">Thermodrain cover · D400</div>
             <button type="button" class="stage-nav prev" id="prodPrev" aria-label="Previous product">‹</button>
             <button type="button" class="stage-nav next" id="prodNext" aria-label="Next product">›</button>
-            <div class="swipe-hint" id="swipeHint">Swipe for more products</div>
+            <div class="gallery-dots" id="galleryDots" style="display:none"></div>
+            <div class="swipe-hint" id="swipeHint" style="display:none">Swipe to see more photos</div>
           </div>
         </div>
         <div class="panel">
@@ -1598,7 +1604,19 @@ const products = [
   ]}
 ];
 let curProd = 0;
+let photoIdx = 0;
 const photos = {"A15":"images/st-A15.webp","B125":"images/st-B125.webp","C250":"images/st-C250.webp","D400":"images/st-D400.webp","E600":"images/st-E600.webp","F900":"images/st-F900.webp"};
+
+/* Multiple photos per product. Key = product name (must match `products` above).
+   Each entry is a list of photos the customer can swipe / tap dots to browse.
+   A photo is either "images/file.webp" or {src:"images/file.webp", cap:"Side view"}.
+   Add files to the images/ folder and list them here — products without an entry
+   keep their single load-class photo (no dots). Example:
+     'Solid Top Manhole Cover': ['images/st-top.webp','images/st-angle.webp','images/st-installed.webp'],
+*/
+const productGallery = {
+  // 'Solid Top Manhole Cover': ['images/st-top.webp', {src:'images/st-angle.webp', cap:'Angle view'}, 'images/st-installed.webp'],
+};
 /* ---------- Grating configurator ---------- */
 const MIN = 50, MAX = 2400, MODULE = 50;   // one +/- click = one MODULE-wide grating section
 let lenMM = 1000, widMM = 400;
@@ -1852,14 +1870,56 @@ function preloadProduct(i){
   if(p.img) urls.push(p.img);
   if(pset) urls.push(...Object.values(pset));
   else classOrder.forEach(c => { if(photos[c]) urls.push(photos[c]); });
+  const gal = productGallery[p.name];
+  if(gal) gal.forEach(x => urls.push(typeof x === 'string' ? x : x.src));
   urls.forEach(u => { const im = new Image(); im.src = u; });
+}
+
+/* ---------- Per-product photo gallery ---------- */
+// Normalised list of photos for a product, or null when it has no extra photos.
+function currentGallery(){
+  const g = productGallery[products[curProd].name];
+  return (g && g.length) ? g.map(x => typeof x === 'string' ? {src:x} : x) : null;
+}
+function updateDots(){
+  const dots = document.getElementById('galleryDots');
+  const g = currentGallery();
+  if(!g || g.length < 2){ dots.innerHTML = ''; dots.style.display = 'none'; return; }
+  dots.style.display = 'flex';
+  dots.innerHTML = g.map((_, i) =>
+    `<button type="button" class="gallery-dot${i === photoIdx ? ' on' : ''}" data-i="${i}" aria-label="Photo ${i+1} of ${g.length}"></button>`
+  ).join('');
+}
+// Show a photo from the current product's gallery (wraps at both ends).
+function showPhoto(idx){
+  const g = currentGallery();
+  if(!g) return;
+  photoIdx = ((idx % g.length) + g.length) % g.length;
+  const item = g[photoIdx];
+  const im = document.getElementById('classPhoto');
+  im.style.opacity = 0;
+  setTimeout(() => { im.src = item.src; im.style.opacity = 1; }, 120);
+  im.alt = item.cap ? `${products[curProd].name} — ${item.cap}` : products[curProd].name;
+  updateDots();
+}
+// After switching product: reset to the first photo and (re)build the gallery, or clear it.
+function refreshGallery(){
+  photoIdx = 0;
+  const g = currentGallery();
+  const hint = document.getElementById('swipeHint');
+  if(g){ showPhoto(0); }
+  else { const dots = document.getElementById('galleryDots'); dots.innerHTML = ''; dots.style.display = 'none'; }
+  // hint only makes sense when there's more than one photo to swipe
+  hint.style.display = (g && g.length > 1) ? '' : 'none';
 }
 
 function setProduct(i){
   const n = products.length;
   curProd = ((i % n) + n) % n;          // wrap around both ends
+  photoIdx = 0;
   prodSel.value = curProd;
   fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo);
+  refreshGallery();
 }
 prodSel.addEventListener('change', () => setProduct(+prodSel.value));
 sizeSel.addEventListener('change', render);
@@ -1868,7 +1928,7 @@ document.querySelectorAll('.lc-ic').forEach(ic => {
   ic.addEventListener('click', () => selectClass(classOrder[+ic.dataset.i]));
 });
 
-/* ---------- Swipe / chevrons to change product ---------- */
+/* ---------- Chevrons change product · swipe & dots browse the product's photos ---------- */
 (function(){
   const stage = document.getElementById('productStage');
   if(!stage) return;
@@ -1876,6 +1936,12 @@ document.querySelectorAll('.lc-ic').forEach(ic => {
   const next = document.getElementById('prodNext');
   if(prev) prev.addEventListener('click', () => setProduct(curProd - 1));
   if(next) next.addEventListener('click', () => setProduct(curProd + 1));
+
+  // dots jump straight to a photo
+  document.getElementById('galleryDots').addEventListener('click', e => {
+    const b = e.target.closest('.gallery-dot');
+    if(b) showPhoto(+b.dataset.i);
+  });
 
   let x0 = 0, y0 = 0, tracking = false;
   stage.addEventListener('touchstart', e => {
@@ -1887,7 +1953,8 @@ document.querySelectorAll('.lc-ic').forEach(ic => {
     const dx = t.clientX - x0, dy = t.clientY - y0;
     // horizontal swipe only — leave vertical scrolling untouched
     if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4){
-      setProduct(curProd + (dx < 0 ? 1 : -1));
+      const g = currentGallery();
+      if(g && g.length > 1) showPhoto(photoIdx + (dx < 0 ? 1 : -1));   // browse this product's photos
     }
   }, {passive:true});
 })();
@@ -1896,9 +1963,11 @@ function selectClass(c){
   const cp = products[curProd];
   if(cp.noClass){                      // no load-class control — just show the product photo
     curClass = null;
-    const im = document.getElementById('classPhoto');
-    im.style.opacity = 0;
-    setTimeout(() => { im.src = cp.img; im.style.opacity = 1; }, 120);
+    if(!currentGallery()){             // gallery, if any, drives the photo instead
+      const im = document.getElementById('classPhoto');
+      im.style.opacity = 0;
+      setTimeout(() => { im.src = cp.img; im.style.opacity = 1; }, 120);
+    }
     render();
     return;
   }
@@ -1918,11 +1987,13 @@ function selectClass(c){
   document.getElementById('lcRate').textContent = `${d.ton} T · ${d.kn} kN`;
   document.getElementById('lcUse').innerHTML = `<b>${d.use}</b> — ${d.ex}`;
 
-  const img = document.getElementById('classPhoto');
-  const pset = productPhotos[products[curProd].name];
-  const src = (pset && pset[c]) || photos[c];
-  img.style.opacity = 0;
-  setTimeout(() => { img.src = src; img.style.opacity = 1; }, 120);
+  if(!currentGallery()){               // gallery, if any, drives the photo instead of the load class
+    const img = document.getElementById('classPhoto');
+    const pset = productPhotos[products[curProd].name];
+    const src = (pset && pset[c]) || photos[c];
+    img.style.opacity = 0;
+    setTimeout(() => { img.src = src; img.style.opacity = 1; }, 120);
+  }
 
   render();
 }
@@ -1983,7 +2054,7 @@ function render(){
 }
 
 document.getElementById('classPhoto').decoding = 'async';
-prodSel.value = curProd; fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo);
+prodSel.value = curProd; fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo); refreshGallery();
 
 /* On mobile, move the product photo between Size and Load class; restore it to its own column on desktop. */
 (function(){
