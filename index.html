@@ -56,7 +56,8 @@
   [data-reveal][data-delay="1"]{transition-delay:.08s;}
   [data-reveal][data-delay="2"]{transition-delay:.16s;}
   [data-reveal][data-delay="3"]{transition-delay:.24s;}
-  @media (prefers-reduced-motion:reduce){
+  /* Respect reduce-motion on desktop; phones keep motion (owner preference) */
+  @media (prefers-reduced-motion:reduce) and (min-width:721px){
     [data-reveal]{opacity:1 !important; transform:none !important; transition:none;}
   }
 
@@ -190,7 +191,7 @@
   @keyframes float{
     0%,100%{transform:translateY(0);} 50%{transform:translateY(-18px);}
   }
-  @media (prefers-reduced-motion:reduce){ .hero .orb{animation:none;} }
+  @media (prefers-reduced-motion:reduce) and (min-width:721px){ .hero .orb{animation:none;} }
   .hero-inner{
     position:relative; z-index:1; max-width:1200px; margin:0 auto;
     padding:74px 26px 84px; display:grid; grid-template-columns:1.15fr .85fr;
@@ -258,7 +259,7 @@
     filter:blur(8px); animation:pulse 6s ease-in-out infinite;
   }
   @keyframes pulse{0%,100%{transform:scale(.94); opacity:.7;} 50%{transform:scale(1.06); opacity:1;}}
-  @media (prefers-reduced-motion:reduce){ .hero-visual::before{animation:none;} }
+  @media (prefers-reduced-motion:reduce) and (min-width:721px){ .hero-visual::before{animation:none;} }
   .hero-ring{
     width:min(360px,74%); aspect-ratio:1/1; border-radius:50%;
     background:
@@ -273,7 +274,7 @@
     animation:spin 26s linear infinite;
   }
   @keyframes spin{to{transform:rotate(360deg);}}
-  @media (prefers-reduced-motion:reduce){ .hero-ring{animation:none;} }
+  @media (prefers-reduced-motion:reduce) and (min-width:721px){ .hero-ring{animation:none;} }
   .hero-visual .glyph{
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     font-family:'Manrope',sans-serif; font-weight:900; letter-spacing:.02em;
@@ -775,6 +776,20 @@
   footer.site li a:hover{color:#fff; padding-left:6px;}
   footer.site li a:hover::before{content:"› "; color:var(--gold);}
   footer.site .fbar{border-top:1px solid rgba(255,255,255,.08); text-align:center; padding:18px; font-size:12px; color:#6f80a6;}
+  /* ============ MOBILE MOTION — phones only ============ */
+  @media (max-width:720px){
+    /* more pronounced scroll-reveal entrance */
+    [data-reveal]{transform:translateY(46px) scale(.98); transition:opacity .8s var(--ease), transform .8s var(--ease);}
+    [data-reveal][data-delay="1"]{transition-delay:.1s;}
+    [data-reveal][data-delay="2"]{transition-delay:.2s;}
+    [data-reveal][data-delay="3"]{transition-delay:.3s;}
+    /* tap feedback on interactive elements */
+    .btn:active,.sel:active,.tab:active,.lc-ic:active,.fb-btn:active,.btn-inquiry:active,
+    .acc summary:active,.factory-gallery figure:active{transform:scale(.96);}
+    /* gentle always-on cue on the primary hero CTA */
+    .hero-actions .btn-primary{animation:ctaPulse 2.8s ease-in-out infinite;}
+  }
+  @keyframes ctaPulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.025);}}
 </style>
 </head>
 <body>
@@ -1906,7 +1921,9 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
 /* ---------- Scroll reveal ---------- */
 (function(){
   const items = document.querySelectorAll('[data-reveal]');
-  if(!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion:reduce)').matches){
+  // Phones always animate; on desktop, honour the reduce-motion setting.
+  const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches && window.innerWidth > 720;
+  if(!('IntersectionObserver' in window) || reduce){
     items.forEach(el => el.classList.add('in')); return;
   }
   const io = new IntersectionObserver((entries) => {
