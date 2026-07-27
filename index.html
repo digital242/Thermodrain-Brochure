@@ -546,6 +546,30 @@
     position:absolute; bottom:14px; right:14px; color:#9fb0d4;
     font-family:'Manrope',sans-serif; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; font-weight:600;
   }
+  .product-stage{touch-action:pan-y;}
+  .stage-nav{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+    width:40px; height:40px; border-radius:50%; border:none; cursor:pointer;
+    background:rgba(11,28,63,.55); color:#fff; font-size:24px; line-height:1;
+    display:grid; place-items:center; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+    box-shadow:0 6px 16px -6px rgba(0,0,0,.6); opacity:0; transition:opacity .2s, background .2s, transform .2s;
+    font-family:'Manrope',sans-serif; padding-bottom:3px;
+  }
+  .stage-nav.prev{left:12px;} .stage-nav.next{right:12px;}
+  .product-stage:hover .stage-nav{opacity:1;}
+  .stage-nav:hover{background:var(--red);}
+  .stage-nav:active{transform:translateY(-50%) scale(.92);}
+  .swipe-hint{
+    position:absolute; bottom:14px; left:14px; z-index:3; display:none;
+    align-items:center; gap:6px; padding:6px 11px; border-radius:20px;
+    background:rgba(11,28,63,.6); color:#cdd8ef; font-family:'Manrope',sans-serif;
+    font-size:10.5px; font-weight:600; letter-spacing:.04em;
+    backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); pointer-events:none;
+    animation:hintFade 6s ease forwards;
+  }
+  .swipe-hint::before{content:"⇄"; font-size:13px;}
+  @keyframes hintFade{0%,70%{opacity:1;} 100%{opacity:0; visibility:hidden;}}
+  @media (hover:none){ .swipe-hint{display:flex;} .stage-nav{opacity:.85;} }
   /* Product & size pickers */
   .picker{margin-bottom:16px;}
   .pick-label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:700; margin-bottom:8px;}
@@ -1102,10 +1126,13 @@
       <div class="demo-grid">
         <div class="panel">
           <div class="panel-head"><span class="idx">02</span><h3>Product photo</h3></div>
-          <div class="product-stage">
+          <div class="product-stage" id="productStage">
             <img id="classPhoto" alt="Thermodrain cover" fetchpriority="high" decoding="async" />
             <div class="class-badge" id="classBadge">D400</div>
             <div class="stage-tag" id="stageTag">Thermodrain cover · D400</div>
+            <button type="button" class="stage-nav prev" id="prodPrev" aria-label="Previous product">‹</button>
+            <button type="button" class="stage-nav next" id="prodNext" aria-label="Next product">›</button>
+            <div class="swipe-hint" id="swipeHint">Swipe for more products</div>
           </div>
         </div>
         <div class="panel">
@@ -1819,12 +1846,42 @@ function preloadProduct(i){
   urls.forEach(u => { const im = new Image(); im.src = u; });
 }
 
-prodSel.addEventListener('change', () => { curProd=+prodSel.value; fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo); });
+function setProduct(i){
+  const n = products.length;
+  curProd = ((i % n) + n) % n;          // wrap around both ends
+  prodSel.value = curProd;
+  fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo);
+}
+prodSel.addEventListener('change', () => setProduct(+prodSel.value));
 sizeSel.addEventListener('change', render);
 lcSlider.addEventListener('input', () => selectClass(classOrder[+lcSlider.value]));
 document.querySelectorAll('.lc-ic').forEach(ic => {
   ic.addEventListener('click', () => selectClass(classOrder[+ic.dataset.i]));
 });
+
+/* ---------- Swipe / chevrons to change product ---------- */
+(function(){
+  const stage = document.getElementById('productStage');
+  if(!stage) return;
+  const prev = document.getElementById('prodPrev');
+  const next = document.getElementById('prodNext');
+  if(prev) prev.addEventListener('click', () => setProduct(curProd - 1));
+  if(next) next.addEventListener('click', () => setProduct(curProd + 1));
+
+  let x0 = 0, y0 = 0, tracking = false;
+  stage.addEventListener('touchstart', e => {
+    const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; tracking = true;
+  }, {passive:true});
+  stage.addEventListener('touchend', e => {
+    if(!tracking) return; tracking = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - x0, dy = t.clientY - y0;
+    // horizontal swipe only — leave vertical scrolling untouched
+    if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4){
+      setProduct(curProd + (dx < 0 ? 1 : -1));
+    }
+  }, {passive:true});
+})();
 
 function selectClass(c){
   const cp = products[curProd];
@@ -2038,6 +2095,45 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
   // activate the initial tab without moving the page off the hero
   const start = ids.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'explorer';
   showTab(start, false, false);
+
+  /* ---------- Scroll past a panel to reach the next tab, one by one ---------- */
+  const seq = tabs.map(t => t.dataset.tab);          // left-to-right tab order
+  const footer = document.getElementById('contact');
+  let navLock = false;
+
+  const activeId  = () => (tabs.find(t => t.classList.contains('active')) || tabs[0]).dataset.tab;
+  const panelTopY = () => tabbar.offsetTop - header.offsetHeight;
+  const atBottom  = () => (window.scrollY + window.innerHeight) >= ((footer ? footer.offsetTop : document.body.scrollHeight) - 2);
+  const atTop     = () => window.scrollY <= panelTopY() + 2;
+
+  function goRel(dir){
+    const i = seq.indexOf(activeId());
+    const n = i + dir;
+    if(n < 0 || n >= seq.length) return false;       // let the page scroll normally at the ends
+    navLock = true;
+    showTab(seq[n], false);
+    window.scrollTo({ top: panelTopY() + 1, behavior: 'smooth' });
+    setTimeout(() => { navLock = false; }, 650);
+    return true;
+  }
+
+  // desktop / trackpad
+  window.addEventListener('wheel', e => {
+    if(navLock) return;
+    if(e.deltaY > 0 && atBottom())            { if(goRel(1))  e.preventDefault(); }
+    else if(e.deltaY < 0 && atTop() && window.scrollY > 4) { if(goRel(-1)) e.preventDefault(); }
+  }, {passive:false});
+
+  // touch — a swipe up at the panel bottom advances, a swipe down at the top goes back
+  let ty0 = 0;
+  window.addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, {passive:true});
+  window.addEventListener('touchend', e => {
+    if(navLock) return;
+    const dy = e.changedTouches[0].clientY - ty0;
+    if(Math.abs(dy) < 45) return;
+    if(dy < 0 && atBottom())                 goRel(1);   // finger up → next tab
+    else if(dy > 0 && atTop() && window.scrollY > 4) goRel(-1);
+  }, {passive:true});
 })();
 </script>
 <!-- Vercel Web Analytics (anonymous traffic stats; enable Analytics in the Vercel project) -->
