@@ -719,8 +719,8 @@
   @media (max-width:860px){
     main{display:flex; flex-direction:column;}
     main .tab-panel{display:block; scroll-margin-top:calc(var(--hh,62px) + var(--tabh,52px) + 6px);}
-    #explorer{order:1;} #configurator{order:2;} #range{order:3;} #loads{order:4;}
-    #applications{order:5;} #compare{order:6;} #why{order:7;} #about{order:8;}
+    #about{order:1;} #why{order:2;} #explorer{order:3;} #configurator{order:4;}
+    #range{order:5;} #loads{order:6;} #applications{order:7;} #compare{order:8;}
     main .tab-panel + .tab-panel{border-top:1px solid var(--line);}
   }
 
@@ -899,14 +899,14 @@
 <!-- ============ TAB BAR ============ -->
 <div class="tabbar" id="tabbar">
   <div class="tabbar-inner">
+    <button type="button" class="tab" data-tab="about">About</button>
+    <button type="button" class="tab" data-tab="why">Why FRP</button>
     <button type="button" class="tab" data-tab="explorer">Products</button>
     <button type="button" class="tab" data-tab="configurator">Grating configurator</button>
     <button type="button" class="tab" data-tab="range">Range</button>
     <button type="button" class="tab" data-tab="loads">Load classes</button>
     <button type="button" class="tab" data-tab="applications">Applications</button>
     <button type="button" class="tab" data-tab="compare">Compare</button>
-    <button type="button" class="tab" data-tab="why">Why FRP</button>
-    <button type="button" class="tab" data-tab="about">About</button>
   </div>
 </div>
 
@@ -2115,7 +2115,7 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance â€
   });
 
   // activate the initial tab without moving the page off the hero
-  const start = ids.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'explorer';
+  const start = ids.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'about';
   showTab(start, false, false);
 
   /* ---------- Mobile: highlight the tab of the section in view, and centre it ---------- */
