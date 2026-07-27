@@ -388,10 +388,11 @@
     #configurator .canvas-wrap{order:-1; border-bottom:1px solid var(--line);}
     #configurator .panel-controls{border-bottom:none;}
   }
-  /* Products finder: put the photo below the Specification (product/size) when stacked (mobile) */
+  /* Products finder (mobile): the photo is relocated between Size and Load class via JS;
+     hide the now-empty photo panel so only the Specification column shows. */
   @media (max-width:860px){
-    #explorer .demo-grid > .panel:first-child{order:2; border-top:1px solid var(--line);}
-    #explorer .demo-grid > .panel:last-child{order:1;}
+    #explorer .demo-grid > .panel.photo-panel-hidden{display:none;}
+    #explorer .product-stage.in-spec{margin:4px 0 22px;}
   }
   .panel-head{display:flex; align-items:center; gap:10px; margin-bottom:24px;}
   .panel-head .idx{
@@ -1912,6 +1913,31 @@ function render(){
 
 document.getElementById('classPhoto').decoding = 'async';
 prodSel.value = curProd; fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo);
+
+/* On mobile, move the product photo between Size and Load class; restore it to its own column on desktop. */
+(function(){
+  const stage = document.querySelector('#explorer .product-stage');
+  if(!stage) return;
+  const photoPanel = stage.closest('.panel');
+  const specPanel = document.querySelector('#explorer .demo-grid > .panel:last-child');
+  const lcBlock = document.getElementById('lcBlock');
+  const mq = matchMedia('(max-width:860px)');
+  function place(){
+    if(mq.matches){
+      if(stage.parentElement !== specPanel){
+        specPanel.insertBefore(stage, lcBlock);
+        stage.classList.add('in-spec');
+        photoPanel.classList.add('photo-panel-hidden');
+      }
+    } else if(stage.parentElement !== photoPanel){
+      photoPanel.appendChild(stage);
+      stage.classList.remove('in-spec');
+      photoPanel.classList.remove('photo-panel-hidden');
+    }
+  }
+  place();
+  mq.addEventListener('change', place);
+})();
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
