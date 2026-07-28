@@ -546,6 +546,35 @@
     position:absolute; bottom:14px; right:14px; color:#9fb0d4;
     font-family:'Manrope',sans-serif; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; font-weight:600;
   }
+  .product-stage{touch-action:pan-y;}
+  .stage-nav{
+    position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+    width:40px; height:40px; border-radius:50%; border:none; cursor:pointer;
+    background:rgba(11,28,63,.55); color:#fff; font-size:24px; line-height:1;
+    display:grid; place-items:center; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+    box-shadow:0 6px 16px -6px rgba(0,0,0,.6); opacity:0; transition:opacity .2s, background .2s, transform .2s;
+    font-family:'Manrope',sans-serif; padding-bottom:3px;
+  }
+  .stage-nav.prev{left:12px;} .stage-nav.next{right:12px;}
+  .product-stage:hover .stage-nav{opacity:1;}
+  .stage-nav:hover{background:var(--red);}
+  .stage-nav:active{transform:translateY(-50%) scale(.92);}
+  .swipe-hint{
+    position:absolute; bottom:14px; left:14px; z-index:3; display:none;
+    align-items:center; gap:6px; padding:6px 11px; border-radius:20px;
+    background:rgba(11,28,63,.6); color:#cdd8ef; font-family:'Manrope',sans-serif;
+    font-size:10.5px; font-weight:600; letter-spacing:.04em;
+    backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); pointer-events:none;
+    animation:hintFade 6s ease forwards;
+  }
+  .swipe-hint::before{content:"⇄"; font-size:13px;}
+  @keyframes hintFade{0%,70%{opacity:1;} 100%{opacity:0; visibility:hidden;}}
+  @media (hover:none){ .swipe-hint{display:flex;} .stage-nav{opacity:.85;} }
+  .gallery-dots{position:absolute; left:0; right:0; bottom:13px; z-index:3; display:flex; gap:7px; justify-content:center;}
+  .gallery-dot{width:8px; height:8px; padding:0; border:none; border-radius:50%; cursor:pointer;
+    background:rgba(255,255,255,.42); box-shadow:0 1px 3px rgba(0,0,0,.4); transition:background .2s, transform .2s;}
+  .gallery-dot:hover{background:rgba(255,255,255,.75);}
+  .gallery-dot.on{background:#fff; transform:scale(1.3);}
   /* Product & size pickers */
   .picker{margin-bottom:16px;}
   .pick-label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:700; margin-bottom:8px;}
@@ -690,6 +719,15 @@
   main .tab-panel{display:none; border-top:none;}
   main .tab-panel.active{display:block;}
   @media (max-width:720px){ .tabbar-inner{padding:0 10px;} .tab{padding:14px 12px; font-size:12px;} .tab::after{left:12px; right:12px;} }
+
+  /* Mobile: one continuous page — every section stacked in tab order, tab bar becomes jump links */
+  @media (max-width:860px){
+    main{display:flex; flex-direction:column;}
+    main .tab-panel{display:block; scroll-margin-top:calc(var(--hh,62px) + var(--tabh,52px) + 6px);}
+    #about{order:1;} #why{order:2;} #explorer{order:3;} #configurator{order:4;}
+    #range{order:5;} #loads{order:6;} #applications{order:7;} #compare{order:8;}
+    main .tab-panel + .tab-panel{border-top:1px solid var(--line);}
+  }
 
   /* ============ ABOUT ============ */
   .about-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:start;}
@@ -866,14 +904,14 @@
 <!-- ============ TAB BAR ============ -->
 <div class="tabbar" id="tabbar">
   <div class="tabbar-inner">
+    <button type="button" class="tab" data-tab="about">About</button>
+    <button type="button" class="tab" data-tab="why">Why FRP</button>
     <button type="button" class="tab" data-tab="explorer">Products</button>
     <button type="button" class="tab" data-tab="configurator">Grating configurator</button>
     <button type="button" class="tab" data-tab="range">Range</button>
     <button type="button" class="tab" data-tab="loads">Load classes</button>
     <button type="button" class="tab" data-tab="applications">Applications</button>
     <button type="button" class="tab" data-tab="compare">Compare</button>
-    <button type="button" class="tab" data-tab="why">Why FRP</button>
-    <button type="button" class="tab" data-tab="about">About</button>
   </div>
 </div>
 
@@ -1102,10 +1140,14 @@
       <div class="demo-grid">
         <div class="panel">
           <div class="panel-head"><span class="idx">02</span><h3>Product photo</h3></div>
-          <div class="product-stage">
+          <div class="product-stage" id="productStage">
             <img id="classPhoto" alt="Thermodrain cover" fetchpriority="high" decoding="async" />
             <div class="class-badge" id="classBadge">D400</div>
             <div class="stage-tag" id="stageTag">Thermodrain cover · D400</div>
+            <button type="button" class="stage-nav prev" id="prodPrev" aria-label="Previous product">‹</button>
+            <button type="button" class="stage-nav next" id="prodNext" aria-label="Next product">›</button>
+            <div class="gallery-dots" id="galleryDots" style="display:none"></div>
+            <div class="swipe-hint" id="swipeHint" style="display:none">Swipe to see more photos</div>
           </div>
         </div>
         <div class="panel">
@@ -1562,7 +1604,19 @@ const products = [
   ]}
 ];
 let curProd = 0;
+let photoIdx = 0;
 const photos = {"A15":"images/st-A15.webp","B125":"images/st-B125.webp","C250":"images/st-C250.webp","D400":"images/st-D400.webp","E600":"images/st-E600.webp","F900":"images/st-F900.webp"};
+
+/* Multiple photos per product. Key = product name (must match `products` above).
+   Each entry is a list of photos the customer can swipe / tap dots to browse.
+   A photo is either "images/file.webp" or {src:"images/file.webp", cap:"Side view"}.
+   Add files to the images/ folder and list them here — products without an entry
+   keep their single load-class photo (no dots). Example:
+     'Solid Top Manhole Cover': ['images/st-top.webp','images/st-angle.webp','images/st-installed.webp'],
+*/
+const productGallery = {
+  // 'Solid Top Manhole Cover': ['images/st-top.webp', {src:'images/st-angle.webp', cap:'Angle view'}, 'images/st-installed.webp'],
+};
 /* ---------- Grating configurator ---------- */
 const MIN = 50, MAX = 2400, MODULE = 50;   // one +/- click = one MODULE-wide grating section
 let lenMM = 1000, widMM = 400;
@@ -1816,23 +1870,104 @@ function preloadProduct(i){
   if(p.img) urls.push(p.img);
   if(pset) urls.push(...Object.values(pset));
   else classOrder.forEach(c => { if(photos[c]) urls.push(photos[c]); });
+  const gal = productGallery[p.name];
+  if(gal) gal.forEach(x => urls.push(typeof x === 'string' ? x : x.src));
   urls.forEach(u => { const im = new Image(); im.src = u; });
 }
 
-prodSel.addEventListener('change', () => { curProd=+prodSel.value; fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo); });
+/* ---------- Per-product photo gallery ---------- */
+// Normalised list of photos for a product, or null when it has no extra photos.
+function currentGallery(){
+  const g = productGallery[products[curProd].name];
+  return (g && g.length) ? g.map(x => typeof x === 'string' ? {src:x} : x) : null;
+}
+function updateDots(){
+  const dots = document.getElementById('galleryDots');
+  const g = currentGallery();
+  if(!g || g.length < 2){ dots.innerHTML = ''; dots.style.display = 'none'; return; }
+  dots.style.display = 'flex';
+  dots.innerHTML = g.map((_, i) =>
+    `<button type="button" class="gallery-dot${i === photoIdx ? ' on' : ''}" data-i="${i}" aria-label="Photo ${i+1} of ${g.length}"></button>`
+  ).join('');
+}
+// Show a photo from the current product's gallery (wraps at both ends).
+function showPhoto(idx){
+  const g = currentGallery();
+  if(!g) return;
+  photoIdx = ((idx % g.length) + g.length) % g.length;
+  const item = g[photoIdx];
+  const im = document.getElementById('classPhoto');
+  im.style.opacity = 0;
+  setTimeout(() => { im.src = item.src; im.style.opacity = 1; }, 120);
+  im.alt = item.cap ? `${products[curProd].name} — ${item.cap}` : products[curProd].name;
+  updateDots();
+}
+// After switching product: reset to the first photo and (re)build the gallery, or clear it.
+function refreshGallery(){
+  photoIdx = 0;
+  const g = currentGallery();
+  const hint = document.getElementById('swipeHint');
+  if(g){ showPhoto(0); }
+  else { const dots = document.getElementById('galleryDots'); dots.innerHTML = ''; dots.style.display = 'none'; }
+  // hint only makes sense when there's more than one photo to swipe
+  hint.style.display = (g && g.length > 1) ? '' : 'none';
+}
+
+function setProduct(i){
+  const n = products.length;
+  curProd = ((i % n) + n) % n;          // wrap around both ends
+  photoIdx = 0;
+  prodSel.value = curProd;
+  fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo);
+  refreshGallery();
+}
+prodSel.addEventListener('change', () => setProduct(+prodSel.value));
 sizeSel.addEventListener('change', render);
 lcSlider.addEventListener('input', () => selectClass(classOrder[+lcSlider.value]));
 document.querySelectorAll('.lc-ic').forEach(ic => {
   ic.addEventListener('click', () => selectClass(classOrder[+ic.dataset.i]));
 });
 
+/* ---------- Chevrons change product · swipe & dots browse the product's photos ---------- */
+(function(){
+  const stage = document.getElementById('productStage');
+  if(!stage) return;
+  const prev = document.getElementById('prodPrev');
+  const next = document.getElementById('prodNext');
+  if(prev) prev.addEventListener('click', () => setProduct(curProd - 1));
+  if(next) next.addEventListener('click', () => setProduct(curProd + 1));
+
+  // dots jump straight to a photo
+  document.getElementById('galleryDots').addEventListener('click', e => {
+    const b = e.target.closest('.gallery-dot');
+    if(b) showPhoto(+b.dataset.i);
+  });
+
+  let x0 = 0, y0 = 0, tracking = false;
+  stage.addEventListener('touchstart', e => {
+    const t = e.touches[0]; x0 = t.clientX; y0 = t.clientY; tracking = true;
+  }, {passive:true});
+  stage.addEventListener('touchend', e => {
+    if(!tracking) return; tracking = false;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - x0, dy = t.clientY - y0;
+    // horizontal swipe only — leave vertical scrolling untouched
+    if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4){
+      const g = currentGallery();
+      if(g && g.length > 1) showPhoto(photoIdx + (dx < 0 ? 1 : -1));   // browse this product's photos
+    }
+  }, {passive:true});
+})();
+
 function selectClass(c){
   const cp = products[curProd];
   if(cp.noClass){                      // no load-class control — just show the product photo
     curClass = null;
-    const im = document.getElementById('classPhoto');
-    im.style.opacity = 0;
-    setTimeout(() => { im.src = cp.img; im.style.opacity = 1; }, 120);
+    if(!currentGallery()){             // gallery, if any, drives the photo instead
+      const im = document.getElementById('classPhoto');
+      im.style.opacity = 0;
+      setTimeout(() => { im.src = cp.img; im.style.opacity = 1; }, 120);
+    }
     render();
     return;
   }
@@ -1852,11 +1987,13 @@ function selectClass(c){
   document.getElementById('lcRate').textContent = `${d.ton} T · ${d.kn} kN`;
   document.getElementById('lcUse').innerHTML = `<b>${d.use}</b> — ${d.ex}`;
 
-  const img = document.getElementById('classPhoto');
-  const pset = productPhotos[products[curProd].name];
-  const src = (pset && pset[c]) || photos[c];
-  img.style.opacity = 0;
-  setTimeout(() => { img.src = src; img.style.opacity = 1; }, 120);
+  if(!currentGallery()){               // gallery, if any, drives the photo instead of the load class
+    const img = document.getElementById('classPhoto');
+    const pset = productPhotos[products[curProd].name];
+    const src = (pset && pset[c]) || photos[c];
+    img.style.opacity = 0;
+    setTimeout(() => { img.src = src; img.style.opacity = 1; }, 120);
+  }
 
   render();
 }
@@ -1917,7 +2054,7 @@ function render(){
 }
 
 document.getElementById('classPhoto').decoding = 'async';
-prodSel.value = curProd; fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo);
+prodSel.value = curProd; fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo); refreshGallery();
 
 /* On mobile, move the product photo between Size and Load class; restore it to its own column on desktop. */
 (function(){
@@ -2014,7 +2151,13 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
   if(!tabs.length || !tabbar) return;
   const ids = panels.map(p => p.id);
 
-  const setHH = () => document.documentElement.style.setProperty('--hh', header.offsetHeight + 'px');
+  const seq = tabs.map(t => t.dataset.tab);          // left-to-right tab order = mobile stacking order
+  const oneCol = matchMedia('(max-width:860px)');    // mobile: one continuous page
+
+  const setHH = () => {
+    document.documentElement.style.setProperty('--hh', header.offsetHeight + 'px');
+    document.documentElement.style.setProperty('--tabh', tabbar.offsetHeight + 'px');
+  };
   setHH(); window.addEventListener('resize', setHH);
 
   function showTab(id, scroll, writeHash){
@@ -2027,17 +2170,85 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
     return true;
   }
 
-  tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab, true)));
+  // On mobile every section is already on the page — a tab/link just scrolls to it.
+  function jumpTo(id){
+    const el = document.getElementById(id);
+    if(el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  const activate = (id, scroll) => oneCol.matches ? jumpTo(id) : showTab(id, scroll);
 
-  // in-page links that target a panel switch tabs instead of jumping
+  tabs.forEach(t => t.addEventListener('click', () => activate(t.dataset.tab, true)));
+
+  // in-page links that target a panel switch tabs (desktop) or scroll to it (mobile)
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     const id = a.getAttribute('href').slice(1);
-    if(ids.includes(id)) a.addEventListener('click', e => { e.preventDefault(); showTab(id, true); });
+    if(ids.includes(id)) a.addEventListener('click', e => { e.preventDefault(); activate(id, true); });
   });
 
   // activate the initial tab without moving the page off the hero
-  const start = ids.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'explorer';
+  const start = ids.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'about';
   showTab(start, false, false);
+
+  /* ---------- Mobile: highlight the tab of the section in view, and centre it ---------- */
+  const inner = tabbar.querySelector('.tabbar-inner');
+  function centerTab(at){
+    if(!at || !inner) return;
+    const target = at.offsetLeft - (inner.clientWidth - at.offsetWidth) / 2;
+    inner.scrollTo({ left: Math.max(0, target), behavior:'smooth' });
+  }
+  let spyActive = null, spyRaf = 0;
+  function spy(){
+    spyRaf = 0;
+    if(!oneCol.matches) return;
+    const line = header.offsetHeight + tabbar.offsetHeight + 8;
+    let cur = seq[0];
+    seq.forEach(id => { const el = document.getElementById(id); if(el && el.getBoundingClientRect().top <= line) cur = id; });
+    if(cur === spyActive) return;
+    spyActive = cur;
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === cur));
+    centerTab(tabs.find(t => t.dataset.tab === cur));
+  }
+  const queueSpy = () => { if(!spyRaf) spyRaf = requestAnimationFrame(spy); };
+  window.addEventListener('scroll', queueSpy, {passive:true});
+  oneCol.addEventListener('change', () => { spyActive = null; queueSpy(); });
+  queueSpy();
+
+  /* ---------- Desktop: scroll past a panel to reach the next tab, one by one ---------- */
+  const footer = document.getElementById('contact');
+  let navLock = false;
+  const activeId  = () => (tabs.find(t => t.classList.contains('active')) || tabs[0]).dataset.tab;
+  const panelTopY = () => tabbar.offsetTop - header.offsetHeight;
+  const atBottom  = () => (window.scrollY + window.innerHeight) >= ((footer ? footer.offsetTop : document.body.scrollHeight) - 2);
+  const atTop     = () => window.scrollY <= panelTopY() + 2;
+
+  function goRel(dir){
+    const i = seq.indexOf(activeId());
+    const n = i + dir;
+    if(n < 0 || n >= seq.length) return false;       // let the page scroll normally at the ends
+    navLock = true;
+    showTab(seq[n], false);
+    window.scrollTo({ top: panelTopY() + 1, behavior: 'smooth' });
+    setTimeout(() => { navLock = false; }, 650);
+    return true;
+  }
+
+  // desktop / trackpad — disabled on the mobile one-page layout
+  window.addEventListener('wheel', e => {
+    if(oneCol.matches || navLock) return;
+    if(e.deltaY > 0 && atBottom())            { if(goRel(1))  e.preventDefault(); }
+    else if(e.deltaY < 0 && atTop() && window.scrollY > 4) { if(goRel(-1)) e.preventDefault(); }
+  }, {passive:false});
+
+  // touch (tablet/desktop-width touch) — a swipe up at the panel bottom advances
+  let ty0 = 0;
+  window.addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, {passive:true});
+  window.addEventListener('touchend', e => {
+    if(oneCol.matches || navLock) return;
+    const dy = e.changedTouches[0].clientY - ty0;
+    if(Math.abs(dy) < 45) return;
+    if(dy < 0 && atBottom())                 goRel(1);   // finger up → next tab
+    else if(dy > 0 && atTop() && window.scrollY > 4) goRel(-1);
+  }, {passive:true});
 })();
 </script>
 <!-- Vercel Web Analytics (anonymous traffic stats; enable Analytics in the Vercel project) -->
