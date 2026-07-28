@@ -2363,21 +2363,27 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
    Add more photos here as you upload them to images/ (multiple per product / size).
    Each item is {src, label}. */
 const rangeCarouselPhotos = [
+  // Grating installation photos — add the files to images/ with these exact names.
+  {src:'images/grating-rooftop.jpg',   label:'FRP grating rooftop platform'},
+  {src:'images/grating-walkway.jpg',   label:'FRP grating walkway with railings'},
+  {src:'images/grating-pooldrain.jpg', label:'Poolside FRP grating drain'},
+  {src:'images/grating-staircase.jpg', label:'FRP grating staircase treads'},
+  {src:'images/grating-panel.jpg',     label:'Moulded FRP grating panel'},
+  // Existing product renders
   {src:'images/st-D400.webp', label:'Solid Top Manhole Cover'},
   {src:'images/mc-D400.webp', label:'Multiple Covers with Frame'},
   {src:'images/rc-C250.webp', label:'Recess (Fill-in) Cover'},
   {src:'images/aw-D400.webp', label:'Air & Water Tight Cover'},
   {src:'images/wg-C250.webp', label:'Water Gully Cover'},
   {src:'images/grating-1.webp', label:'Gratings'},
-  {src:'images/st-F900.webp', label:'Solid Top — F900 (90 T)'},
-  {src:'images/aw-E600.webp', label:'Air & Water Tight — E600'},
 ];
 (function(){
   const track = document.getElementById('carouselTrack');
   const wrap = document.getElementById('rangeCarousel');
   if(!track || !wrap) return;
   if(!rangeCarouselPhotos.length){ wrap.style.display = 'none'; return; }
-  const card = p => `<figure class="carousel-card"><img loading="lazy" decoding="async" src="${p.src}" alt="${(p.label||'Thermodrain product').replace(/"/g,'&quot;')}">${p.label?`<figcaption>${p.label}</figcaption>`:''}</figure>`;
+  // onerror removes any card whose image file isn't present yet (both duplicated copies), keeping the loop symmetric
+  const card = p => `<figure class="carousel-card"><img decoding="async" src="${p.src}" alt="${(p.label||'Thermodrain product').replace(/"/g,'&quot;')}" onerror="this.closest('.carousel-card').remove()">${p.label?`<figcaption>${p.label}</figcaption>`:''}</figure>`;
   const html = rangeCarouselPhotos.map(card).join('');
   track.innerHTML = html + html;   // duplicated for a seamless -50% loop
 })();
