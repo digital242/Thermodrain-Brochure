@@ -720,14 +720,12 @@
   main .tab-panel.active{display:block;}
   @media (max-width:720px){ .tabbar-inner{padding:0 10px;} .tab{padding:14px 12px; font-size:12px;} .tab::after{left:12px; right:12px;} }
 
-  /* Mobile: one continuous page — every section stacked in tab order, tab bar becomes jump links */
-  @media (max-width:860px){
-    main{display:flex; flex-direction:column;}
-    main .tab-panel{display:block; scroll-margin-top:calc(var(--hh,62px) + var(--tabh,52px) + 6px);}
-    #about{order:1;} #why{order:2;} #explorer{order:3;} #configurator{order:4;}
-    #range{order:5;} #loads{order:6;} #applications{order:7;} #compare{order:8;}
-    main .tab-panel + .tab-panel{border-top:1px solid var(--line);}
-  }
+  /* One continuous page (all screens) — every section stacked in tab order, tab bar becomes jump links */
+  main{display:flex; flex-direction:column;}
+  main .tab-panel{display:block; scroll-margin-top:calc(var(--hh,62px) + var(--tabh,52px) + 6px);}
+  #about{order:1;} #why{order:2;} #explorer{order:3;} #configurator{order:4;}
+  #range{order:5;} #loads{order:6;} #applications{order:7;} #compare{order:8;}
+  main .tab-panel + .tab-panel{border-top:1px solid var(--line);}
 
   /* ============ ABOUT ============ */
   .about-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:start;}
@@ -2262,7 +2260,7 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
   const ids = panels.map(p => p.id);
 
   const seq = tabs.map(t => t.dataset.tab);          // left-to-right tab order = mobile stacking order
-  const oneCol = matchMedia('(max-width:860px)');    // mobile: one continuous page
+  const oneCol = matchMedia('(min-width:0px)');      // one continuous page on every screen (always true)
 
   const setHH = () => {
     document.documentElement.style.setProperty('--hh', header.offsetHeight + 'px');
