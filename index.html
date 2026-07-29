@@ -796,6 +796,12 @@
   .acc .acc-body li{margin-bottom:7px;} .acc .acc-body li:last-child{margin-bottom:0;}
   .acc .sub{font-size:11px; text-transform:uppercase; letter-spacing:.11em; color:var(--muted); font-weight:700; margin:18px 0 9px;}
   .acc .sizes{display:flex; flex-wrap:wrap; gap:6px;}
+  .acc-photos{display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:12px; margin-top:4px;}
+  .acc-photos figure{margin:0;}
+  .acc-photos img{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px; background:var(--paper); display:block; box-shadow:var(--shadow-sm); transition:transform .2s var(--ease);}
+  .acc-photos figure:hover img{transform:translateY(-2px);}
+  .acc-photos figcaption{font-size:11px; color:var(--muted); font-weight:600; margin-top:6px;}
+  @media (max-width:520px){ .acc-photos{grid-template-columns:1fr 1fr; gap:10px;} }
   .acc .sizes .sz{font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; color:var(--navy-deep); background:var(--paper-2); border:1px solid var(--line); border-radius:6px; padding:5px 8px;}
 
   /* ============ DO'S & DON'TS ============ */
@@ -1298,6 +1304,16 @@
           </ul>
           <div class="sub">Frame clear opening — sizes</div>
           <p style="margin:0;">Circular Ø400–Ø1400 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-1.webp" alt="Solid Top Cover 1200×1200 D400 installed"><figcaption>1200×1200 D400</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-2.webp" alt="Solid Top Cover Ø600 round"><figcaption>Ø600 round (D400)</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-3.webp" alt="Solid Top Cover 900×600 Smart City"><figcaption>900×600 · 5 T</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-4.webp" alt="Solid Top Cover Ø1000 round"><figcaption>Ø1000 round</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-5.webp" alt="Solid Top Cover 900×600 C250"><figcaption>900×600 C250</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-6.webp" alt="Solid Top Cover 600×600 B125"><figcaption>600×600 B125</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-7.webp" alt="Solid Top Cover 600×600 F900"><figcaption>600×600 F900</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1312,6 +1328,16 @@
             <li>HSPA / stainless-steel closed-bottom keyholes.</li>
             <li>Self-pigmented, non-brittle, zero permanent set.</li>
           </ul>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-1.webp" alt="Multiple Covers 600×600 set"><figcaption>600×600 set</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-2.webp" alt="Multiple Cover 900×650 / 900×450"><figcaption>900×650 / 900×450</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-3.webp" alt="Multiple Covers 1200×1200"><figcaption>1200×1200</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-4.webp" alt="Multiple Cover 750×750 run"><figcaption>750×750 run</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-5.webp" alt="Multiple Covers 1000×1000 D400"><figcaption>1000×1000 D400</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-6.webp" alt="Multiple Cover 900×570 roadway"><figcaption>900×570 roadway</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-7.webp" alt="Multiple Cover 900×450 twin (2.5 T)"><figcaption>900×450 · 2.5 T</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1358,6 +1384,16 @@
           <p style="margin:0 0 4px;">Swimming pools · industrial plants · podiums · basement car parks · storm-water drain trenches · cable trenches.</p>
           <div class="sub">Size chart — 30 &amp; 40 mm height (mm)</div>
           <div class="sizes" id="gratingChart"></div>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/grating-rooftop.webp" alt="FRP grating rooftop platform"><figcaption>Rooftop platform</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-walkway.webp" alt="FRP grating walkway with railings"><figcaption>Walkway with railings</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-pooldrain.webp" alt="Poolside FRP grating drain"><figcaption>Poolside drain</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-staircase.webp" alt="FRP grating staircase treads"><figcaption>Staircase treads</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-panel.webp" alt="Moulded FRP grating panel"><figcaption>Moulded panel</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-channel.webp" alt="FRP grating drain channel"><figcaption>Drain channel</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-parking.webp" alt="FRP grating drain in parking deck"><figcaption>Parking-deck drain</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -2389,7 +2425,7 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
    Add more photos here as you upload them to images/ (multiple per product / size).
    Each item is {src, label}. */
 const rangeCarouselPhotos = [
-  // Grating installation & product photos (optimised webp)
+  // General grating installation shots (per-product photos live under each Range card)
   {src:'images/grating-rooftop.webp',   label:'FRP grating rooftop platform'},
   {src:'images/grating-walkway.webp',   label:'FRP grating walkway with railings'},
   {src:'images/grating-staircase.webp', label:'FRP grating staircase treads'},
@@ -2397,26 +2433,6 @@ const rangeCarouselPhotos = [
   {src:'images/grating-channel.webp',   label:'FRP grating drain channel'},
   {src:'images/grating-parking.webp',   label:'FRP grating drain — parking deck'},
   {src:'images/grating-panel.webp',     label:'Moulded FRP grating panel'},
-  // Solid Top Manhole Cover photos
-  {src:'images/st-photo-1.webp', label:'Solid Top Cover — 1200×1200 D400'},
-  {src:'images/st-photo-3.webp', label:'Solid Top Cover — 900×600 (Smart City)'},
-  {src:'images/st-photo-2.webp', label:'Solid Top Cover — Ø600 round'},
-  {src:'images/st-photo-4.webp', label:'Solid Top Cover — Ø1000 round'},
-  {src:'images/st-photo-5.webp', label:'Solid Top Cover — 900×600 C250'},
-  {src:'images/st-photo-6.webp', label:'Solid Top Cover — 600×600 B125'},
-  {src:'images/st-photo-7.webp', label:'Solid Top Cover — 600×600 F900'},
-  // Multiple Cover photos
-  {src:'images/mc-photo-1.webp', label:'Multiple Covers — 600×600 set'},
-  {src:'images/mc-photo-3.webp', label:'Multiple Covers — 1200×1200'},
-  {src:'images/mc-photo-5.webp', label:'Multiple Covers — 1000×1000 D400'},
-  {src:'images/mc-photo-2.webp', label:'Multiple Cover — 900×650 / 900×450'},
-  {src:'images/mc-photo-4.webp', label:'Multiple Cover — 750×750 run'},
-  {src:'images/mc-photo-6.webp', label:'Multiple Cover — 900×570 roadway'},
-  {src:'images/mc-photo-7.webp', label:'Multiple Cover — 900×450 (2.5 T)'},
-  // Product renders
-  {src:'images/rc-C250.webp', label:'Recess (Fill-in) Cover'},
-  {src:'images/aw-D400.webp', label:'Air & Water Tight Cover'},
-  {src:'images/wg-C250.webp', label:'Water Gully Cover'},
 ];
 (function(){
   const track = document.getElementById('carouselTrack');
