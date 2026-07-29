@@ -801,7 +801,16 @@
   .acc-photos img{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px; background:var(--paper); display:block; box-shadow:var(--shadow-sm); transition:transform .2s var(--ease);}
   .acc-photos figure:hover img{transform:translateY(-2px);}
   .acc-photos figcaption{font-size:11px; color:var(--muted); font-weight:600; margin-top:6px;}
-  @media (max-width:520px){ .acc-photos{grid-template-columns:1fr 1fr; gap:10px;} }
+  @media (max-width:520px){ .acc-photos:not(.is-carousel){grid-template-columns:1fr 1fr; gap:10px;} }
+  /* moving version (auto-scrolling) */
+  .acc-photos.is-carousel{display:block; overflow:hidden; position:relative;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
+            mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);}
+  .acc-photos-track{display:flex; gap:12px; width:max-content; animation:carouselMarq 38s linear infinite;}
+  .acc-photos.is-carousel:hover .acc-photos-track{animation-play-state:paused;}
+  .acc-photos-track figure{flex:none; width:220px; margin:0;}
+  @media (max-width:520px){ .acc-photos-track figure{width:168px;} }
+  @media (prefers-reduced-motion:reduce) and (min-width:721px){ .acc-photos-track{animation:none;} .acc-photos.is-carousel{overflow-x:auto;} }
   .acc .sizes .sz{font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; color:var(--navy-deep); background:var(--paper-2); border:1px solid var(--line); border-radius:6px; padding:5px 8px;}
 
   /* ============ DO'S & DON'TS ============ */
@@ -1283,10 +1292,6 @@
       <span class="eyebrow">Full range</span>
       <h2 class="title">Every THERMODRAIN product</h2>
       <p class="lede">The complete FRP/GRP/composite range — covers, gratings, gully &amp; tank covers, chambers, drain channels and accessories. Tap any product for its salient features and sizes.</p>
-    </div>
-
-    <div class="carousel" id="rangeCarousel" data-reveal aria-label="Product photo gallery">
-      <div class="carousel-track" id="carouselTrack"></div>
     </div>
 
     <div data-reveal data-delay="1">
@@ -2424,25 +2429,19 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
 /* ---------- Range: auto-moving product photo carousel ----------
    Add more photos here as you upload them to images/ (multiple per product / size).
    Each item is {src, label}. */
-const rangeCarouselPhotos = [
-  // General grating installation shots (per-product photos live under each Range card)
-  {src:'images/grating-rooftop.webp',   label:'FRP grating rooftop platform'},
-  {src:'images/grating-walkway.webp',   label:'FRP grating walkway with railings'},
-  {src:'images/grating-staircase.webp', label:'FRP grating staircase treads'},
-  {src:'images/grating-pooldrain.webp', label:'Poolside FRP grating drain'},
-  {src:'images/grating-channel.webp',   label:'FRP grating drain channel'},
-  {src:'images/grating-parking.webp',   label:'FRP grating drain — parking deck'},
-  {src:'images/grating-panel.webp',     label:'Moulded FRP grating panel'},
-];
+/* ---------- Range: turn each product's under-card Photos into an auto-moving carousel ---------- */
 (function(){
-  const track = document.getElementById('carouselTrack');
-  const wrap = document.getElementById('rangeCarousel');
-  if(!track || !wrap) return;
-  if(!rangeCarouselPhotos.length){ wrap.style.display = 'none'; return; }
-  // onerror removes any card whose image file isn't present yet (both duplicated copies), keeping the loop symmetric
-  const card = p => `<figure class="carousel-card"><img decoding="async" src="${p.src}" alt="${(p.label||'Thermodrain product').replace(/"/g,'&quot;')}" onerror="this.closest('.carousel-card').remove()">${p.label?`<figcaption>${p.label}</figcaption>`:''}</figure>`;
-  const html = rangeCarouselPhotos.map(card).join('');
-  track.innerHTML = html + html;   // duplicated for a seamless -50% loop
+  document.querySelectorAll('#range .acc-photos').forEach(g => {
+    const figs = [...g.children];
+    if(figs.length < 2) return;
+    const track = document.createElement('div');
+    track.className = 'acc-photos-track';
+    figs.forEach(f => track.appendChild(f));
+    figs.forEach(f => track.appendChild(f.cloneNode(true)));   // duplicate for a seamless -50% loop
+    g.appendChild(track);
+    g.classList.add('is-carousel');
+    track.style.animationDuration = Math.max(20, figs.length * 5) + 's';
+  });
 })();
 
 /* ---------- Enquiry modal (opens from the grating configurator) ---------- */
