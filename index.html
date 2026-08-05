@@ -388,11 +388,17 @@
     #configurator .canvas-wrap{order:-1; border-bottom:1px solid var(--line);}
     #configurator .panel-controls{border-bottom:none;}
   }
+  /* Products finder: stack the product photo panel ABOVE the specification panel
+     (single column) instead of side-by-side, and cap/centre the photo so it
+     isn't oversized when spanning the full width. */
+  #explorer .demo-grid{grid-template-columns:1fr;}
+  #explorer .product-stage{max-width:520px; margin-left:auto; margin-right:auto;}
   /* Products finder (mobile): the photo is relocated between Size and Load class via JS;
      hide the now-empty photo panel so only the Specification column shows. */
   @media (max-width:860px){
     #explorer .demo-grid > .panel.photo-panel-hidden{display:none;}
     #explorer .product-stage.in-spec{margin:4px 0 22px;}
+    #explorer .product-stage{max-width:none;}
   }
   .panel-head{display:flex; align-items:center; gap:10px; margin-bottom:24px;}
   .panel-head .idx{
