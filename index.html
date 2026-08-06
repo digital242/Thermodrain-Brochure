@@ -243,10 +243,10 @@
     background:linear-gradient(180deg,transparent,rgba(174,187,216,.35),transparent);
   }
   .hero-stats .stat .n{
-    font-family:'Manrope',sans-serif; font-weight:800; font-size:28px; color:#fff;
-    display:flex; align-items:baseline; gap:3px; line-height:1;
+    font-family:'Manrope',sans-serif; font-weight:800; font-size:38px; color:#fff;
+    display:flex; align-items:baseline; gap:4px; line-height:1;
   }
-  .hero-stats .stat .n small{font-size:15px; color:var(--gold); font-weight:700;}
+  .hero-stats .stat .n small{font-size:21px; color:var(--gold); font-weight:700;}
   .hero-stats .stat .l{font-size:11.5px; color:#8ea0c6; letter-spacing:.02em; margin-top:6px;}
 
   /* hero visual */
@@ -388,11 +388,17 @@
     #configurator .canvas-wrap{order:-1; border-bottom:1px solid var(--line);}
     #configurator .panel-controls{border-bottom:none;}
   }
+  /* Products finder: stack the product photo panel ABOVE the specification panel
+     (single column) instead of side-by-side, and cap/centre the photo so it
+     isn't oversized when spanning the full width. */
+  #explorer .demo-grid{grid-template-columns:1fr;}
+  #explorer .product-stage{max-width:520px; margin-left:auto; margin-right:auto;}
   /* Products finder (mobile): the photo is relocated between Size and Load class via JS;
      hide the now-empty photo panel so only the Specification column shows. */
   @media (max-width:860px){
     #explorer .demo-grid > .panel.photo-panel-hidden{display:none;}
     #explorer .product-stage.in-spec{margin:4px 0 22px;}
+    #explorer .product-stage{max-width:none;}
   }
   .panel-head{display:flex; align-items:center; gap:10px; margin-bottom:24px;}
   .panel-head .idx{
@@ -720,14 +726,12 @@
   main .tab-panel.active{display:block;}
   @media (max-width:720px){ .tabbar-inner{padding:0 10px;} .tab{padding:14px 12px; font-size:12px;} .tab::after{left:12px; right:12px;} }
 
-  /* Mobile: one continuous page — every section stacked in tab order, tab bar becomes jump links */
-  @media (max-width:860px){
-    main{display:flex; flex-direction:column;}
-    main .tab-panel{display:block; scroll-margin-top:calc(var(--hh,62px) + var(--tabh,52px) + 6px);}
-    #about{order:1;} #why{order:2;} #explorer{order:3;} #configurator{order:4;}
-    #range{order:5;} #loads{order:6;} #applications{order:7;} #compare{order:8;}
-    main .tab-panel + .tab-panel{border-top:1px solid var(--line);}
-  }
+  /* One continuous page (all screens) — every section stacked in tab order, tab bar becomes jump links */
+  main{display:flex; flex-direction:column;}
+  main .tab-panel{display:block; scroll-margin-top:calc(var(--hh,62px) + var(--tabh,52px) + 6px);}
+  #about{order:1;} #why{order:2;} #explorer{order:3;} #configurator{order:4;}
+  #range{order:5;} #loads{order:6;} #applications{order:7;} #compare{order:8;}
+  main .tab-panel + .tab-panel{border-top:1px solid var(--line);}
 
   /* ============ ABOUT ============ */
   .about-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:start;}
@@ -798,6 +802,21 @@
   .acc .acc-body li{margin-bottom:7px;} .acc .acc-body li:last-child{margin-bottom:0;}
   .acc .sub{font-size:11px; text-transform:uppercase; letter-spacing:.11em; color:var(--muted); font-weight:700; margin:18px 0 9px;}
   .acc .sizes{display:flex; flex-wrap:wrap; gap:6px;}
+  .acc-photos{display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:12px; margin-top:4px;}
+  .acc-photos figure{margin:0;}
+  .acc-photos img{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px; background:var(--paper); display:block; box-shadow:var(--shadow-sm); transition:transform .2s var(--ease);}
+  .acc-photos figure:hover img{transform:translateY(-2px);}
+  .acc-photos figcaption{font-size:11px; color:var(--muted); font-weight:600; margin-top:6px;}
+  @media (max-width:520px){ .acc-photos:not(.is-carousel){grid-template-columns:1fr 1fr; gap:10px;} }
+  /* moving version (auto-scrolling) */
+  .acc-photos.is-carousel{display:block; overflow:hidden; position:relative;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
+            mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);}
+  .acc-photos-track{display:flex; gap:12px; width:max-content; animation:carouselMarq 38s linear infinite;}
+  .acc-photos.is-carousel:hover .acc-photos-track{animation-play-state:paused;}
+  .acc-photos-track figure{flex:none; width:220px; margin:0;}
+  @media (max-width:520px){ .acc-photos-track figure{width:168px;} }
+  @media (prefers-reduced-motion:reduce) and (min-width:721px){ .acc-photos-track{animation:none;} .acc-photos.is-carousel{overflow-x:auto;} }
   .acc .sizes .sz{font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600; color:var(--navy-deep); background:var(--paper-2); border:1px solid var(--line); border-radius:6px; padding:5px 8px;}
 
   /* ============ DO'S & DON'TS ============ */
@@ -844,6 +863,70 @@
     .hero-actions .btn-primary{animation:ctaPulse 2.8s ease-in-out infinite;}
   }
   @keyframes ctaPulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.025);}}
+
+  /* Hero — every load class as chips */
+  .hero-stats .stat-classes{min-width:0;}
+  .hero-stats .lc-chips{display:flex; flex-wrap:wrap; gap:5px;}
+  .hero-stats .lc-chips span{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:#fff;
+    background:rgba(246,188,22,.14); border:1px solid rgba(246,188,22,.34);
+    padding:3px 8px; border-radius:6px; line-height:1;
+  }
+
+  /* Keyhole photos */
+  .kh-photo{margin:0 0 14px;}
+  .kh-photo img{width:100%; aspect-ratio:16/10; object-fit:cover; border-radius:12px; background:#0f2450; display:block; box-shadow:var(--shadow-sm);}
+  .kh-photo figcaption{font-size:11.5px; color:var(--muted); font-weight:600; margin-top:7px; letter-spacing:.02em;}
+
+  /* Range — auto-moving product carousel */
+  .carousel{margin:26px 0 6px; overflow:hidden; position:relative;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+            mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);}
+  .carousel-track{display:flex; gap:16px; width:max-content; animation:carouselMarq 48s linear infinite;}
+  .carousel:hover .carousel-track{animation-play-state:paused;}
+  .carousel-card{flex:none; width:236px; margin:0;}
+  .carousel-card img{width:236px; height:176px; object-fit:cover; border-radius:12px; background:#0f2450; display:block; box-shadow:var(--shadow-sm);}
+  .carousel-card figcaption{font-size:12px; color:var(--muted); font-weight:600; margin-top:8px;}
+  @keyframes carouselMarq{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+  @media (max-width:640px){ .carousel-card,.carousel-card img{width:172px;} .carousel-card img{height:132px;} }
+  @media (prefers-reduced-motion:reduce) and (min-width:721px){ .carousel-track{animation:none;} .carousel{overflow-x:auto;} }
+
+  /* Grating configurator — enquiry CTA */
+  .config-enquire{display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-top:20px;}
+  .config-enquire .btn-inquiry{width:auto;}
+  .config-enquire-note{font-size:12.5px; color:var(--muted);}
+
+  /* Enquiry modal */
+  .enq-overlay{position:fixed; inset:0; z-index:200; display:flex; align-items:flex-start; justify-content:center;
+    padding:40px 18px; overflow-y:auto; background:rgba(11,28,63,.62); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);}
+  .enq-overlay[hidden]{display:none;}
+  .enq-modal{position:relative; width:100%; max-width:640px; background:#fff; border-radius:16px;
+    padding:30px 30px 26px; box-shadow:0 30px 70px -20px rgba(11,28,63,.6); animation:enqIn .22s var(--ease);}
+  @keyframes enqIn{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;}}
+  @media (max-width:560px){ .enq-modal{padding:24px 18px 20px;} .enq-overlay{padding:16px 10px;} }
+  .enq-close{position:absolute; top:14px; right:16px; border:none; background:none; font-size:26px; line-height:1;
+    color:var(--muted); cursor:pointer; padding:2px 6px; border-radius:8px; transition:color .15s, background .15s;}
+  .enq-close:hover{color:var(--navy-ink); background:var(--paper);}
+  .enq-title{font-family:'Manrope',sans-serif; font-size:20px; font-weight:800; color:var(--navy-ink); margin:0 0 4px;}
+  .enq-sub{font-size:13px; color:var(--muted); margin:0 0 18px;}
+  .enq-form{display:flex; flex-direction:column; gap:12px;}
+  .enq-form input[type=text], .enq-form input[type=email], .enq-form textarea{
+    width:100%; padding:13px 14px; border:1px solid var(--line); border-radius:10px;
+    font-family:'Inter',sans-serif; font-size:14px; color:var(--navy-ink); background:#fff; box-shadow:var(--shadow-sm);}
+  .enq-form textarea{resize:vertical; min-height:96px;}
+  .enq-form input:focus, .enq-form textarea:focus, .enq-form select:focus{
+    outline:none; border-color:var(--navy); box-shadow:0 0 0 3px rgba(28,63,134,.12);}
+  .enq-form .sel{width:100%;}
+  .enq-form input:required:invalid{}
+  .enq-form .field-err{border-color:var(--red) !important; box-shadow:0 0 0 3px rgba(226,56,43,.12) !important;}
+  .enq-file{display:flex; flex-direction:column; gap:5px; font-size:12px; color:var(--muted);}
+  .enq-file input{font-size:13px;}
+  .enq-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:6px;}
+  .enq-send, .enq-reset{font-family:'Manrope',sans-serif; font-weight:700; font-size:14px; padding:12px 22px; border-radius:10px; cursor:pointer; border:1px solid var(--navy-deep);}
+  .enq-send{background:var(--navy-deep); color:#fff; box-shadow:0 10px 22px -10px rgba(17,42,94,.6);}
+  .enq-send:hover{background:var(--navy);}
+  .enq-reset{background:#fff; color:var(--navy-deep);}
+  .enq-reset:hover{background:var(--paper);}
 </style>
 </head>
 <body>
@@ -880,7 +963,12 @@
       </div>
       <div class="hero-stats" data-reveal data-delay="3">
         <div class="stat"><div class="n">60<small>+</small></div><div class="l">Catalogue grating sizes</div></div>
-        <div class="stat"><div class="n">A15–F900</div><div class="l">BS EN 124 load classes</div></div>
+        <div class="stat stat-classes">
+          <div class="lc-chips" aria-label="All load classes">
+            <span>A15</span><span>B125</span><span>C250</span><span>D400</span><span>E600</span><span>F900</span>
+          </div>
+          <div class="l">BS EN 124 load classes</div>
+        </div>
         <div class="stat"><div class="n">90<small>t</small></div><div class="l">Max rated wheel load</div></div>
       </div>
     </div>
@@ -897,7 +985,7 @@
     <div class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> ISO 9001:2015 Certified</div>
     <div class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> BS EN 124 / IS 1726</div>
     <div class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Load Tested to F900</div>
-    <div class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Corrosion-Free Composite</div>
+    <div class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> External Plumbing Solutions</div>
   </div>
 </div>
 
@@ -1004,6 +1092,7 @@
     <p class="lede" data-reveal style="margin-bottom:22px;">Every cover lifts via a rod-type or keyhole-type arrangement, with lifting sockets moulded in High-Strength Plastic Alloy (HSPA) or stainless steel — and every keyhole is closed at the bottom, not through-and-through.</p>
     <div class="dodont" data-reveal data-delay="1">
       <div class="dobox do">
+        <figure class="kh-photo"><img loading="lazy" decoding="async" src="images/keyhole-socket.webp" alt="THERMODRAIN HSPA / stainless-steel socket keyhole with insert" onerror="this.closest('.kh-photo').style.display='none'"><figcaption>HSPA / stainless-steel socket keyhole</figcaption></figure>
         <h4>THERMODRAIN socket keyhole — with insert</h4>
         <ul>
           <li>HSPA / stainless-steel socket protects the FRP from wear during repeated lifting.</li>
@@ -1014,6 +1103,7 @@
         </ul>
       </div>
       <div class="dobox dont">
+        <figure class="kh-photo"><img loading="lazy" decoding="async" src="images/keyhole-ordinary.webp" alt="Ordinary keyhole with no insert" onerror="this.closest('.kh-photo').style.display='none'"><figcaption>Ordinary keyhole — no insert</figcaption></figure>
         <h4>Ordinary keyhole — no insert</h4>
         <ul>
           <li>Bare FRP wears and cracks around the keyhole with repeated lifting.</li>
@@ -1088,6 +1178,14 @@
         </div>
       </div>
       <div class="chart-note">Type any length &amp; width from <b>50 mm to 2400 mm</b>, or use <b>−/+</b> to add or remove one grating section (<b>50 mm</b>) at a time. The panel redraws live at true proportions.</div>
+
+      <div class="config-enquire">
+        <button type="button" class="btn-inquiry" id="configEnquireBtn" data-enquiry-open>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          Enquire about this grating
+        </button>
+        <span class="config-enquire-note">We'll include your configured size &amp; edge finish automatically.</span>
+      </div>
 
       <details class="size-guide">
         <summary>
@@ -1201,6 +1299,7 @@
       <h2 class="title">Every THERMODRAIN product</h2>
       <p class="lede">The complete FRP/GRP/composite range — covers, gratings, gully &amp; tank covers, chambers, drain channels and accessories. Tap any product for its salient features and sizes.</p>
     </div>
+
     <div data-reveal data-delay="1">
 
       <details class="acc" open>
@@ -1216,6 +1315,16 @@
           </ul>
           <div class="sub">Frame clear opening — sizes</div>
           <p style="margin:0;">Circular Ø400–Ø1400 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-1.webp" alt="Solid Top Cover 1200×1200 D400 installed"><figcaption>1200×1200 D400</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-2.webp" alt="Solid Top Cover Ø600 round"><figcaption>Ø600 round (D400)</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-3.webp" alt="Solid Top Cover 900×600 Smart City"><figcaption>900×600 · 5 T</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-4.webp" alt="Solid Top Cover Ø1000 round"><figcaption>Ø1000 round</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-5.webp" alt="Solid Top Cover 900×600 C250"><figcaption>900×600 C250</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-6.webp" alt="Solid Top Cover 600×600 B125"><figcaption>600×600 B125</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/st-photo-7.webp" alt="Solid Top Cover 600×600 F900"><figcaption>600×600 F900</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1230,6 +1339,16 @@
             <li>HSPA / stainless-steel closed-bottom keyholes.</li>
             <li>Self-pigmented, non-brittle, zero permanent set.</li>
           </ul>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-1.webp" alt="Multiple Covers 600×600 set"><figcaption>600×600 set</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-2.webp" alt="Multiple Cover 900×650 / 900×450"><figcaption>900×650 / 900×450</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-3.webp" alt="Multiple Covers 1200×1200"><figcaption>1200×1200</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-4.webp" alt="Multiple Cover 750×750 run"><figcaption>750×750 run</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-5.webp" alt="Multiple Covers 1000×1000 D400"><figcaption>1000×1000 D400</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-6.webp" alt="Multiple Cover 900×570 roadway"><figcaption>900×570 roadway</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/mc-photo-7.webp" alt="Multiple Cover 900×450 twin (2.5 T)"><figcaption>900×450 · 2.5 T</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1244,6 +1363,16 @@
           </ul>
           <div class="sub">Frame clear opening — sizes</div>
           <p style="margin:0;">Circular Ø500–Ø1000 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/rc-photo-1.webp" alt="Recess cover filled with pavers, blending into path"><figcaption>Paver-filled path</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/rc-photo-2.webp" alt="Round recess cover pan (2.5 T)"><figcaption>Round recess pan (2.5 T)</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/rc-photo-3.webp" alt="Recess covers giving chamber access"><figcaption>Chamber access</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/rc-photo-4.webp" alt="Granite-filled recess covers in a parking bay"><figcaption>Granite-filled bay</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/rc-photo-5.webp" alt="Four tile-filled recess covers"><figcaption>Tile-filled four-set</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/rc-photo-6.webp" alt="Grass-filled recess covers in a lawn"><figcaption>Grass-filled lawn</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/rc-photo-7.webp" alt="Recess covers with paver and grass-joint finish"><figcaption>Paver &amp; grass joints</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1259,6 +1388,15 @@
           </ul>
           <div class="sub">Frame clear opening — sizes</div>
           <p style="margin:0;">Circular Ø400–Ø1000 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/aw-photo-1.webp" alt="Air & Water Tight round cover with frame (D400)"><figcaption>Round cover &amp; frame (D400)</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/aw-photo-2.webp" alt="Air & Water Tight cover 1000×1000 D400"><figcaption>1000×1000 D400</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/aw-photo-3.webp" alt="Air & Water Tight cover 900Ø D400"><figcaption>900Ø round D400</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/aw-photo-4.webp" alt="Air & Water Tight cover 450×450 B125"><figcaption>450×450 B125</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/aw-photo-5.webp" alt="Air & Water Tight cover 600×600 E600"><figcaption>600×600 E600</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/aw-photo-6.webp" alt="Air & Water Tight cover 600×450 B125"><figcaption>600×450 B125</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1276,6 +1414,16 @@
           <p style="margin:0 0 4px;">Swimming pools · industrial plants · podiums · basement car parks · storm-water drain trenches · cable trenches.</p>
           <div class="sub">Size chart — 30 &amp; 40 mm height (mm)</div>
           <div class="sizes" id="gratingChart"></div>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/grating-rooftop.webp" alt="FRP grating rooftop platform"><figcaption>Rooftop platform</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-walkway.webp" alt="FRP grating walkway with railings"><figcaption>Walkway with railings</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-pooldrain.webp" alt="Poolside FRP grating drain"><figcaption>Poolside drain</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-staircase.webp" alt="FRP grating staircase treads"><figcaption>Staircase treads</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-panel.webp" alt="Moulded FRP grating panel"><figcaption>Moulded panel</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-channel.webp" alt="FRP grating drain channel"><figcaption>Drain channel</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/grating-parking.webp" alt="FRP grating drain in parking deck"><figcaption>Parking-deck drain</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1289,6 +1437,16 @@
             <li>Allow rainwater to penetrate the soil.</li>
             <li>Artistic designs improve landscaping and aesthetics.</li>
           </ul>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/tg-photo-1.webp" alt="Round tree grating, concentric rings"><figcaption>Round grating (rings)</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/tg-photo-2.webp" alt="Round tree grating installed"><figcaption>Round grating — installed</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/tg-photo-3.webp" alt="Square four-piece tree grating"><figcaption>Square 4-piece</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/tg-photo-4.webp" alt="Square tree grating around a palm"><figcaption>Square — palm base</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/tg-photo-5.webp" alt="Square tree grating, sandstone finish"><figcaption>Square — sandstone finish</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/tg-photo-6.webp" alt="Round two-ring tree grating"><figcaption>Round two-ring</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/tg-photo-7.webp" alt="Square four-piece tree grating installed"><figcaption>Square 4-piece — installed</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1304,6 +1462,16 @@
           <p style="margin:0 0 4px;">Industrial plants · podiums · basement car parks · storm-water drain trenches.</p>
           <div class="sub">Frame clear opening — sizes</div>
           <p style="margin:0;">Square 300×300–900×900 · Ø600 round · Rectangular incl. 335×930, 500×600, 900×600 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/wg-photo-1.webp" alt="900×600 D400 slotted water gully cover"><figcaption>900×600 D400 slotted</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/wg-photo-2.webp" alt="600×600 slotted water gully cover"><figcaption>600×600 slotted</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/wg-photo-3.webp" alt="Water gully covers in a grass-paver drive"><figcaption>Grass-paver drive</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/wg-photo-4.webp" alt="Slotted water gully cover in a parking bay"><figcaption>Parking bay</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/wg-photo-5.webp" alt="Water gully cover on a walkway"><figcaption>Walkway gully</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/wg-photo-6.webp" alt="Water gully cover run"><figcaption>Gully cover run</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/wg-photo-7.webp" alt="Long slotted water gully trench run"><figcaption>Long trench run</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1319,6 +1487,16 @@
           </ul>
           <div class="sub">Frame opening — sizes</div>
           <p style="margin:0;">Ø600 · Ø750 · 600×600 · 750×750 mm.</p>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/hg-photo-1.webp" alt="Hinged water-tank cover 800Ø"><figcaption>Hinged water-tank cover</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/hg-photo-2.webp" alt="600×600 hinged sewer cover B125"><figcaption>600×600 hinged (B125)</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/hg-photo-3.webp" alt="Hinged cover lid open on frame"><figcaption>Lid open on frame</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/hg-photo-4.webp" alt="Ø600 D400 hinged sewer cover"><figcaption>Ø600 D400 hinged</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/hg-photo-5.webp" alt="Hinged cover hinge detail"><figcaption>Hinge detail</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/hg-photo-6.webp" alt="Hinged cover closed"><figcaption>Closed cover</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/hg-photo-7.webp" alt="Hinged cover with frame"><figcaption>Cover with frame</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1331,6 +1509,14 @@
             <li>Lightweight, high-strength &amp; durable, impact resistant.</li>
             <li>Dimensional stability, long life cycle, low maintenance.</li>
           </ul>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img decoding="async" src="images/langle-photo-1.webp" alt="FRP L-angle profile section"><figcaption>FRP L-angle profile</figcaption></figure>
+            <figure><img decoding="async" src="images/langle-photo-2.webp" alt="FRP L-angle, light finish"><figcaption>L-angle (light finish)</figcaption></figure>
+            <figure><img decoding="async" src="images/langle-photo-3.webp" alt="FRP L-angles in a range of sizes"><figcaption>Range of sizes</figcaption></figure>
+            <figure><img decoding="async" src="images/langle-photo-4.webp" alt="Pair of FRP L-angle sections"><figcaption>L-angle pair</figcaption></figure>
+            <figure><img decoding="async" src="images/langle-photo-5.webp" alt="Nested FRP L-angle sizes"><figcaption>Nested L-angle sizes</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1344,6 +1530,16 @@
             <li>Completely leak-proof and relocatable; can be used as inspection chambers.</li>
             <li>Readily mounted by digging, concreting the bottom &amp; fixing.</li>
           </ul>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img decoding="async" src="images/chamber-photo-1.webp" alt="900x450 FRP chamber with 2.5T cover"><figcaption>900×450 chamber (2.5 T)</figcaption></figure>
+            <figure><img decoding="async" src="images/chamber-photo-2.webp" alt="Fibre-optic FRP chamber"><figcaption>Fibre-optic chamber (D400)</figcaption></figure>
+            <figure><img decoding="async" src="images/chamber-photo-3.webp" alt="300x300 gully chamber with grating"><figcaption>300×300 gully chamber</figcaption></figure>
+            <figure><img decoding="async" src="images/chamber-photo-4.webp" alt="Fibre-optic riser chamber"><figcaption>Fibre-optic riser chamber</figcaption></figure>
+            <figure><img decoding="async" src="images/chamber-photo-5.webp" alt="Omantel D400 chamber installed on site"><figcaption>Omantel chamber, installed</figcaption></figure>
+            <figure><img decoding="async" src="images/chamber-photo-6.webp" alt="650x750 PRISTINE-E water-tight chamber"><figcaption>650×750 PRISTINE-E chamber</figcaption></figure>
+            <figure><img decoding="async" src="images/chamber-photo-7.webp" alt="600x600 FRP chamber with cover"><figcaption>600×600 chamber with cover</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1361,6 +1557,16 @@
           <div class="sizes"><span class="sz">128 × 155 × 1000</span><span class="sz">167 × 155 × 1000</span><span class="sz">326 × 300 × 1000</span><span class="sz">525 × 300 × 1000</span></div>
           <div class="sub">Advantages vs. cement / concrete channels</div>
           <p style="margin:0;">Fast to install · minimal manpower &amp; labour cost · no water-proofing · no separate MS/FRP angles for gratings · no hidden cost.</p>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img loading="lazy" decoding="async" src="images/dc-photo-1.webp" alt="FRP drain channel section with grating"><figcaption>Channel with grating</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/dc-photo-2.webp" alt="FRP drain channel"><figcaption>Drain channel section</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/dc-photo-3.webp" alt="FRP drain channel with slotted grating"><figcaption>Slotted-grating channel</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/dc-photo-4.webp" alt="Installed drain channel run"><figcaption>Installed run</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/dc-photo-5.webp" alt="Drain channel in a plaza"><figcaption>Plaza trench drain</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/dc-photo-6.webp" alt="Drain channel network installed"><figcaption>Channel network</figcaption></figure>
+            <figure><img loading="lazy" decoding="async" src="images/dc-photo-7.webp" alt="Long drain channel run with gratings"><figcaption>Long channel run</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1370,6 +1576,14 @@
           <p>Lifters ensure manhole covers are lifted with ease and without damage — for circular, square or rectangular covers.</p>
           <div class="sub">Sizes applicable</div>
           <p style="margin:0;">Square / Rectangular: all sizes 300×300 to 1500×1500 · Circular: all sizes Ø300 to Ø900 mm.</p>
+          <div class="sub">Photos</div>
+          <div class="acc-photos">
+            <figure><img decoding="async" src="images/la-photo-1.webp" alt="Wheeled cover-lifting trolley, top view"><figcaption>Wheeled lifting trolley</figcaption></figure>
+            <figure><img decoding="async" src="images/la-photo-2.webp" alt="Set of cover-lifting trolleys"><figcaption>Trolley range</figcaption></figure>
+            <figure><img decoding="async" src="images/la-photo-3.webp" alt="T-bar lifting keys in several sizes"><figcaption>T-bar lifting keys</figcaption></figure>
+            <figure><img decoding="async" src="images/la-photo-4.webp" alt="Lifting trolley beside a round D400 cover"><figcaption>Trolley with a Ø D400 cover</figcaption></figure>
+            <figure><img decoding="async" src="images/la-photo-5.webp" alt="Lifting trolley in use on a Ø900 D400 cover"><figcaption>Lifting a Ø900 D400 cover</figcaption></figure>
+          </div>
         </div>
       </details>
 
@@ -1403,7 +1617,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
         Load testing &amp; permanent set
       </div>
-      We run one of the largest load-testing machines in the segment — rated to <b>90 tons</b>. Permanent set is a multiple-loading test that measures any permanent deformation in the cover after repeated loading within a short time, as specified in BS&nbsp;EN&nbsp;124. Permanent set is <b>zero</b> across all THERMODRAIN sizes and load classes.
+      Every THERMODRAIN product is tested to BS&nbsp;EN&nbsp;124 all the way up to load class <b>F900</b>, on one of the largest load-testing machines in the segment — rated to <b>90 tons (900 kN)</b>. Permanent set is a multiple-loading test that measures any permanent deformation in the cover after repeated loading within a short time, as specified in BS&nbsp;EN&nbsp;124. Permanent set is <b>zero</b> across all THERMODRAIN sizes and load classes.
     </div>
     <div class="dodont" data-reveal data-delay="2">
       <div class="dobox do">
@@ -1542,6 +1756,32 @@
   <div class="fbar">© <span id="year"></span> Thermoset Poly Products (I) Pvt. Ltd. · THERMODRAIN®</div>
 </footer>
 
+<!-- ============ ENQUIRY MODAL ============ -->
+<div class="enq-overlay" id="enqOverlay" role="dialog" aria-modal="true" aria-labelledby="enqTitle" hidden>
+  <div class="enq-modal">
+    <button type="button" class="enq-close" id="enqClose" aria-label="Close enquiry form">&times;</button>
+    <h3 id="enqTitle" class="enq-title">Send an enquiry</h3>
+    <p class="enq-sub">Fill in your details and requirement — we'll get back to you with a quotation.</p>
+    <form id="enqForm" class="enq-form" novalidate>
+      <input type="text"  name="company"  required placeholder="Name of Company :*">
+      <input type="text"  name="contact"  required placeholder="Name of Contact Person :*">
+      <input type="text"  name="phone"    required placeholder="Tel. No. / Cell No. :*">
+      <input type="email" name="email"    required placeholder="Email :*">
+      <div class="sel-wrap"><select name="country" class="sel" id="enqCountry"></select></div>
+      <input type="text"  name="address"  required placeholder="Address / City / Location :*">
+      <textarea name="details" required rows="4" placeholder="Requirements Details :*"></textarea>
+      <label class="enq-file">
+        <input type="file" name="attachment" id="enqFile">
+        <span class="enq-file-note">Attach a file to your email after it opens (optional).</span>
+      </label>
+      <div class="enq-actions">
+        <button type="submit" class="enq-send">Send inquiry</button>
+        <button type="reset"  class="enq-reset">Reset</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 const sizeChart = [48,88,128,167,207,247,286,326,366,406,445,485,525,564,604,644,684,723,763,803,843,882,922,962,1001,1041,1081,1121,1160,1200,1240,1279,1319,1359,1399,1438,1478,1518,1557,1597,1637,1677,1716,1756,1796,1836,1875,1914,1955,1993,2034,2074,2114,2154,2194,2234,2273,2314,2353,2393];
 
@@ -1615,7 +1855,77 @@ const photos = {"A15":"images/st-A15.webp","B125":"images/st-B125.webp","C250":"
      'Solid Top Manhole Cover': ['images/st-top.webp','images/st-angle.webp','images/st-installed.webp'],
 */
 const productGallery = {
-  // 'Solid Top Manhole Cover': ['images/st-top.webp', {src:'images/st-angle.webp', cap:'Angle view'}, 'images/st-installed.webp'],
+  'Solid Top Manhole Cover': [
+    {src:'images/st-photo-1.webp', cap:'1200×1200 D400, site-installed'},
+    {src:'images/st-photo-2.webp', cap:'Ø600 round cover with frame (D400)'},
+    {src:'images/st-photo-3.webp', cap:'900×600 5T — Smaspur Smart City'},
+    {src:'images/st-photo-4.webp', cap:'Ø1000 round cover with frame (2 T)'},
+    {src:'images/st-photo-5.webp', cap:'900×600 C250 — Pune Smart City'},
+    {src:'images/st-photo-6.webp', cap:'600×600 B125 cover with frame'},
+    {src:'images/st-photo-7.webp', cap:'600×600 F900 cover with frame'},
+  ],
+  'Multiple Covers': [
+    {src:'images/mc-photo-1.webp', cap:'Four 600×600 covers in one frame'},
+    {src:'images/mc-photo-2.webp', cap:'900×650 & 900×450 multiple cover'},
+    {src:'images/mc-photo-3.webp', cap:'1200×1200 covers, landscaped run'},
+    {src:'images/mc-photo-4.webp', cap:'750×750 three-cover run (C250)'},
+    {src:'images/mc-photo-5.webp', cap:'1000×1000 D400 multiple covers'},
+    {src:'images/mc-photo-6.webp', cap:'900×570 covers, roadway run'},
+    {src:'images/mc-photo-7.webp', cap:'900×450 twin cover (2.5T)'},
+  ],
+  'Hinged Manhole Cover': [
+    {src:'images/hg-photo-1.webp', cap:'Hinged water-tank cover (800Ø)'},
+    {src:'images/hg-photo-2.webp', cap:'600×600 hinged sewer cover (B125)'},
+    {src:'images/hg-photo-3.webp', cap:'Hinged lid open on frame'},
+    {src:'images/hg-photo-4.webp', cap:'Ø600 D400 hinged sewer cover'},
+    {src:'images/hg-photo-5.webp', cap:'Hinged cover — hinge detail'},
+    {src:'images/hg-photo-6.webp', cap:'Hinged cover, closed'},
+    {src:'images/hg-photo-7.webp', cap:'Hinged cover with frame'},
+  ],
+  'Water Gully Cover': [
+    {src:'images/wg-photo-1.webp', cap:'900×600 D400 slotted'},
+    {src:'images/wg-photo-2.webp', cap:'600×600 slotted'},
+    {src:'images/wg-photo-3.webp', cap:'Grass-paver drive'},
+    {src:'images/wg-photo-4.webp', cap:'Parking bay'},
+    {src:'images/wg-photo-5.webp', cap:'Walkway gully'},
+    {src:'images/wg-photo-6.webp', cap:'Gully cover run'},
+    {src:'images/wg-photo-7.webp', cap:'Long trench run'},
+  ],
+  'Recess Cover': [
+    {src:'images/rc-photo-1.webp', cap:'Paver-filled, blends into path'},
+    {src:'images/rc-photo-2.webp', cap:'Round recess pan (2.5 T)'},
+    {src:'images/rc-photo-3.webp', cap:'Chamber access — tile-filled'},
+    {src:'images/rc-photo-4.webp', cap:'Granite-filled, parking bay'},
+    {src:'images/rc-photo-5.webp', cap:'Tile-filled four-cover set'},
+    {src:'images/rc-photo-6.webp', cap:'Grass-filled, lawn (invisible)'},
+    {src:'images/rc-photo-7.webp', cap:'Paver & grass-joint finish'},
+  ],
+  'Air & Water Tight Cover': [
+    {src:'images/aw-photo-1.webp', cap:'Round cover & frame (D400)'},
+    {src:'images/aw-photo-2.webp', cap:'1000×1000 D400'},
+    {src:'images/aw-photo-3.webp', cap:'900Ø round D400'},
+    {src:'images/aw-photo-4.webp', cap:'450×450 B125'},
+    {src:'images/aw-photo-5.webp', cap:'600×600 E600'},
+    {src:'images/aw-photo-6.webp', cap:'600×450 B125'},
+  ],
+  'Gratings': [
+    {src:'images/grating-panel.webp',     cap:'Moulded FRP grating panel'},
+    {src:'images/grating-rooftop.webp',   cap:'Rooftop grating platform'},
+    {src:'images/grating-walkway.webp',   cap:'Grating walkway with railings'},
+    {src:'images/grating-staircase.webp', cap:'Grating staircase treads'},
+    {src:'images/grating-pooldrain.webp', cap:'Poolside grating drain'},
+    {src:'images/grating-channel.webp',   cap:'Grating drain channel'},
+    {src:'images/grating-parking.webp',   cap:'Parking-deck grating drain'},
+  ],
+  'Chambers': [
+    {src:'images/chamber-photo-1.webp', cap:'900×450 chamber with 2.5 T cover'},
+    {src:'images/chamber-photo-2.webp', cap:'Fibre-optic chamber (BS EN 124 D400)'},
+    {src:'images/chamber-photo-3.webp', cap:'300×300 gully chamber & grating'},
+    {src:'images/chamber-photo-4.webp', cap:'Fibre-optic riser chamber'},
+    {src:'images/chamber-photo-5.webp', cap:'Omantel D400 chamber, site-installed'},
+    {src:'images/chamber-photo-6.webp', cap:'650×750 PRISTINE-E water-tight chamber'},
+    {src:'images/chamber-photo-7.webp', cap:'600×600 chamber with cover'},
+  ],
 };
 /* ---------- Grating configurator ---------- */
 const MIN = 50, MAX = 2400, MODULE = 50;   // one +/- click = one MODULE-wide grating section
@@ -2152,7 +2462,7 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
   const ids = panels.map(p => p.id);
 
   const seq = tabs.map(t => t.dataset.tab);          // left-to-right tab order = mobile stacking order
-  const oneCol = matchMedia('(max-width:860px)');    // mobile: one continuous page
+  const oneCol = matchMedia('(min-width:0px)');      // one continuous page on every screen (always true)
 
   const setHH = () => {
     document.documentElement.style.setProperty('--hh', header.offsetHeight + 'px');
@@ -2249,6 +2559,100 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
     if(dy < 0 && atBottom())                 goRel(1);   // finger up → next tab
     else if(dy > 0 && atTop() && window.scrollY > 4) goRel(-1);
   }, {passive:true});
+})();
+
+/* ---------- Range: auto-moving product photo carousel ----------
+   Add more photos here as you upload them to images/ (multiple per product / size).
+   Each item is {src, label}. */
+/* ---------- Range: turn each product's under-card Photos into an auto-moving carousel ---------- */
+(function(){
+  document.querySelectorAll('#range .acc-photos').forEach(g => {
+    const figs = [...g.children];
+    if(figs.length < 2) return;
+    const track = document.createElement('div');
+    track.className = 'acc-photos-track';
+    figs.forEach(f => track.appendChild(f));
+    figs.forEach(f => track.appendChild(f.cloneNode(true)));   // duplicate for a seamless -50% loop
+    g.appendChild(track);
+    g.classList.add('is-carousel');
+    track.style.animationDuration = Math.max(20, figs.length * 5) + 's';
+  });
+})();
+
+/* ---------- Enquiry modal (opens from the grating configurator) ---------- */
+(function(){
+  const overlay = document.getElementById('enqOverlay');
+  const form = document.getElementById('enqForm');
+  if(!overlay || !form) return;
+  const closeBtn = document.getElementById('enqClose');
+  const configBtn = document.getElementById('configEnquireBtn');
+
+  // country list
+  const countries = ['Select a country','India','United Arab Emirates','Saudi Arabia','Qatar','Oman','Kuwait','Bahrain','United States','United Kingdom','Australia','Canada','Singapore','Malaysia','Sri Lanka','Bangladesh','Nepal','Kenya','Nigeria','South Africa','Germany','France','Netherlands','Other'];
+  const sel = document.getElementById('enqCountry');
+  countries.forEach((c,i) => { const o = document.createElement('option'); o.value = i===0 ? '' : c; o.textContent = c; if(i===0){ o.disabled = true; o.selected = true; } sel.appendChild(o); });
+
+  let lastFocus = null;
+  function open(prefill){
+    lastFocus = document.activeElement;
+    if(prefill) form.querySelector('[name=details]').value = prefill;
+    overlay.hidden = false;
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => form.querySelector('[name=company]').focus(), 30);
+  }
+  function close(){
+    overlay.hidden = true;
+    document.body.style.overflow = '';
+    if(lastFocus) lastFocus.focus();
+  }
+
+  // configured grating summary → prefill the requirement box
+  function gratingPrefill(){
+    const g = id => (document.getElementById(id)||{}).textContent || '';
+    const size = g('roSize'), edge = g('roEdge'), h = g('roHeight'), cut = g('roCut');
+    if(!size) return '';
+    return `Grating enquiry\nOverall size: ${size}\nBar height: ${h}\nCutting type: ${cut} (${edge})\n\nQuantity: \nDelivery location: \n`;
+  }
+
+  if(configBtn) configBtn.addEventListener('click', () => open(gratingPrefill()));
+  document.querySelectorAll('[data-enquiry-open]').forEach(b => { if(b !== configBtn) b.addEventListener('click', () => open('')); });
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', e => { if(e.target === overlay) close(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && !overlay.hidden) close(); });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    // validate required fields
+    let ok = true;
+    form.querySelectorAll('[required]').forEach(f => {
+      const bad = !String(f.value).trim();
+      f.classList.toggle('field-err', bad);
+      if(bad) ok = false;
+    });
+    if(!ok){ form.querySelector('.field-err').focus(); return; }
+
+    const v = n => (form.querySelector(`[name=${n}]`).value || '').trim();
+    const file = document.getElementById('enqFile');
+    const fname = file && file.files && file.files[0] ? file.files[0].name : '';
+    const subject = `Website enquiry — ${v('company')}`;
+    const body = [
+      'Company: ' + v('company'),
+      'Contact person: ' + v('contact'),
+      'Tel / Cell: ' + v('phone'),
+      'Email: ' + v('email'),
+      'Country: ' + (v('country') || '—'),
+      'Address / City / Location: ' + v('address'),
+      '',
+      'Requirement details:',
+      v('details'),
+      ''
+    ];
+    if(fname) body.push('(Attachment to add manually: ' + fname + ')', '');
+    window.location.href = 'mailto:thermodrain@frpmanholecover.com?subject=' +
+      encodeURIComponent(subject) + '&body=' + encodeURIComponent(body.join('\n'));
+    close();
+  });
+  form.addEventListener('input', e => { if(e.target.classList.contains('field-err')) e.target.classList.remove('field-err'); });
 })();
 </script>
 <!-- Vercel Web Analytics (anonymous traffic stats; enable Analytics in the Vercel project) -->
