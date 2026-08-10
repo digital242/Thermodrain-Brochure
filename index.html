@@ -600,7 +600,7 @@
   .sel:focus{outline:none; border-color:var(--navy); box-shadow:0 0 0 3px rgba(28,63,134,.12);}
   .btn-inquiry{
     display:flex; align-items:center; justify-content:center; gap:9px; width:100%; margin-top:20px;
-    padding:15px 22px; border-radius:11px; background:var(--red); color:#fff; text-decoration:none;
+    padding:15px 22px; border:0; border-radius:11px; background:var(--red); color:#fff; text-decoration:none;
     font-family:'Manrope',sans-serif; font-weight:700; font-size:14.5px; letter-spacing:.01em;
     box-shadow:0 14px 30px -12px rgba(226,56,43,.6); position:relative; overflow:hidden;
     transition:transform .16s var(--ease), box-shadow .16s, background .16s;
@@ -895,6 +895,9 @@
   .config-enquire{display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-top:20px;}
   .config-enquire .btn-inquiry{width:auto;}
   .config-enquire-note{font-size:12.5px; color:var(--muted);}
+  /* Yellow enquiry button (dark text for contrast on gold) */
+  #configEnquireBtn{background:var(--gold); color:var(--navy-ink); box-shadow:0 14px 30px -12px rgba(246,188,22,.6);}
+  #configEnquireBtn:hover{background:var(--gold-soft); box-shadow:0 20px 40px -14px rgba(246,188,22,.78);}
 
   /* Enquiry modal */
   .enq-overlay{position:fixed; inset:0; z-index:200; display:flex; align-items:flex-start; justify-content:center;
@@ -1746,8 +1749,8 @@
     <div>
       <h4>Contact</h4>
       <ul>
-        <li>Arenja Plaza, C-302, Sector-15,<br>CBD Belapur, Navi Mumbai 400&nbsp;614, India</li>
-        <li><a href="tel:+912240741414">+91 22 4074 1414</a></li>
+        <li>24 High, Office No. 1020–1021, 10th Floor,<br>Plot No. D-225 &amp; D-226, TTC-MIDC,<br>Opposite DY Patil Stadium, Nerul,<br>Navi Mumbai 400&nbsp;706, India</li>
+        <li><a href="tel:+917021650820">+91 70216 50820</a></li>
         <li><a href="mailto:thermodrain@frpmanholecover.com">thermodrain@frpmanholecover.com</a></li>
         <li><a href="https://www.frpmanholecover.com/" target="_blank" rel="noopener">www.frpmanholecover.com</a></li>
       </ul>
