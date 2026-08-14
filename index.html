@@ -726,11 +726,8 @@
   main .tab-panel.active{display:block;}
   @media (max-width:720px){ .tabbar-inner{padding:0 10px;} .tab{padding:14px 12px; font-size:12px;} .tab::after{left:12px; right:12px;} }
 
-  /* One continuous page (all screens) — every section stacked in tab order, tab bar becomes jump links */
-  main{display:flex; flex-direction:column;}
+  /* One continuous page (all screens) — every section stacked in DOM/tab order, tab bar becomes jump links */
   main .tab-panel{display:block; scroll-margin-top:calc(var(--hh,62px) + var(--tabh,52px) + 6px);}
-  #about{order:1;} #why{order:2;} #explorer{order:3;} #configurator{order:4;}
-  #range{order:5;} #loads{order:6;} #applications{order:7;} #compare{order:8;}
   main .tab-panel + .tab-panel{border-top:1px solid var(--line);}
 
   /* ============ ABOUT ============ */
@@ -950,8 +947,9 @@
     <nav id="siteNav">
       <a href="#about">About</a>
       <a href="#why">Why FRP</a>
-      <a href="#configurator">Grating configurator</a>
-      <a href="#explorer">Products</a>
+      <a href="#range">Product Range</a>
+      <a href="#explorer">Product Configurator</a>
+      <a href="#configurator">Grating Configurator</a>
       <a href="#contact" class="cta">Contact</a>
     </nav>
   </div>
@@ -999,14 +997,13 @@
 <!-- ============ TAB BAR ============ -->
 <div class="tabbar" id="tabbar">
   <div class="tabbar-inner">
-    <button type="button" class="tab" data-tab="about">About</button>
+    <button type="button" class="tab" data-tab="about">About Thermodrain</button>
     <button type="button" class="tab" data-tab="why">Why FRP</button>
-    <button type="button" class="tab" data-tab="explorer">Products</button>
-    <button type="button" class="tab" data-tab="configurator">Grating configurator</button>
-    <button type="button" class="tab" data-tab="range">Range</button>
-    <button type="button" class="tab" data-tab="loads">Load classes</button>
-    <button type="button" class="tab" data-tab="applications">Applications</button>
-    <button type="button" class="tab" data-tab="compare">Compare</button>
+    <button type="button" class="tab" data-tab="loads">Load Classes &amp; Applications</button>
+    <button type="button" class="tab" data-tab="range">Product Range</button>
+    <button type="button" class="tab" data-tab="compare">Comparisons</button>
+    <button type="button" class="tab" data-tab="explorer">Product Configurator</button>
+    <button type="button" class="tab" data-tab="configurator">Grating Configurator</button>
   </div>
 </div>
 
@@ -1122,184 +1119,79 @@
     </div>
   </section>
 
-  <!-- ============ CONCEPT 01 · CONFIGURATOR ============ -->
-  <section class="section tab-panel" id="configurator">
+  <!-- ============ LOAD CLASSES ============ -->
+  <section class="section tab-panel" id="loads">
     <div class="sec-head" data-reveal>
-      <span class="eyebrow">Concept 01</span>
-      <h2 class="title">Grating size configurator</h2>
-      <p class="lede">Type any length and width (or step one grating section at a time) and switch bar height — the panel redraws live at true proportions.</p>
+      <span class="eyebrow">Load classes &amp; applications</span>
+      <h2 class="title">Rated from A15 to F900</h2>
+      <p class="lede">Every THERMODRAIN product is load-tested to BS EN 124, IS 1726 &amp; AASHTO M306 — from 2.5 tons up to F900 (90 tons) — including a permanent-set (multiple-loading) test.</p>
     </div>
-
-    <div class="demo" data-reveal data-delay="1">
-      <div class="demo-grid">
-        <div class="panel panel-controls">
-          <div class="panel-head"><span class="idx">01</span><h3>Configure your grating</h3></div>
-
-          <div class="dim-row">
-            <div class="dim-label">Length <span class="dim-hint">· type any size · 50–2400 mm</span></div>
-            <div class="stepper">
-              <button id="lenMinus" aria-label="Remove one section from length">−</button>
-              <div class="val"><input id="lenVal" class="szin" type="number" min="50" max="2400" step="50" value="1000" inputmode="numeric" aria-label="Length in millimetres"><small>mm</small></div>
-              <button id="lenPlus" aria-label="Add one section to length">+</button>
-            </div>
-          </div>
-
-          <div class="dim-row">
-            <div class="dim-label">Width <span class="dim-hint">· type any size · 50–2400 mm</span></div>
-            <div class="stepper">
-              <button id="widMinus" aria-label="Remove one section from width">−</button>
-              <div class="val"><input id="widVal" class="szin" type="number" min="50" max="2400" step="50" value="400" inputmode="numeric" aria-label="Width in millimetres"><small>mm</small></div>
-              <button id="widPlus" aria-label="Add one section to width">+</button>
-            </div>
-          </div>
-
-          <div class="dim-row">
-            <div class="dim-label">Bar height</div>
-            <div class="toggle-row">
-              <button class="toggle-btn active" data-h="30" id="h30">30 mm</button>
-              <button class="toggle-btn" data-h="40" id="h40">40 mm</button>
-            </div>
-          </div>
-
-          <div class="dim-row">
-            <div class="dim-label">Cutting type <span class="dim-hint">· how the edges are finished</span></div>
-            <div class="cut-grid" id="cutGrid"></div>
-            <div class="cut-legend">
-              <span class="li"><span class="sw closed"></span> Closed / flush edge</span>
-              <span class="li"><span class="sw open"></span> Open / tooth edge</span>
-            </div>
-          </div>
-
-          <div class="readout">
-            <div><div class="k">Overall size</div><div class="v" id="roSize">1001 × 406 mm</div></div>
-            <div><div class="k">Panel area</div><div class="v" id="roArea">0.41 m²</div></div>
-            <div><div class="k">Height class</div><div class="v" id="roHeight">30 mm</div></div>
-            <div><div class="k">Grid</div><div class="v" id="roGrid">20 × 8 sections</div></div>
-            <div><div class="k">Cutting type</div><div class="v" id="roCut">Type I</div></div>
-            <div><div class="k">Edge finish</div><div class="v" id="roEdge">Closed all sides</div></div>
-          </div>
-        </div>
-
-        <div class="panel canvas-wrap">
-          <svg id="gratingSvg" width="490" height="470" viewBox="0 0 490 470" role="img" aria-label="Grating preview"></svg>
-        </div>
+    <div class="cmp" data-reveal data-delay="1">
+      <div class="cmp-scroll">
+        <table>
+          <thead><tr><th>Class</th><th class="hl">Load</th><th>Installation areas</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>A15</td><td class="col-frp">1.5 T · 15 kN</td><td>Pedestrian &amp; pedal-cyclist areas only</td><td>Bicycle ways, pedestrian ways</td></tr>
+            <tr><td>B125</td><td class="col-frp">12.5 T · 125 kN</td><td>Footways, pedestrian areas, light duty</td><td>Car parking areas</td></tr>
+            <tr><td>C250</td><td class="col-frp">25 T · 250 kN</td><td>Kerbside channels &amp; high wheel-load zones</td><td>Kerbside parking areas</td></tr>
+            <tr><td>D400</td><td class="col-frp">40 T · 400 kN</td><td>Carriageways &amp; parking for all road vehicles</td><td>Roadways, vehicle traffic</td></tr>
+            <tr><td>E600</td><td class="col-frp">60 T · 600 kN</td><td>Heavy-duty &amp; high wheel-load zones</td><td>Sea ports, docks</td></tr>
+            <tr><td>F900</td><td class="col-frp">90 T · 900 kN</td><td>Extreme wheel-load zones</td><td>Airport aprons, runways</td></tr>
+          </tbody>
+        </table>
       </div>
-      <div class="chart-note">Type any length &amp; width from <b>50 mm to 2400 mm</b>, or use <b>−/+</b> to add or remove one grating section (<b>50 mm</b>) at a time. The panel redraws live at true proportions.</div>
-
-      <div class="config-enquire">
-        <button type="button" class="btn-inquiry" id="configEnquireBtn" data-enquiry-open>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          Enquire about this grating
-        </button>
-        <span class="config-enquire-note">We'll include your configured size &amp; edge finish automatically.</span>
+    </div>
+    <div class="callout" data-reveal data-delay="1" style="margin-top:24px;">
+      <div class="h">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+        Load testing &amp; permanent set
       </div>
-
-      <details class="size-guide">
-        <summary>
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-4.6-4.6a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4Z"/><path d="m7.5 10.5 2 2"/><path d="m10.5 7.5 2 2"/><path d="m13.5 4.5 2 2"/></svg>
-          How to choose your size
-          <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-        </summary>
-        <div class="sg-body">
-          <ol class="sg-steps">
-            <li><b>Set the Length and Width</b> — type an exact size (50–2400 mm), or use <b>−/+</b> to add or remove one grating section (50 mm) at a time.</li>
-            <li><b>Set the bar height</b> (30 mm or 40 mm) — taller bars carry heavier loads and longer spans.</li>
-            <li><b>Pick a cutting type (I–VI)</b> to match your channel: a <b>closed / flush edge</b> gives a finished border, an <b>open / tooth edge</b> lets bars run out so panels butt together or drop over a frame. The preview redraws so you can see the exact edge.</li>
-            <li>Note your <b>Overall size</b> and <b>Edge finish</b> from the summary, then send them with your enquiry.</li>
-          </ol>
-          <div class="sg-sub">Common sizes (mm) — tap to set length</div>
-          <div class="size-chips" id="sizeChips"></div>
-        </div>
-      </details>
-
-      <div class="fb">
-        <div class="fb-q">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A5 5 0 0 0 10 16h4a5 5 0 0 0 2.1 4"/><path d="M12 2a7 7 0 0 0-7 7c0 2.6 1.4 4.3 2.6 5.4A5 5 0 0 1 9 17h6a5 5 0 0 1 1.4-2.6C17.6 13.3 19 11.6 19 9a7 7 0 0 0-7-7Z"/></svg>
-          Did this help you find the right size?
-        </div>
-        <div class="fb-actions">
-          <button type="button" class="fb-btn" data-fb="up">👍&nbsp; Yes, perfect fit</button>
-          <button type="button" class="fb-btn" data-fb="down">👎&nbsp; Not quite</button>
-        </div>
-        <div class="fb-form" id="fbForm">
-          <textarea id="fbText" placeholder="Optional — tell us the size or edge finish you were after, so we can improve our range."></textarea>
-          <button type="button" class="fb-send" id="fbSend">Send feedback</button>
-        </div>
-        <div class="fb-thanks" id="fbThanks">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          Thanks — your feedback helps us improve our size range.
-        </div>
+      Every THERMODRAIN product is tested to BS&nbsp;EN&nbsp;124 all the way up to load class <b>F900</b>, on one of the largest load-testing machines in the segment — rated to <b>90 tons (900 kN)</b>. Permanent set is a multiple-loading test that measures any permanent deformation in the cover after repeated loading within a short time, as specified in BS&nbsp;EN&nbsp;124. Permanent set is <b>zero</b> across all THERMODRAIN sizes and load classes.
+    </div>
+    <div class="dodont" data-reveal data-delay="2">
+      <div class="dobox do">
+        <h4>Do's</h4>
+        <ul>
+          <li>Install the frame correctly with complete civil support.</li>
+          <li>Apply load on the frame only after grouting is completed.</li>
+          <li>Handle the cover with care during transport and fitting.</li>
+        </ul>
+      </div>
+      <div class="dobox dont">
+        <h4>Don'ts</h4>
+        <ul>
+          <li>Don't apply load before the grouting has fully set.</li>
+          <li>Don't throw or drop the material.</li>
+          <li>Don't skip the civil support around the frame.</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <!-- ============ CONCEPT 02 · LOAD CLASS EXPLORER ============ -->
-  <section class="section tab-panel" id="explorer">
+  <!-- ============ APPLICATIONS ============ -->
+  <section class="section tab-panel" id="applications">
     <div class="sec-head" data-reveal>
-      <span class="eyebrow">Product finder</span>
-      <h2 class="title title-hl">Choose your product, size &amp; <span class="hl-accent">load class</span></h2>
-      <p class="lede">Pick a product and its size, then the load class. The photo and specification update to match. Full range on <a href="https://www.frpmanholecover.com/" target="_blank" rel="noopener" style="color:var(--red);font-weight:600;text-decoration:none;">frpmanholecover.com</a>.</p>
+      <span class="eyebrow">Applications</span>
+      <h2 class="title">Where THERMODRAIN is installed</h2>
+      <p class="lede">From pedestrian pathways to airport aprons — matched to the right load class and product.</p>
     </div>
-
-    <div class="demo" data-reveal data-delay="1">
-      <div class="demo-grid">
-        <div class="panel">
-          <div class="panel-head"><span class="idx">02</span><h3>Product photo</h3></div>
-          <div class="product-stage" id="productStage">
-            <img id="classPhoto" alt="Thermodrain cover" fetchpriority="high" decoding="async" />
-            <div class="class-badge" id="classBadge">D400</div>
-            <div class="stage-tag" id="stageTag">Thermodrain cover · D400</div>
-            <button type="button" class="stage-nav prev" id="prodPrev" aria-label="Previous product">‹</button>
-            <button type="button" class="stage-nav next" id="prodNext" aria-label="Next product">›</button>
-            <div class="gallery-dots" id="galleryDots" style="display:none"></div>
-            <div class="swipe-hint" id="swipeHint" style="display:none">Swipe to see more photos</div>
-          </div>
-        </div>
-        <div class="panel">
-          <div class="panel-head"><span class="idx">▸</span><h3>Specification</h3></div>
-
-          <div class="picker">
-            <label class="pick-label" for="prodSel">1 · Product</label>
-            <div class="sel-wrap"><select id="prodSel" class="sel"></select></div>
-          </div>
-          <div class="picker">
-            <label class="pick-label" for="sizeSel">2 · Size <span class="pick-hint">· clear opening</span></label>
-            <div class="sel-wrap"><select id="sizeSel" class="sel"></select></div>
-          </div>
-
-          <div class="lc" id="lcBlock">
-            <div class="lc-top">
-              <span class="lc-step" id="lcStep">4</span>
-              <span class="lc-label">3 · Load class</span>
-            </div>
-            <div class="lc-icons" id="lcIcons">
-              <button type="button" class="lc-ic" data-i="0" aria-label="A15 — pedestrian">🚲</button>
-              <button type="button" class="lc-ic" data-i="1" aria-label="B125 — car">🚗</button>
-              <button type="button" class="lc-ic" data-i="2" aria-label="C250 — light truck">🚚</button>
-              <button type="button" class="lc-ic" data-i="3" aria-label="D400 — roadway">🚛</button>
-              <button type="button" class="lc-ic" data-i="4" aria-label="E600 — port">🚢</button>
-              <button type="button" class="lc-ic" data-i="5" aria-label="F900 — airport">✈️</button>
-            </div>
-            <input id="lcSlider" class="lc-slider" type="range" min="0" max="5" step="1" value="3" aria-label="Load class selector">
-            <div class="lc-readout">
-              <span class="lc-class" id="lcClass">D400</span>
-              <span class="lc-rate" id="lcRate">40 T · 400 kN</span>
-            </div>
-            <div class="lc-use" id="lcUse"></div>
-            <div class="lc-range" id="lcRange">Full rated range · <b>1.5 T</b> (A15) → <b>90 T</b> (F900)</div>
-          </div>
-
-          <div class="spec-table" id="specTable"></div>
-          <a id="inquiryBtn" class="btn-inquiry" href="mailto:thermodrain@frpmanholecover.com">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            Send inquiry
-          </a>
-        </div>
-      </div>
+    <div class="app-chips" data-reveal data-delay="1">
+      <span class="app-chip"><span class="adot"></span>Roadways &amp; carriageways</span>
+      <span class="app-chip"><span class="adot"></span>Footways &amp; kerbsides</span>
+      <span class="app-chip"><span class="adot"></span>Car parking areas</span>
+      <span class="app-chip"><span class="adot"></span>Sea ports &amp; docks</span>
+      <span class="app-chip"><span class="adot"></span>Airport aprons</span>
+      <span class="app-chip"><span class="adot"></span>Industrial plants</span>
+      <span class="app-chip"><span class="adot"></span>Basement car parks</span>
+      <span class="app-chip"><span class="adot"></span>Podiums</span>
+      <span class="app-chip"><span class="adot"></span>Swimming pools</span>
+      <span class="app-chip"><span class="adot"></span>Storm-water drain trenches</span>
+      <span class="app-chip"><span class="adot"></span>Cable trenches</span>
+      <span class="app-chip"><span class="adot"></span>Telecom &amp; electrical chambers</span>
+      <span class="app-chip"><span class="adot"></span>Tree surrounds</span>
     </div>
   </section>
-
-  <!-- ============ RANGE (PRODUCT DETAILS) ============ -->
+<!-- ============ RANGE (PRODUCT DETAILS) ============ -->
   <section class="section tab-panel" id="range">
     <div class="sec-head" data-reveal>
       <span class="eyebrow">Full range</span>
@@ -1321,7 +1213,7 @@
             <li>Zero permanent set across all sizes &amp; load bearings.</li>
           </ul>
           <div class="sub">Frame clear opening — sizes</div>
-          <p style="margin:0;">Circular Ø400–Ø1400 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+          <p style="margin:0;">Circular Ø400–Ø1400 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Product Configurator</a> tab.</p>
           <div class="sub">Photos</div>
           <div class="acc-photos">
             <figure><img loading="lazy" decoding="async" src="images/st-photo-1.webp" alt="Solid Top Cover 1200×1200 D400 installed"><figcaption>1200×1200 D400</figcaption></figure>
@@ -1369,7 +1261,7 @@
             <li>Closed-bottom keyholes; zero permanent set in all sizes &amp; load bearings.</li>
           </ul>
           <div class="sub">Frame clear opening — sizes</div>
-          <p style="margin:0;">Circular Ø500–Ø1000 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+          <p style="margin:0;">Circular Ø500–Ø1000 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Product Configurator</a> tab.</p>
           <div class="sub">Photos</div>
           <div class="acc-photos">
             <figure><img loading="lazy" decoding="async" src="images/rc-photo-1.webp" alt="Recess cover filled with pavers, blending into path"><figcaption>Paver-filled path</figcaption></figure>
@@ -1394,7 +1286,7 @@
             <li>No foul smell or seepage.</li>
           </ul>
           <div class="sub">Frame clear opening — sizes</div>
-          <p style="margin:0;">Circular Ø400–Ø1000 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+          <p style="margin:0;">Circular Ø400–Ø1000 · Square 300×300–1500×1500 · Rectangular up to 990×1220 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Product Configurator</a> tab.</p>
           <div class="sub">Photos</div>
           <div class="acc-photos">
             <figure><img loading="lazy" decoding="async" src="images/aw-photo-1.webp" alt="Air & Water Tight round cover with frame (D400)"><figcaption>Round cover &amp; frame (D400)</figcaption></figure>
@@ -1468,7 +1360,7 @@
           <div class="sub">Areas of application</div>
           <p style="margin:0 0 4px;">Industrial plants · podiums · basement car parks · storm-water drain trenches.</p>
           <div class="sub">Frame clear opening — sizes</div>
-          <p style="margin:0;">Square 300×300–900×900 · Ø600 round · Rectangular incl. 335×930, 500×600, 900×600 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Products</a> tab.</p>
+          <p style="margin:0;">Square 300×300–900×900 · Ø600 round · Rectangular incl. 335×930, 500×600, 900×600 mm. Full list in the <a href="#explorer" style="color:var(--red);font-weight:600;text-decoration:none;">Product Configurator</a> tab.</p>
           <div class="sub">Photos</div>
           <div class="acc-photos">
             <figure><img loading="lazy" decoding="async" src="images/wg-photo-1.webp" alt="900×600 D400 slotted water gully cover"><figcaption>900×600 D400 slotted</figcaption></figure>
@@ -1597,55 +1489,6 @@
     </div>
   </section>
 
-  <!-- ============ LOAD CLASSES ============ -->
-  <section class="section tab-panel" id="loads">
-    <div class="sec-head" data-reveal>
-      <span class="eyebrow">Load classes &amp; testing</span>
-      <h2 class="title">Rated from A15 to F900</h2>
-      <p class="lede">Every THERMODRAIN product is load-tested to BS EN 124, IS 1726 &amp; AASHTO M306 — from 2.5 tons up to F900 (90 tons) — including a permanent-set (multiple-loading) test.</p>
-    </div>
-    <div class="cmp" data-reveal data-delay="1">
-      <div class="cmp-scroll">
-        <table>
-          <thead><tr><th>Class</th><th class="hl">Load</th><th>Installation areas</th><th>Example</th></tr></thead>
-          <tbody>
-            <tr><td>A15</td><td class="col-frp">1.5 T · 15 kN</td><td>Pedestrian &amp; pedal-cyclist areas only</td><td>Bicycle ways, pedestrian ways</td></tr>
-            <tr><td>B125</td><td class="col-frp">12.5 T · 125 kN</td><td>Footways, pedestrian areas, light duty</td><td>Car parking areas</td></tr>
-            <tr><td>C250</td><td class="col-frp">25 T · 250 kN</td><td>Kerbside channels &amp; high wheel-load zones</td><td>Kerbside parking areas</td></tr>
-            <tr><td>D400</td><td class="col-frp">40 T · 400 kN</td><td>Carriageways &amp; parking for all road vehicles</td><td>Roadways, vehicle traffic</td></tr>
-            <tr><td>E600</td><td class="col-frp">60 T · 600 kN</td><td>Heavy-duty &amp; high wheel-load zones</td><td>Sea ports, docks</td></tr>
-            <tr><td>F900</td><td class="col-frp">90 T · 900 kN</td><td>Extreme wheel-load zones</td><td>Airport aprons, runways</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="callout" data-reveal data-delay="1" style="margin-top:24px;">
-      <div class="h">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
-        Load testing &amp; permanent set
-      </div>
-      Every THERMODRAIN product is tested to BS&nbsp;EN&nbsp;124 all the way up to load class <b>F900</b>, on one of the largest load-testing machines in the segment — rated to <b>90 tons (900 kN)</b>. Permanent set is a multiple-loading test that measures any permanent deformation in the cover after repeated loading within a short time, as specified in BS&nbsp;EN&nbsp;124. Permanent set is <b>zero</b> across all THERMODRAIN sizes and load classes.
-    </div>
-    <div class="dodont" data-reveal data-delay="2">
-      <div class="dobox do">
-        <h4>Do's</h4>
-        <ul>
-          <li>Install the frame correctly with complete civil support.</li>
-          <li>Apply load on the frame only after grouting is completed.</li>
-          <li>Handle the cover with care during transport and fitting.</li>
-        </ul>
-      </div>
-      <div class="dobox dont">
-        <h4>Don'ts</h4>
-        <ul>
-          <li>Don't apply load before the grouting has fully set.</li>
-          <li>Don't throw or drop the material.</li>
-          <li>Don't skip the civil support around the frame.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ COMPARISON ============ -->
   <section class="section tab-panel" id="compare">
     <div class="sec-head" data-reveal>
@@ -1694,27 +1537,180 @@
     </div>
   </section>
 
-  <!-- ============ APPLICATIONS ============ -->
-  <section class="section tab-panel" id="applications">
+  <!-- ============ CONCEPT 02 · LOAD CLASS EXPLORER ============ -->
+  <section class="section tab-panel" id="explorer">
     <div class="sec-head" data-reveal>
-      <span class="eyebrow">Applications</span>
-      <h2 class="title">Where THERMODRAIN is installed</h2>
-      <p class="lede">From pedestrian pathways to airport aprons — matched to the right load class and product.</p>
+      <span class="eyebrow">Product finder</span>
+      <h2 class="title title-hl">Choose your product, size &amp; <span class="hl-accent">load class</span></h2>
+      <p class="lede">Pick a product and its size, then the load class. The photo and specification update to match. Full range on <a href="https://www.frpmanholecover.com/" target="_blank" rel="noopener" style="color:var(--red);font-weight:600;text-decoration:none;">frpmanholecover.com</a>.</p>
     </div>
-    <div class="app-chips" data-reveal data-delay="1">
-      <span class="app-chip"><span class="adot"></span>Roadways &amp; carriageways</span>
-      <span class="app-chip"><span class="adot"></span>Footways &amp; kerbsides</span>
-      <span class="app-chip"><span class="adot"></span>Car parking areas</span>
-      <span class="app-chip"><span class="adot"></span>Sea ports &amp; docks</span>
-      <span class="app-chip"><span class="adot"></span>Airport aprons</span>
-      <span class="app-chip"><span class="adot"></span>Industrial plants</span>
-      <span class="app-chip"><span class="adot"></span>Basement car parks</span>
-      <span class="app-chip"><span class="adot"></span>Podiums</span>
-      <span class="app-chip"><span class="adot"></span>Swimming pools</span>
-      <span class="app-chip"><span class="adot"></span>Storm-water drain trenches</span>
-      <span class="app-chip"><span class="adot"></span>Cable trenches</span>
-      <span class="app-chip"><span class="adot"></span>Telecom &amp; electrical chambers</span>
-      <span class="app-chip"><span class="adot"></span>Tree surrounds</span>
+
+    <div class="demo" data-reveal data-delay="1">
+      <div class="demo-grid">
+        <div class="panel">
+          <div class="panel-head"><span class="idx">02</span><h3>Product photo</h3></div>
+          <div class="product-stage" id="productStage">
+            <img id="classPhoto" alt="Thermodrain cover" fetchpriority="high" decoding="async" />
+            <div class="class-badge" id="classBadge">D400</div>
+            <div class="stage-tag" id="stageTag">Thermodrain cover · D400</div>
+            <button type="button" class="stage-nav prev" id="prodPrev" aria-label="Previous photo">‹</button>
+            <button type="button" class="stage-nav next" id="prodNext" aria-label="Next photo">›</button>
+            <div class="gallery-dots" id="galleryDots" style="display:none"></div>
+            <div class="swipe-hint" id="swipeHint" style="display:none">Swipe to see more photos</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="idx">▸</span><h3>Specification</h3></div>
+
+          <div class="picker">
+            <label class="pick-label" for="prodSel">1 · Product</label>
+            <div class="sel-wrap"><select id="prodSel" class="sel"></select></div>
+          </div>
+          <div class="picker">
+            <label class="pick-label" for="sizeSel">2 · Size <span class="pick-hint">· clear opening</span></label>
+            <div class="sel-wrap"><select id="sizeSel" class="sel"></select></div>
+          </div>
+
+          <div class="lc" id="lcBlock">
+            <div class="lc-top">
+              <span class="lc-step" id="lcStep">4</span>
+              <span class="lc-label">3 · Load class</span>
+            </div>
+            <div class="lc-icons" id="lcIcons">
+              <button type="button" class="lc-ic" data-i="0" aria-label="A15 — pedestrian">🚲</button>
+              <button type="button" class="lc-ic" data-i="1" aria-label="B125 — car">🚗</button>
+              <button type="button" class="lc-ic" data-i="2" aria-label="C250 — light truck">🚚</button>
+              <button type="button" class="lc-ic" data-i="3" aria-label="D400 — roadway">🚛</button>
+              <button type="button" class="lc-ic" data-i="4" aria-label="E600 — port">🚢</button>
+              <button type="button" class="lc-ic" data-i="5" aria-label="F900 — airport">✈️</button>
+            </div>
+            <input id="lcSlider" class="lc-slider" type="range" min="0" max="5" step="1" value="3" aria-label="Load class selector">
+            <div class="lc-readout">
+              <span class="lc-class" id="lcClass">D400</span>
+              <span class="lc-rate" id="lcRate">40 T · 400 kN</span>
+            </div>
+            <div class="lc-use" id="lcUse"></div>
+            <div class="lc-range" id="lcRange">Full rated range · <b>1.5 T</b> (A15) → <b>90 T</b> (F900)</div>
+          </div>
+
+          <div class="spec-table" id="specTable"></div>
+          <a id="inquiryBtn" class="btn-inquiry" href="mailto:thermodrain@frpmanholecover.com">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            Send inquiry
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONCEPT 01 · CONFIGURATOR ============ -->
+  <section class="section tab-panel" id="configurator">
+    <div class="sec-head" data-reveal>
+      <span class="eyebrow">Grating configurator</span>
+      <h2 class="title">Grating size configurator</h2>
+      <p class="lede">Type any length and width (or step one grating section at a time) and switch bar height — the panel redraws live at true proportions.</p>
+    </div>
+
+    <div class="demo" data-reveal data-delay="1">
+      <div class="demo-grid">
+        <div class="panel panel-controls">
+          <div class="panel-head"><span class="idx">01</span><h3>Configure your grating</h3></div>
+
+          <div class="dim-row">
+            <div class="dim-label">Length <span class="dim-hint">· type any size · 50–2400 mm</span></div>
+            <div class="stepper">
+              <button id="lenMinus" aria-label="Remove one section from length">−</button>
+              <div class="val"><input id="lenVal" class="szin" type="number" min="50" max="2400" step="50" value="1000" inputmode="numeric" aria-label="Length in millimetres"><small>mm</small></div>
+              <button id="lenPlus" aria-label="Add one section to length">+</button>
+            </div>
+          </div>
+
+          <div class="dim-row">
+            <div class="dim-label">Width <span class="dim-hint">· type any size · 50–2400 mm</span></div>
+            <div class="stepper">
+              <button id="widMinus" aria-label="Remove one section from width">−</button>
+              <div class="val"><input id="widVal" class="szin" type="number" min="50" max="2400" step="50" value="400" inputmode="numeric" aria-label="Width in millimetres"><small>mm</small></div>
+              <button id="widPlus" aria-label="Add one section to width">+</button>
+            </div>
+          </div>
+
+          <div class="dim-row">
+            <div class="dim-label">Bar height</div>
+            <div class="toggle-row">
+              <button class="toggle-btn active" data-h="30" id="h30">30 mm</button>
+              <button class="toggle-btn" data-h="40" id="h40">40 mm</button>
+            </div>
+          </div>
+
+          <div class="dim-row">
+            <div class="dim-label">Cutting type <span class="dim-hint">· how the edges are finished</span></div>
+            <div class="cut-grid" id="cutGrid"></div>
+            <div class="cut-legend">
+              <span class="li"><span class="sw closed"></span> Closed / flush edge</span>
+              <span class="li"><span class="sw open"></span> Open / tooth edge</span>
+            </div>
+          </div>
+
+          <div class="readout">
+            <div><div class="k">Overall size</div><div class="v" id="roSize">1001 × 406 mm</div></div>
+            <div><div class="k">Panel area</div><div class="v" id="roArea">0.41 m²</div></div>
+            <div><div class="k">Height class</div><div class="v" id="roHeight">30 mm</div></div>
+            <div><div class="k">Grid</div><div class="v" id="roGrid">20 × 8 sections</div></div>
+            <div><div class="k">Cutting type</div><div class="v" id="roCut">Type I</div></div>
+            <div><div class="k">Edge finish</div><div class="v" id="roEdge">Closed all sides</div></div>
+          </div>
+        </div>
+
+        <div class="panel canvas-wrap">
+          <svg id="gratingSvg" width="490" height="470" viewBox="0 0 490 470" role="img" aria-label="Grating preview"></svg>
+        </div>
+      </div>
+      <div class="chart-note">Type any length &amp; width from <b>50 mm to 2400 mm</b>, or use <b>−/+</b> to add or remove one grating section (<b>50 mm</b>) at a time. The panel redraws live at true proportions.</div>
+
+      <div class="config-enquire">
+        <button type="button" class="btn-inquiry" id="configEnquireBtn" data-enquiry-open>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          Enquire about this grating
+        </button>
+        <span class="config-enquire-note">We'll include your configured size &amp; edge finish automatically.</span>
+      </div>
+
+      <details class="size-guide">
+        <summary>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 8.7 8.7 21.3a1 1 0 0 1-1.4 0l-4.6-4.6a1 1 0 0 1 0-1.4L15.3 2.7a1 1 0 0 1 1.4 0l4.6 4.6a1 1 0 0 1 0 1.4Z"/><path d="m7.5 10.5 2 2"/><path d="m10.5 7.5 2 2"/><path d="m13.5 4.5 2 2"/></svg>
+          How to choose your size
+          <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="sg-body">
+          <ol class="sg-steps">
+            <li><b>Set the Length and Width</b> — type an exact size (50–2400 mm), or use <b>−/+</b> to add or remove one grating section (50 mm) at a time.</li>
+            <li><b>Set the bar height</b> (30 mm or 40 mm) — taller bars carry heavier loads and longer spans.</li>
+            <li><b>Pick a cutting type (I–VI)</b> to match your channel: a <b>closed / flush edge</b> gives a finished border, an <b>open / tooth edge</b> lets bars run out so panels butt together or drop over a frame. The preview redraws so you can see the exact edge.</li>
+            <li>Note your <b>Overall size</b> and <b>Edge finish</b> from the summary, then send them with your enquiry.</li>
+          </ol>
+          <div class="sg-sub">Common sizes (mm) — tap to set length</div>
+          <div class="size-chips" id="sizeChips"></div>
+        </div>
+      </details>
+
+      <div class="fb">
+        <div class="fb-q">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A5 5 0 0 0 10 16h4a5 5 0 0 0 2.1 4"/><path d="M12 2a7 7 0 0 0-7 7c0 2.6 1.4 4.3 2.6 5.4A5 5 0 0 1 9 17h6a5 5 0 0 1 1.4-2.6C17.6 13.3 19 11.6 19 9a7 7 0 0 0-7-7Z"/></svg>
+          Did this help you find the right size?
+        </div>
+        <div class="fb-actions">
+          <button type="button" class="fb-btn" data-fb="up">👍&nbsp; Yes, perfect fit</button>
+          <button type="button" class="fb-btn" data-fb="down">👎&nbsp; Not quite</button>
+        </div>
+        <div class="fb-form" id="fbForm">
+          <textarea id="fbText" placeholder="Optional — tell us the size or edge finish you were after, so we can improve our range."></textarea>
+          <button type="button" class="fb-send" id="fbSend">Send feedback</button>
+        </div>
+        <div class="fb-thanks" id="fbThanks">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          Thanks — your feedback helps us improve our size range.
+        </div>
+      </div>
     </div>
   </section>
 
@@ -2227,7 +2223,12 @@ function refreshGallery(){
   if(g){ showPhoto(0); }
   else { const dots = document.getElementById('galleryDots'); dots.innerHTML = ''; dots.style.display = 'none'; }
   // hint only makes sense when there's more than one photo to swipe
-  hint.style.display = (g && g.length > 1) ? '' : 'none';
+  const multi = !!(g && g.length > 1);
+  hint.style.display = multi ? '' : 'none';
+  // chevrons browse photos, so only show them when there's more than one photo
+  const prevBtn = document.getElementById('prodPrev'), nextBtn = document.getElementById('prodNext');
+  if(prevBtn) prevBtn.style.display = multi ? '' : 'none';
+  if(nextBtn) nextBtn.style.display = multi ? '' : 'none';
 }
 
 function setProduct(i){
@@ -2251,8 +2252,9 @@ document.querySelectorAll('.lc-ic').forEach(ic => {
   if(!stage) return;
   const prev = document.getElementById('prodPrev');
   const next = document.getElementById('prodNext');
-  if(prev) prev.addEventListener('click', () => setProduct(curProd - 1));
-  if(next) next.addEventListener('click', () => setProduct(curProd + 1));
+  // Chevrons browse THIS product's photos only — they never change the product/category.
+  if(prev) prev.addEventListener('click', () => { const g = currentGallery(); if(g && g.length > 1) showPhoto(photoIdx - 1); });
+  if(next) next.addEventListener('click', () => { const g = currentGallery(); if(g && g.length > 1) showPhoto(photoIdx + 1); });
 
   // dots jump straight to a photo
   document.getElementById('galleryDots').addEventListener('click', e => {
@@ -2517,7 +2519,7 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
   function spy(){
     spyRaf = 0;
     if(!oneCol.matches) return;
-    const line = header.offsetHeight + tabbar.offsetHeight + 8;
+    const line = header.offsetHeight + tabbar.offsetHeight + 28;
     let cur = seq[0];
     seq.forEach(id => { const el = document.getElementById(id); if(el && el.getBoundingClientRect().top <= line) cur = id; });
     if(cur === spyActive) return;
