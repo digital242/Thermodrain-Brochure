@@ -113,10 +113,12 @@
   }
   header.site .logo{font-size:22px; transition:transform .2s var(--ease);}
   header.site .logo:hover{transform:translateY(-1px);}
-  .logo-img{display:inline-flex; align-items:center; background:#fff; border-radius:9px; padding:6px 11px; box-shadow:0 4px 12px -6px rgba(0,0,0,.45); transition:transform .2s var(--ease);}
+  .logo-img{display:inline-flex; align-items:center; transition:transform .2s var(--ease);}
   .logo-img:hover{transform:translateY(-1px);}
   .logo-img img{height:34px; width:auto; display:block;}
-  @media (max-width:520px){ .logo-img img{height:28px;} .logo-img{padding:5px 9px;} }
+  @media (max-width:520px){ .logo-img img{height:28px;} }
+  footer.site .logo-img{margin-bottom:16px;}
+  footer.site .logo-img img{height:42px;}
   header.site nav{display:flex; gap:8px; align-items:center;}
   header.site nav a{
     font-family:'Manrope',sans-serif; font-size:12px; letter-spacing:.06em;
@@ -944,7 +946,7 @@
 <header class="site">
   <div class="bar">
     <a class="logo-img" href="#" aria-label="THERMODRAIN — ISO 9001:2015 Company">
-      <img src="images/thermodrain-logo.webp" alt="THERMODRAIN — ISO 9001:2015 Company" width="900" height="363" decoding="async">
+      <img src="images/thermodrain-logo-white.webp" alt="THERMODRAIN" width="700" height="161" decoding="async">
     </a>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-controls="siteNav" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -1725,8 +1727,8 @@
 <footer class="site" id="contact">
   <div class="fin">
     <div>
-      <span class="logo on-dark">
-        <span class="lw">THERM</span><span class="ring"></span><span class="lw">DRAIN<span class="reg">®</span></span>
+      <span class="logo-img">
+        <img src="images/thermodrain-logo-white.webp" alt="THERMODRAIN" width="700" height="161" decoding="async">
       </span>
       <p>Thermoset Poly Products (I) Pvt. Ltd. — FRP/GRP/composite solid top, recess, air &amp; water tight covers, multiple covers, gratings, L-angles, water gully &amp; tank covers, chambers and drain channels. Corrosion-free, load-tested to F900, ISO 9001:2015.</p>
     </div>
