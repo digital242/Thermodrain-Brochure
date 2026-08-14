@@ -732,6 +732,9 @@
   main .tab-panel + .tab-panel{border-top:1px solid var(--line);}
 
   /* ============ ABOUT ============ */
+  .brand-logo{max-width:360px; margin:0 auto 36px; background:var(--white); border:1px solid var(--line); border-radius:16px; padding:26px 32px; box-shadow:var(--shadow-sm);}
+  .brand-logo img{width:100%; height:auto; display:block;}
+  @media (max-width:520px){ .brand-logo{max-width:280px; padding:20px 24px;} }
   .about-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:start;}
   @media (max-width:820px){ .about-grid{grid-template-columns:1fr; gap:30px;} }
   .about-grid p{color:var(--ink-soft); font-size:15px; line-height:1.7; margin:0 0 16px;}
@@ -1012,6 +1015,9 @@
 
   <!-- ============ ABOUT ============ -->
   <section class="section tab-panel" id="about">
+    <figure class="brand-logo" data-reveal>
+      <img src="images/thermodrain-logo.webp" alt="THERMODRAIN — ISO 9001:2015 Company" width="900" height="363" decoding="async">
+    </figure>
     <div class="sec-head" data-reveal>
       <span class="eyebrow">About us</span>
       <h2 class="title">30 years of composite engineering</h2>
