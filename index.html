@@ -1777,8 +1777,10 @@
       <input type="text"  name="contact"  required placeholder="Name of Contact Person :*">
       <input type="text"  name="phone"    required placeholder="Tel. No. / Cell No. :*">
       <input type="email" name="email"    required placeholder="Email :*">
+      <input type="text"  name="location" required placeholder="Location / Area :*">
+      <input type="text"  name="city"     required placeholder="City :*">
+      <input type="text"  name="state"    required placeholder="State :*">
       <div class="sel-wrap"><select name="country" class="sel" id="enqCountry"></select></div>
-      <input type="text"  name="address"  required placeholder="Address / City / Location :*">
       <textarea name="details" required rows="4" placeholder="Requirements Details :*"></textarea>
       <label class="enq-file">
         <input type="file" name="attachment" id="enqFile">
@@ -2650,14 +2652,16 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance �
     const v = n => (form.querySelector(`[name=${n}]`).value || '').trim();
     const file = document.getElementById('enqFile');
     const fname = file && file.files && file.files[0] ? file.files[0].name : '';
-    const subject = `Website enquiry — ${v('company')}`;
+    const subject = `Website enquiry: ${v('company')}`;
     const body = [
       'Company: ' + v('company'),
       'Contact person: ' + v('contact'),
       'Tel / Cell: ' + v('phone'),
       'Email: ' + v('email'),
-      'Country: ' + (v('country') || '—'),
-      'Address / City / Location: ' + v('address'),
+      'Location / Area: ' + v('location'),
+      'City: ' + v('city'),
+      'State: ' + v('state'),
+      'Country: ' + (v('country') || 'Not specified'),
       '',
       'Requirement details:',
       v('details'),
