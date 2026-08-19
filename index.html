@@ -977,7 +977,7 @@
         <div class="stat"><div class="n">60<small>+</small></div><div class="l">Catalogue grating sizes</div></div>
         <div class="stat stat-classes">
           <div class="lc-chips" aria-label="All load classes">
-            <span>A15</span><span>B125</span><span>C250</span><span>D400</span><span>E600</span><span>F900</span>
+            <span>2.5T</span><span>5T</span><span>B125</span><span>C250</span><span>D400</span><span>E600</span><span>F900</span>
           </div>
           <div class="l">BS EN 124 load classes</div>
         </div>
@@ -1130,7 +1130,7 @@
   <section class="section tab-panel" id="loads">
     <div class="sec-head" data-reveal>
       <span class="eyebrow">Load classes &amp; applications</span>
-      <h2 class="title">Rated from A15 to F900</h2>
+      <h2 class="title">Rated from 2.5T to F900</h2>
       <p class="lede">Every THERMODRAIN product is load-tested to BS EN 124, IS 1726 &amp; AASHTO M306 — from 2.5 tons up to F900 (90 tons) — including a permanent-set (multiple-loading) test.</p>
     </div>
     <div class="cmp" data-reveal data-delay="1">
@@ -1138,7 +1138,8 @@
         <table>
           <thead><tr><th>Class</th><th class="hl">Load</th><th>Installation areas</th><th>Example</th></tr></thead>
           <tbody>
-            <tr><td>A15</td><td class="col-frp">1.5 T · 15 kN</td><td>Pedestrian &amp; pedal-cyclist areas only</td><td>Bicycle ways, pedestrian ways</td></tr>
+            <tr><td>2.5T</td><td class="col-frp">2.5 T · 25 kN</td><td>Pedestrian &amp; pedal-cyclist areas</td><td>Footpaths, cycle tracks</td></tr>
+            <tr><td>5T</td><td class="col-frp">5 T · 50 kN</td><td>Two-wheeler &amp; light-vehicle areas</td><td>Two-wheeler parking, light driveways</td></tr>
             <tr><td>B125</td><td class="col-frp">12.5 T · 125 kN</td><td>Footways, pedestrian areas, light duty</td><td>Car parking areas</td></tr>
             <tr><td>C250</td><td class="col-frp">25 T · 250 kN</td><td>Kerbside channels &amp; high wheel-load zones</td><td>Kerbside parking areas</td></tr>
             <tr><td>D400</td><td class="col-frp">40 T · 400 kN</td><td>Carriageways &amp; parking for all road vehicles</td><td>Roadways, vehicle traffic</td></tr>
@@ -1584,20 +1585,21 @@
               <span class="lc-label">3 · Load class</span>
             </div>
             <div class="lc-icons" id="lcIcons">
-              <button type="button" class="lc-ic" data-i="0" aria-label="A15 — pedestrian">🚲</button>
-              <button type="button" class="lc-ic" data-i="1" aria-label="B125 — car">🚗</button>
-              <button type="button" class="lc-ic" data-i="2" aria-label="C250 — light truck">🚚</button>
-              <button type="button" class="lc-ic" data-i="3" aria-label="D400 — roadway">🚛</button>
-              <button type="button" class="lc-ic" data-i="4" aria-label="E600 — port">🚢</button>
-              <button type="button" class="lc-ic" data-i="5" aria-label="F900 — airport">✈️</button>
+              <button type="button" class="lc-ic" data-i="0" aria-label="2.5T — pedestrian">🚶</button>
+              <button type="button" class="lc-ic" data-i="1" aria-label="5T — two-wheeler">🛵</button>
+              <button type="button" class="lc-ic" data-i="2" aria-label="B125 — car">🚗</button>
+              <button type="button" class="lc-ic" data-i="3" aria-label="C250 — light truck">🚚</button>
+              <button type="button" class="lc-ic" data-i="4" aria-label="D400 — roadway">🚛</button>
+              <button type="button" class="lc-ic" data-i="5" aria-label="E600 — port">🚢</button>
+              <button type="button" class="lc-ic" data-i="6" aria-label="F900 — airport">✈️</button>
             </div>
-            <input id="lcSlider" class="lc-slider" type="range" min="0" max="5" step="1" value="3" aria-label="Load class selector">
+            <input id="lcSlider" class="lc-slider" type="range" min="0" max="6" step="1" value="4" aria-label="Load class selector">
             <div class="lc-readout">
               <span class="lc-class" id="lcClass">D400</span>
               <span class="lc-rate" id="lcRate">40 T · 400 kN</span>
             </div>
             <div class="lc-use" id="lcUse"></div>
-            <div class="lc-range" id="lcRange">Full rated range · <b>1.5 T</b> (A15) → <b>90 T</b> (F900)</div>
+            <div class="lc-range" id="lcRange">Full rated range · <b>2.5 T</b> → <b>90 T</b> (F900)</div>
           </div>
 
           <div class="spec-table" id="specTable"></div>
@@ -1750,7 +1752,7 @@
         <li>IS 1726</li>
         <li>AASHTO M306</li>
         <li>ISO 9001:2015</li>
-        <li>Load classes A15–F900</li>
+        <li>Load classes 2.5T–F900</li>
       </ul>
     </div>
     <div>
@@ -1798,19 +1800,20 @@
 const sizeChart = [48,88,128,167,207,247,286,326,366,406,445,485,525,564,604,644,684,723,763,803,843,882,922,962,1001,1041,1081,1121,1160,1200,1240,1279,1319,1359,1399,1438,1478,1518,1557,1597,1637,1677,1716,1756,1796,1836,1875,1914,1955,1993,2034,2074,2114,2154,2194,2234,2273,2314,2353,2393];
 
 const classData = {
-  A15:  {ton:"1.5",  kn:"15",  use:"Pedestrian & cyclist zones",        ex:"Bicycle paths, pedestrian walkways", color:"#F6BC16"},
+  '2.5T':{ton:"2.5", kn:"25",  use:"Pedestrian & cyclist areas",         ex:"Footpaths, cycle tracks",             color:"#F6BC16"},
+  '5T':  {ton:"5",   kn:"50",  use:"2-wheeler & light-vehicle areas",    ex:"Two-wheeler parking, light drives",   color:"#EDA915"},
   B125: {ton:"12.5", kn:"125", use:"Footways & light-duty parking",     ex:"Car parking areas",                  color:"#EBA015"},
   C250: {ton:"25",   kn:"250", use:"Kerbside channels & driveways",     ex:"Kerbside parking areas",             color:"#E5731E"},
   D400: {ton:"40",   kn:"400", use:"Carriageways & roadways",           ex:"Roadways, vehicle traffic",          color:"#E2382B"},
   E600: {ton:"60",   kn:"600", use:"Heavy-traffic & port areas",        ex:"Sea ports, docks",                   color:"#C0271C"},
   F900: {ton:"90",   kn:"900", use:"Extreme wheel-load zones",          ex:"Airport aprons, runways",            color:"#8E1710"}
 };
-const classOrder = ['A15','B125','C250','D400','E600','F900'];
+const classOrder = ['2.5T','5T','B125','C250','D400','E600','F900'];
 
 /* Per-product photo overrides: productPhotos[productName][loadClass] = dataURI.
    When a product has an entry for the selected class its photo is shown; otherwise
    the explorer falls back to the shared `photos` set above. */
-const productPhotos = {"Multiple Covers":{"A15":"images/mc-A15.webp","B125":"images/mc-B125.webp","C250":"images/mc-C250.webp","D400":"images/mc-D400.webp","E600":"images/mc-E600.webp","F900":"images/mc-F900.webp"},"Recess Cover":{"A15":"images/rc-A15.webp","B125":"images/rc-B125.webp","C250":"images/rc-C250.webp","D400":"images/rc-D400.webp"},"Water Gully Cover":{"A15":"images/wg-A15.webp","B125":"images/wg-B125.webp","C250":"images/wg-C250.webp","D400":"images/wg-D400.webp","E600":"images/wg-E600.webp","F900":"images/wg-F900.webp"},"Air & Water Tight Cover":{"A15":"images/aw-A15.webp","B125":"images/aw-B125.webp","C250":"images/aw-C250.webp","D400":"images/aw-D400.webp","E600":"images/aw-E600.webp","F900":"images/aw-F900.webp"}};
+const productPhotos = {"Multiple Covers":{"2.5T":"images/mc-A15.webp","5T":"images/mc-A15.webp","B125":"images/mc-B125.webp","C250":"images/mc-C250.webp","D400":"images/mc-D400.webp","E600":"images/mc-E600.webp","F900":"images/mc-F900.webp"},"Recess Cover":{"2.5T":"images/rc-A15.webp","5T":"images/rc-A15.webp","B125":"images/rc-B125.webp","C250":"images/rc-C250.webp","D400":"images/rc-D400.webp"},"Water Gully Cover":{"2.5T":"images/wg-A15.webp","5T":"images/wg-A15.webp","B125":"images/wg-B125.webp","C250":"images/wg-C250.webp","D400":"images/wg-D400.webp","E600":"images/wg-E600.webp","F900":"images/wg-F900.webp"},"Air & Water Tight Cover":{"2.5T":"images/aw-A15.webp","5T":"images/aw-A15.webp","B125":"images/aw-B125.webp","C250":"images/aw-C250.webp","D400":"images/aw-D400.webp","E600":"images/aw-E600.webp","F900":"images/aw-F900.webp"}};
 
 /* Product range & sizes — frame clear opening, from the Thermodrain price list.
    Sizes are grouped by shape; `photo` maps to a load-class key for the demo image. */
@@ -1857,7 +1860,7 @@ const products = [
 ];
 let curProd = 0;
 let photoIdx = 0;
-const photos = {"A15":"images/st-A15.webp","B125":"images/st-B125.webp","C250":"images/st-C250.webp","D400":"images/st-D400.webp","E600":"images/st-E600.webp","F900":"images/st-F900.webp"};
+const photos = {"2.5T":"images/st-A15.webp","5T":"images/st-A15.webp","B125":"images/st-B125.webp","C250":"images/st-C250.webp","D400":"images/st-D400.webp","E600":"images/st-E600.webp","F900":"images/st-F900.webp"};
 
 /* Multiple photos per product. Key = product name (must match `products` above).
    Each entry is a list of photos the customer can swipe / tap dots to browse.
@@ -2183,7 +2186,7 @@ function applyClassLimits(){
   document.querySelectorAll('.lc-ic').forEach((el,i) => { el.style.display = i > maxIdx ? 'none' : ''; });
   const top = avail[avail.length-1];
   document.getElementById('lcRange').innerHTML =
-    `Rated range · <b>${classData['A15'].ton} T</b> (A15) → <b>${classData[top].ton} T</b> (${top})`;
+    `Rated range · <b>${classData[classOrder[0]].ton} T</b> (${classOrder[0]}) → <b>${classData[top].ton} T</b> (${top})`;
 }
 
 // Warm the browser cache with a product's photos so switching load class is instant.
