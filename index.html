@@ -1020,7 +1020,7 @@
   <section class="section tab-panel" id="about">
     <div class="sec-head" data-reveal>
       <span class="eyebrow">About us</span>
-      <h2 class="title">30 years of composite engineering</h2>
+      <h2 class="title">32+ years of composite engineering</h2>
       <p class="lede">Thermoset Poly Products (I) Pvt. Ltd. — an ISO 9001:2015 design &amp; manufacturing company in Navi Mumbai, making the THERMODRAIN range of FRP/GRP/composite covers, gratings, gully covers, chambers and drain channels since 1993.</p>
     </div>
     <div class="about-grid" data-reveal data-delay="1">
@@ -1838,7 +1838,7 @@ const products = [
     {g:'Rectangular', s:['600 × 450','750 × 600','900 × 450','900 × 600','990 × 1220']},
     {g:'Square',      s:['300 × 300','450 × 450','600 × 600','675 × 675','750 × 750','800 × 800','900 × 900','1000 × 1000','1200 × 1200','1500 × 1500']}
   ]},
-  {name:'Water Gully Cover', photo:'C250', sizes:[
+  {name:'Water Gully Cover', photo:'C250', maxClass:'E600', sizes:[
     {g:'Circular',    s:['Ø 600']},
     {g:'Rectangular', s:['640 × 240','385 × 317','335 × 930','500 × 600','600 × 450','900 × 450','900 × 600']},
     {g:'Square',      s:['300 × 300','450 × 450','600 × 600','750 × 750','900 × 900']}
@@ -1847,7 +1847,7 @@ const products = [
     {g:'Circular', s:['Ø 600']},
     {g:'Square',   s:['600 × 600']}
   ]},
-  {name:'Water Tank Cover', photo:'B125', sizes:[
+  {name:'Water Tank Cover', photo:'B125', maxClass:'E600', sizes:[
     {g:'Circular', s:['Ø 600','Ø 750']},
     {g:'Square',   s:['600 × 600','750 × 750']}
   ]},
@@ -2165,9 +2165,15 @@ function fillSizes(){
 // photo set is limited to those classes; products using the shared photo
 // set (e.g. Solid Top) keep the full range.
 function availClasses(name){
+  const p = products.find(x => x.name === name);
   const pset = productPhotos[name];
-  const list = pset ? classOrder.filter(c => pset[c]) : classOrder.slice();
-  return list.length ? list : classOrder.slice();
+  let list = pset ? classOrder.filter(c => pset[c]) : classOrder.slice();
+  if(!list.length) list = classOrder.slice();
+  if(p && p.maxClass){                       // hard cap a product's top load class
+    const cap = classOrder.indexOf(p.maxClass);
+    if(cap > -1) list = list.filter(c => classOrder.indexOf(c) <= cap);
+  }
+  return list;
 }
 function applyClassLimits(){
   const p = products[curProd];
