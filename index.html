@@ -1969,6 +1969,22 @@ const cutTypes = [
   {n:'VI',  sum:'Open all sides (tooth)',  edges:{t:0,r:0,b:0,l:0}}
 ];
 
+// A grating edge can be finished flush only when the dimension lands on the moulding grid
+// (a whole number of MODULE cells) or on a standard chart size. Any other (custom) size is
+// cut through the bars, so those edges show open teeth regardless of the chosen cut type.
+function isFlushSize(mm){
+  if(mm % MODULE === 0) return true;
+  return sizeChart.some(v => Math.abs(v - mm) <= 1);
+}
+function edgeSummary(e){
+  const open=[];
+  if(!e.t) open.push('top'); if(!e.b) open.push('bottom');
+  if(!e.l) open.push('left'); if(!e.r) open.push('right');
+  if(open.length === 0) return 'Closed all sides';
+  if(open.length === 4) return 'Open all sides (tooth)';
+  return 'Open ' + open.join(' & ');
+}
+
 function renderGrating(){
   const L = lenMM, W = widMM;
   const nx = Math.max(1, Math.round(L / MODULE));   // number of sections along the length
@@ -1982,7 +1998,6 @@ function renderGrating(){
   document.getElementById('roHeight').textContent = barHeight + ' mm';
   document.getElementById('roGrid').textContent = nx + ' × ' + ny + ' sections';
   document.getElementById('roCut').textContent = 'Type ' + cutTypes[cutIdx].n;
-  document.getElementById('roEdge').textContent = cutTypes[cutIdx].sum;
 
   document.getElementById('lenMinus').disabled = L <= MIN;
   document.getElementById('lenPlus').disabled  = L >= MAX;
@@ -2000,6 +2015,13 @@ function renderGrating(){
   // Even, symmetric grid: choose a whole number of columns/rows so every hole is equal and
   // both edges match — no thin leftover cell on the far right or bottom.
   const E = cutTypes[cutIdx].edges;
+  const lenFlush = isFlushSize(L);   // length on the grid → left/right can be flush
+  const widFlush = isFlushSize(W);   // width on the grid → top/bottom can be flush
+  // A side is flush only if the cut type closes it AND the size is on-grid on that axis;
+  // an off-grid (custom) size is cut through the bars, so those edges always show teeth.
+  const eff = { t:E.t&&widFlush, b:E.b&&widFlush, l:E.l&&lenFlush, r:E.r&&lenFlush };
+  const sizeCut = !lenFlush || !widFlush;
+  document.getElementById('roEdge').textContent = edgeSummary(eff) + (sizeCut ? ' · size cut' : '');
   const tooth = barHeight === 40 ? 9 : 7;
   const DG = 22, TK = 5, LB = 6;   // dimension-line gap from the panel edge (clears teeth), tick half-length, label gap
   const oX=+originX.toFixed(2), oY=+originY.toFixed(2), bW=+boxW.toFixed(2), bH=+boxH.toFixed(2);
@@ -2023,10 +2045,10 @@ function renderGrating(){
   const teethLR=atX=>{ let s=''; for(let j=1;j<ny;j++) s+=`<rect x="${f(atX)}" y="${f(originY+j*cy-bar/2)}" width="${tooth}" height="${bar}" fill="url(#barH)"/>`; return s; };
 
   let rails='', openTeeth='';
-  if(E.t) rails+=railH(oY);     else openTeeth+=teethTB(originY-tooth);
-  if(E.b) rails+=railH(rY-bar); else openTeeth+=teethTB(rY);
-  if(E.l) rails+=railV(oX);     else openTeeth+=teethLR(originX-tooth);
-  if(E.r) rails+=railV(rX-bar); else openTeeth+=teethLR(rX);
+  if(eff.t) rails+=railH(oY);     else openTeeth+=teethTB(originY-tooth);
+  if(eff.b) rails+=railH(rY-bar); else openTeeth+=teethTB(rY);
+  if(eff.l) rails+=railV(oX);     else openTeeth+=teethLR(originX-tooth);
+  if(eff.r) rails+=railV(rX-bar); else openTeeth+=teethLR(rX);
 
   document.getElementById('gratingSvg').innerHTML = `
     <defs>
