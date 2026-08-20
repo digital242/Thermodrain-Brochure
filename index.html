@@ -1637,19 +1637,19 @@
           <div class="panel-head"><span class="idx">01</span><h3>Configure your grating</h3></div>
 
           <div class="dim-row">
-            <div class="dim-label">Length <span class="dim-hint">· type any size · 50–2400 mm</span></div>
+            <div class="dim-label">Length <span class="dim-hint">· type any size · 48–2400 mm</span></div>
             <div class="stepper">
               <button id="lenMinus" aria-label="Remove one section from length">−</button>
-              <div class="val"><input id="lenVal" class="szin" type="number" min="50" max="2400" step="50" value="1000" inputmode="numeric" aria-label="Length in millimetres"><small>mm</small></div>
+              <div class="val"><input id="lenVal" class="szin" type="number" min="48" max="2400" step="1" value="1000" inputmode="numeric" aria-label="Length in millimetres"><small>mm</small></div>
               <button id="lenPlus" aria-label="Add one section to length">+</button>
             </div>
           </div>
 
           <div class="dim-row">
-            <div class="dim-label">Width <span class="dim-hint">· type any size · 50–2400 mm</span></div>
+            <div class="dim-label">Width <span class="dim-hint">· type any size · 48–2400 mm</span></div>
             <div class="stepper">
               <button id="widMinus" aria-label="Remove one section from width">−</button>
-              <div class="val"><input id="widVal" class="szin" type="number" min="50" max="2400" step="50" value="400" inputmode="numeric" aria-label="Width in millimetres"><small>mm</small></div>
+              <div class="val"><input id="widVal" class="szin" type="number" min="48" max="2400" step="1" value="400" inputmode="numeric" aria-label="Width in millimetres"><small>mm</small></div>
               <button id="widPlus" aria-label="Add one section to width">+</button>
             </div>
           </div>
@@ -2081,7 +2081,7 @@ document.getElementById('lenPlus').onclick  = () => { lenMM = clampMM(nextFlush(
 document.getElementById('widMinus').onclick = () => { widMM = clampMM(prevFlush(widMM)); renderGrating(); };
 document.getElementById('widPlus').onclick  = () => { widMM = clampMM(nextFlush(widMM)); renderGrating(); };
 
-// Type a size directly: live preview while typing, snapped into the 50–2400 mm range on blur/Enter.
+// Type a size directly: live preview while typing, snapped into the 48–2400 mm range on blur/Enter.
 (function(){
   const li = document.getElementById('lenVal'), wi = document.getElementById('widVal');
   function wire(el, get, set){
