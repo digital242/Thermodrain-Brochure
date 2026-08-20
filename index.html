@@ -297,7 +297,7 @@
     flex-direction:column; line-height:1.05;
   }
   .hero-visual .glyph-sm{font-size:.42em; letter-spacing:.34em; color:var(--gold); font-weight:700; margin-top:.5em;}
-  @media (max-width:900px){ .hero-visual{max-width:340px; margin:0 auto;} }
+  @media (max-width:900px){ .hero-visual{order:-1; max-width:320px; margin:0 auto 6px;} }
   @media (max-width:560px){
     .hero-inner{padding:44px 20px 52px; gap:30px;}
     .hero .kicker{white-space:normal;}
@@ -307,7 +307,7 @@
     .hero-stats .stat{padding:15px 0; padding-right:0; border-top:1px solid rgba(174,187,216,.16);}
     .hero-stats .stat:last-child{border-bottom:1px solid rgba(174,187,216,.16);}
     .hero-stats .stat:not(:last-child)::after{display:none;}
-    .hero-visual{max-width:200px;}
+    .hero-visual{max-width:270px;}
   }
 
   /* ============ TRUST STRIP ============ */
