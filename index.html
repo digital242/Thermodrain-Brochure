@@ -2003,11 +2003,12 @@ function renderGrating(){
 
   // Even, symmetric grid: choose a whole number of columns/rows so every hole is equal and
   // both edges match — no thin leftover cell on the far right or bottom.
-  const lenFlush = isFlushSize(L);   // length standard → left/right flush, else cut (teeth)
-  const widFlush = isFlushSize(W);   // width standard  → top/bottom flush, else cut (teeth)
-  // The size on each axis decides that axis's edges: a non-standard length cuts the left &
-  // right edges; a non-standard width cuts the top & bottom edges. Only the cut side gets teeth.
-  const eff = { t:widFlush, b:widFlush, l:lenFlush, r:lenFlush };
+  const lenFlush = isFlushSize(L);   // length standard → both ends flush
+  const widFlush = isFlushSize(W);   // width standard  → both ends flush
+  // A cut removes material from one end of an axis only — the opposite edge keeps its moulded
+  // flush finish. So a non-standard length cuts the right edge, a non-standard width cuts the
+  // bottom edge (one side per axis, never both ends).
+  const eff = { t:true, b:widFlush, l:true, r:lenFlush };
   document.getElementById('roEdge').textContent = edgeSummary(eff);
   const tooth = barHeight === 40 ? 9 : 7;
   const DG = 22, TK = 5, LB = 6;   // dimension-line gap from the panel edge (clears teeth), tick half-length, label gap
