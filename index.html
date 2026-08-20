@@ -1954,7 +1954,7 @@ const productGallery = {
 };
 /* ---------- Grating configurator ---------- */
 const MIN = 50, MAX = 2400, MODULE = 50;   // one +/- click = one MODULE-wide grating section
-let lenMM = 1000, widMM = 400;
+let lenMM = 1001, widMM = 406;   // a standard moulded size → flush edges on load
 let barHeight = 30;
 const clampMM = v => Math.max(MIN, Math.min(MAX, Math.round(v)));
 
@@ -1962,7 +1962,8 @@ const clampMM = v => Math.max(MIN, Math.min(MAX, Math.round(v)));
 // (a whole number of MODULE cells) or on a standard chart size. Any other (custom) size is
 // cut through the bars, so those edges show open teeth regardless of the chosen cut type.
 function isFlushSize(mm){
-  if(mm % MODULE === 0) return true;
+  // Flush edges only when the dimension matches a standard moulded size (the grating pitch).
+  // Any other size is cut through the bars on that axis, so those edges show open teeth.
   return sizeChart.some(v => Math.abs(v - mm) <= 1);
 }
 function edgeSummary(e){
