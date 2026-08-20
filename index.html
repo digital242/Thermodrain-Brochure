@@ -257,16 +257,25 @@
 
   /* hero visual */
   .hero-visual{
-    position:relative; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
+    position:relative; aspect-ratio:1/1; display:flex; align-items:flex-end; justify-content:center;
   }
   .hero-visual::before{
-    content:""; position:absolute; width:70%; aspect-ratio:1/1; border-radius:50%;
-    background:radial-gradient(circle, rgba(246,188,22,.22), transparent 68%);
-    filter:blur(8px); animation:pulse 6s ease-in-out infinite;
+    content:""; position:absolute; inset:0; margin:auto; width:78%; aspect-ratio:1/1; border-radius:50%;
+    background:radial-gradient(circle, rgba(246,188,22,.26), transparent 66%);
+    filter:blur(10px); animation:pulse 6s ease-in-out infinite;
   }
   @keyframes pulse{0%,100%{transform:scale(.94); opacity:.7;} 50%{transform:scale(1.06); opacity:1;}}
   @media (prefers-reduced-motion:reduce) and (min-width:721px){ .hero-visual::before{animation:none;} }
+  /* Sumo strength visual */
+  .hero-sumo{position:relative; z-index:2; height:98%; width:auto; max-width:100%; object-fit:contain;
+    filter:drop-shadow(0 26px 42px rgba(0,0,0,.55));}
+  .hero-sumo-badge{position:absolute; z-index:3; top:9%; right:2%;
+    background:rgba(11,28,63,.72); border:1px solid rgba(246,188,22,.55); color:#fff;
+    font-size:12px; font-weight:700; letter-spacing:.01em; padding:8px 13px; border-radius:999px;
+    box-shadow:0 10px 22px -10px rgba(0,0,0,.6); backdrop-filter:blur(4px);}
+  .hero-sumo-badge b{color:var(--gold);}
   .hero-ring{
+    position:absolute; inset:0; margin:auto; z-index:1;
     width:min(360px,74%); aspect-ratio:1/1; border-radius:50%;
     background:
       radial-gradient(circle at 50% 45%,
@@ -986,7 +995,8 @@
     </div>
     <div class="hero-visual">
       <div class="hero-ring"></div>
-      <div class="glyph">THERMODRAIN<span class="glyph-sm">ISO 9001:2015</span></div>
+      <img class="hero-sumo" src="images/hero-sumo.webp" alt="Sumo wrestler squatting on a THERMODRAIN composite cover" width="760" height="1192" decoding="async" fetchpriority="high">
+      <span class="hero-sumo-badge">Holds a sumo · rated to <b>90 T</b></span>
     </div>
   </div>
 </section>
