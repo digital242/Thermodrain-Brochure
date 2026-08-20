@@ -1628,7 +1628,7 @@
     <div class="sec-head" data-reveal>
       <span class="eyebrow">Grating configurator</span>
       <h2 class="title">Grating size configurator</h2>
-      <p class="lede">Type any length and width (or step one grating section at a time) and switch bar height — the panel redraws live at true proportions.</p>
+      <p class="lede">Type any length and width (or step through the standard moulded sizes) and switch bar height — the panel redraws live at true proportions, showing where a cut-to-size edge leaves open teeth.</p>
     </div>
 
     <div class="demo" data-reveal data-delay="1">
@@ -1684,7 +1684,7 @@
           <svg id="gratingSvg" width="490" height="470" viewBox="0 0 490 470" role="img" aria-label="Grating preview"></svg>
         </div>
       </div>
-      <div class="chart-note">Type any length &amp; width from <b>50 mm to 2400 mm</b>, or use <b>−/+</b> to add or remove one grating section (<b>50 mm</b>) at a time. The panel redraws live at true proportions.</div>
+      <div class="chart-note">Type any length &amp; width from <b>48 mm to 2400 mm</b>, or use <b>−/+</b> to step to the next standard moulded size (bars mould at a <b>~40 mm pitch</b>). A non-standard size is cut to fit, so that edge shows open teeth. The panel redraws live at true proportions.</div>
 
       <div class="config-enquire">
         <button type="button" class="btn-inquiry" id="configEnquireBtn" data-enquiry-open>
@@ -1702,7 +1702,7 @@
         </summary>
         <div class="sg-body">
           <ol class="sg-steps">
-            <li><b>Set the Length and Width</b> — type an exact size (50–2400 mm), or use <b>−/+</b> to add or remove one grating section (50 mm) at a time.</li>
+            <li><b>Set the Length and Width</b> — type an exact size (48–2400 mm), or use <b>−/+</b> to step to the next standard moulded size. Off-size dimensions are cut to fit and show open teeth on the cut edge.</li>
             <li><b>Set the bar height</b> (30 mm or 40 mm) — taller bars carry heavier loads and longer spans.</li>
             <li><b>The edges are finished to your size.</b> A standard (on-module) size gives a <b>closed / flush edge</b>; a custom size is cut through the bars, so those edges show an <b>open / tooth edge</b>. The preview redraws so you can see the exact edge for your size.</li>
             <li>Note your <b>Overall size</b> and <b>Edge finish</b> from the summary, then send them with your enquiry.</li>
@@ -1953,14 +1953,17 @@ const productGallery = {
   ],
 };
 /* ---------- Grating configurator ---------- */
-const MIN = 50, MAX = 2400, MODULE = 50;   // one +/- click = one MODULE-wide grating section
+const MIN = 48, MAX = 2400, PITCH = 39.75;   // real moulded bar pitch (mm), from the size chart
 let lenMM = 1001, widMM = 406;   // a standard moulded size → flush edges on load
 let barHeight = 30;
 const clampMM = v => Math.max(MIN, Math.min(MAX, Math.round(v)));
+// −/+ step to the next / previous standard moulded size (so a step always lands flush)
+const nextFlush = v => sizeChart.find(x => x > v + 0.5) ?? MAX;
+const prevFlush = v => [...sizeChart].reverse().find(x => x < v - 0.5) ?? MIN;
 
-// A grating edge can be finished flush only when the dimension lands on the moulding grid
-// (a whole number of MODULE cells) or on a standard chart size. Any other (custom) size is
-// cut through the bars, so those edges show open teeth regardless of the chosen cut type.
+// A grating edge can be finished flush only when the dimension lands on a standard moulded
+// size (a whole number of PITCH cells). Any other (custom) size is cut through the bars, so
+// that edge shows open teeth where the moulded panel was cut down.
 function isFlushSize(mm){
   // Flush edges only when the dimension matches a standard moulded size (the grating pitch).
   // Any other size is cut through the bars on that axis, so those edges show open teeth.
@@ -1977,8 +1980,9 @@ function edgeSummary(e){
 
 function renderGrating(){
   const L = lenMM, W = widMM;
-  const nx = Math.max(1, Math.round(L / MODULE));   // number of sections along the length
-  const ny = Math.max(1, Math.round(W / MODULE));   // number of sections along the width
+  const lenFlush = isFlushSize(L), widFlush = isFlushSize(W);
+  const nx = Math.max(1, Math.round(L / PITCH));   // whole moulded cells along the length
+  const ny = Math.max(1, Math.round(W / PITCH));   // whole moulded cells along the width
 
   const li = document.getElementById('lenVal'), wi = document.getElementById('widVal');
   if(document.activeElement !== li) li.value = L;    // don't fight the user while they type
@@ -2001,10 +2005,6 @@ function renderGrating(){
   const originX = (VW - boxW) / 2, originY = (VH - boxH) / 2 + 6;
   const bar = barHeight === 40 ? 4 : 3;   // bar thickness (taller bars render a touch heavier)
 
-  // Even, symmetric grid: choose a whole number of columns/rows so every hole is equal and
-  // both edges match — no thin leftover cell on the far right or bottom.
-  const lenFlush = isFlushSize(L);   // length standard → both ends flush
-  const widFlush = isFlushSize(W);   // width standard  → both ends flush
   // A cut removes material from one end of an axis only — the opposite edge keeps its moulded
   // flush finish. So a non-standard length cuts the right edge, a non-standard width cuts the
   // bottom edge (one side per axis, never both ends).
@@ -2014,23 +2014,37 @@ function renderGrating(){
   const DG = 22, TK = 5, LB = 6;   // dimension-line gap from the panel edge (clears teeth), tick half-length, label gap
   const oX=+originX.toFixed(2), oY=+originY.toFixed(2), bW=+boxW.toFixed(2), bH=+boxH.toFixed(2);
   const rX=+(originX+boxW).toFixed(2), rY=+(originY+boxH).toFixed(2);
-  const cx=boxW/nx, cy=boxH/ny, f=n=>(+n).toFixed(2);
+  const cellPx = PITCH * PPMM, f=n=>(+n).toFixed(2);
+
+  // Cells sit at the real moulding pitch. A standard (flush) size divides into whole cells so
+  // both edges are moulded rails. Otherwise whole pitch-cells fill from the flush edge and the
+  // leftover strip is the partial cut-cell against the cut edge — that is where the open teeth
+  // land, exactly where the moulded panel was sawn to size.
+  function axisLines(mm, boxPx, flush){
+    const lines=[];
+    if(flush){ const n=Math.max(1,Math.round(mm/PITCH)); for(let i=1;i<n;i++) lines.push(boxPx*i/n); return lines; }
+    const nFull=Math.max(0,Math.floor(mm/PITCH));
+    for(let i=1;i<=nFull;i++){ const x=cellPx*i; if(x < boxPx-0.6) lines.push(x); }
+    return lines;
+  }
+  const xl = axisLines(L, boxW, lenFlush);   // interior vertical-bar offsets (px), last one = the cut
+  const yl = axisLines(W, boxH, widFlush);   // interior horizontal-bar offsets (px), last one = the cut
 
   // interior lattice, centred on the grid lines, clipped to the panel
   let bars='', hi='';
-  for(let i=1;i<nx;i++){ const x=f(originX+i*cx-bar/2);
+  xl.forEach(dx=>{ const x=f(originX+dx-bar/2);
     bars+=`<rect x="${x}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`;
-    hi  +=`<rect x="${x}" y="${oY}" width="0.8" height="${bH}" fill="rgba(255,255,255,.18)"/>`; }
-  for(let j=1;j<ny;j++){ const y=f(originY+j*cy-bar/2);
+    hi  +=`<rect x="${x}" y="${oY}" width="0.8" height="${bH}" fill="rgba(255,255,255,.18)"/>`; });
+  yl.forEach(dy=>{ const y=f(originY+dy-bar/2);
     bars+=`<rect x="${oX}" y="${y}" width="${bW}" height="${bar}" fill="url(#barH)"/>`;
-    hi  +=`<rect x="${oX}" y="${y}" width="${bW}" height="0.8" fill="rgba(255,255,255,.14)"/>`; }
+    hi  +=`<rect x="${oX}" y="${y}" width="${bW}" height="0.8" fill="rgba(255,255,255,.14)"/>`; });
 
   // closed edges → flush rails; open edges → teeth aligned to the same grid lines
   const railV=x=>`<rect x="${f(x)}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`;
   const railH=y=>`<rect x="${oX}" y="${f(y)}" width="${bW}" height="${bar}" fill="url(#barH)"/>`;
-  // teeth only on the interior bars (skip the outermost bar on each side) so the corners stay clean
-  const teethTB=atY=>{ let s=''; for(let i=1;i<nx;i++) s+=`<rect x="${f(originX+i*cx-bar/2)}" y="${f(atY)}" width="${bar}" height="${tooth}" fill="url(#barV)"/>`; return s; };
-  const teethLR=atX=>{ let s=''; for(let j=1;j<ny;j++) s+=`<rect x="${f(atX)}" y="${f(originY+j*cy-bar/2)}" width="${tooth}" height="${bar}" fill="url(#barH)"/>`; return s; };
+  // teeth sit on the interior grid lines of the perpendicular axis — the cut cross-bar ends
+  const teethTB=atY=>{ let s=''; xl.forEach(dx=>{ s+=`<rect x="${f(originX+dx-bar/2)}" y="${f(atY)}" width="${bar}" height="${tooth}" fill="url(#barV)"/>`; }); return s; };
+  const teethLR=atX=>{ let s=''; yl.forEach(dy=>{ s+=`<rect x="${f(atX)}" y="${f(originY+dy-bar/2)}" width="${tooth}" height="${bar}" fill="url(#barH)"/>`; }); return s; };
 
   let rails='', openTeeth='';
   if(eff.t) rails+=railH(oY);     else openTeeth+=teethTB(originY-tooth);
@@ -2062,10 +2076,10 @@ function renderGrating(){
   `;
 }
 
-document.getElementById('lenMinus').onclick = () => { lenMM = clampMM(lenMM - MODULE); renderGrating(); };
-document.getElementById('lenPlus').onclick  = () => { lenMM = clampMM(lenMM + MODULE); renderGrating(); };
-document.getElementById('widMinus').onclick = () => { widMM = clampMM(widMM - MODULE); renderGrating(); };
-document.getElementById('widPlus').onclick  = () => { widMM = clampMM(widMM + MODULE); renderGrating(); };
+document.getElementById('lenMinus').onclick = () => { lenMM = clampMM(prevFlush(lenMM)); renderGrating(); };
+document.getElementById('lenPlus').onclick  = () => { lenMM = clampMM(nextFlush(lenMM)); renderGrating(); };
+document.getElementById('widMinus').onclick = () => { widMM = clampMM(prevFlush(widMM)); renderGrating(); };
+document.getElementById('widPlus').onclick  = () => { widMM = clampMM(nextFlush(widMM)); renderGrating(); };
 
 // Type a size directly: live preview while typing, snapped into the 50–2400 mm range on blur/Enter.
 (function(){
