@@ -2003,11 +2003,12 @@ function renderGrating(){
 
   // Even, symmetric grid: choose a whole number of columns/rows so every hole is equal and
   // both edges match — no thin leftover cell on the far right or bottom.
-  const lenFlush = isFlushSize(L);   // length on the grid → left/right are flush
-  const widFlush = isFlushSize(W);   // width on the grid → top/bottom are flush
-  // The size alone decides the finish: an on-grid dimension gives flush edges; an off-grid
-  // (custom) size is cut through the bars, so those edges show open teeth.
-  const eff = { t:widFlush, b:widFlush, l:lenFlush, r:lenFlush };
+  const lenFlush = isFlushSize(L);
+  const widFlush = isFlushSize(W);
+  // A grating is finished flush only when BOTH dimensions are standard moulded sizes.
+  // Any other (cut-to-order) size is cut from a larger sheet, so every edge shows open teeth.
+  const flush = lenFlush && widFlush;
+  const eff = { t:flush, b:flush, l:flush, r:flush };
   document.getElementById('roEdge').textContent = edgeSummary(eff);
   const tooth = barHeight === 40 ? 9 : 7;
   const DG = 22, TK = 5, LB = 6;   // dimension-line gap from the panel edge (clears teeth), tick half-length, label gap
