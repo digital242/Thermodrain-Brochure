@@ -906,16 +906,27 @@
   @media (prefers-reduced-motion:reduce) and (min-width:721px){ .carousel-track{animation:none;} .carousel{overflow-x:auto;} }
 
   /* Grating configurator — enquiry CTA */
-  .config-enquire{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:16px; padding:6px 32px 20px;}
-  .config-enquire .btn-inquiry{width:auto; justify-self:start; margin:0;}
-  .config-enquire-note{grid-column:2; justify-self:center; text-align:center; font-size:12.5px; color:#a9770a; font-weight:600;}
+  .config-enquire{display:flex; align-items:center; flex-wrap:wrap; gap:16px 22px; padding:6px 32px 20px;}
+  /* split "half and half" button: red mail half + green WhatsApp half */
+  .enquire-split{display:flex; width:100%; max-width:440px; border-radius:12px; overflow:hidden; box-shadow:0 14px 30px -14px rgba(11,28,63,.4);}
+  .es-btn{flex:1 1 50%; display:flex; align-items:center; justify-content:center; gap:9px;
+    padding:15px 16px; border:0; color:#fff; text-decoration:none; cursor:pointer;
+    font-family:'Manrope',sans-serif; font-weight:700; font-size:14.5px; letter-spacing:.01em;
+    transition:background .16s var(--ease), transform .16s var(--ease);}
+  .es-btn svg{flex:none;}
+  .es-mail{background:var(--red);}
+  .es-mail:hover{background:var(--red-deep);}
+  .es-wa{background:#25d366; box-shadow:inset 1px 0 0 rgba(255,255,255,.3);}
+  .es-wa:hover{background:#1da851;}
+  .es-btn:active{transform:translateY(1px);}
+  .config-enquire-note{flex:1 1 200px; min-width:180px; font-size:12.5px; color:#a9770a; font-weight:600;}
   @media (max-width:640px){
-    .config-enquire{grid-template-columns:1fr; justify-items:start; text-align:left;}
-    .config-enquire-note{grid-column:1; justify-self:start; text-align:left;}
+    .config-enquire{flex-direction:column; align-items:stretch; text-align:left;}
+    .enquire-split{max-width:none;}
   }
-  /* Yellow enquiry button (dark text for contrast on gold) */
-  #configEnquireBtn{background:var(--gold); color:var(--navy-ink); box-shadow:0 14px 30px -12px rgba(246,188,22,.6);}
-  #configEnquireBtn:hover{background:var(--gold-soft); box-shadow:0 20px 40px -14px rgba(246,188,22,.78);}
+  /* Send-enquiry half of the split button (red) */
+  #configEnquireBtn{background:var(--red); color:#fff;}
+  #configEnquireBtn:hover{background:var(--red-deep);}
 
   /* Enquiry modal */
   .enq-overlay{position:fixed; inset:0; z-index:200; display:flex; align-items:flex-start; justify-content:center;
@@ -1687,10 +1698,16 @@
       <div class="chart-note">Type any length &amp; width from <b>48 mm to 2400 mm</b>, or use <b>−/+</b> to grow the panel <b>10 mm at a time</b> (bars mould at a <b>~40 mm pitch</b>). A standard size is flush; an in-between size is cut to fit, so that edge fills in as open teeth until the next standard row completes. The panel redraws live at true proportions.</div>
 
       <div class="config-enquire">
-        <button type="button" class="btn-inquiry" id="configEnquireBtn" data-enquiry-open>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          Enquire about this grating
-        </button>
+        <div class="enquire-split">
+          <button type="button" class="es-btn es-mail" id="configEnquireBtn" data-enquiry-open>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            Send enquiry
+          </button>
+          <a class="es-btn es-wa" id="configWhatsappBtn" href="https://wa.me/917021650820" target="_blank" rel="noopener">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35zM12.05 21.5h-.01a9.4 9.4 0 0 1-4.8-1.32l-.34-.2-3.57.94.95-3.48-.22-.36a9.4 9.4 0 0 1-1.44-5.01c0-5.2 4.24-9.44 9.46-9.44 2.52 0 4.9.99 6.68 2.77a9.38 9.38 0 0 1 2.77 6.68c0 5.2-4.24 9.44-9.46 9.44zm8.04-17.49A11.32 11.32 0 0 0 12.05.5C5.82.5.76 5.56.76 11.78c0 2 .52 3.94 1.51 5.66L.66 23.5l6.2-1.63a11.3 11.3 0 0 0 5.19 1.32h.01c6.23 0 11.29-5.06 11.29-11.28 0-3.02-1.17-5.85-3.3-7.9z"/></svg>
+            WhatsApp
+          </a>
+        </div>
         <span class="config-enquire-note">We'll include your configured size &amp; edge finish automatically.</span>
       </div>
 
@@ -2112,6 +2129,19 @@ sizeChart.forEach(v=>{
 });
 
 renderGrating();
+
+/* ---- WhatsApp enquiry: prefill the configured size & edge finish ---- */
+(function(){
+  const wa = document.getElementById('configWhatsappBtn');
+  if(!wa) return;
+  wa.addEventListener('click', () => {
+    const size = document.getElementById('roSize').textContent;
+    const h    = document.getElementById('roHeight').textContent;
+    const edge = document.getElementById('roEdge').textContent;
+    const msg  = `Hi THERMODRAIN, I'd like to enquire about an FRP grating.\nOverall size: ${size}\nBar height: ${h}\nEdge finish: ${edge}`;
+    wa.href = 'https://wa.me/917021650820?text=' + encodeURIComponent(msg);
+  });
+})();
 
 /* ---- Size feedback (stored locally; wire to a backend when live) ---- */
 (function(){
