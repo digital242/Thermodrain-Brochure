@@ -1664,7 +1664,7 @@
 
           <div class="dim-row">
             <div class="dim-label">Edge finish <span class="dim-hint">· cut to your size</span></div>
-            <p class="dim-note">Standard (on-module) sizes have flush edges. A custom size is cut through the bars, so those edges show open teeth.</p>
+            <p class="dim-note">Sizes on or near a standard moulded size are supplied with flush edges. Only a size that lands midway between two standard sizes is cut through the bars, so that edge shows open teeth.</p>
             <div class="cut-legend">
               <span class="li"><span class="sw closed"></span> Closed / flush edge</span>
               <span class="li"><span class="sw open"></span> Open / tooth edge</span>
@@ -1684,7 +1684,7 @@
           <svg id="gratingSvg" width="490" height="470" viewBox="0 0 490 470" role="img" aria-label="Grating preview"></svg>
         </div>
       </div>
-      <div class="chart-note">Type any length &amp; width from <b>48 mm to 2400 mm</b>, or use <b>−/+</b> to step to the next standard moulded size (bars mould at a <b>~40 mm pitch</b>). A non-standard size is cut to fit, so that edge shows open teeth. The panel redraws live at true proportions.</div>
+      <div class="chart-note">Type any length &amp; width from <b>48 mm to 2400 mm</b>, or use <b>−/+</b> to step to the next standard moulded size (bars mould at a <b>~40 mm pitch</b>). A size close to a standard is supplied flush; one that lands midway between two standards is cut to fit, so that edge shows open teeth. The panel redraws live at true proportions.</div>
 
       <div class="config-enquire">
         <button type="button" class="btn-inquiry" id="configEnquireBtn" data-enquiry-open>
@@ -1702,9 +1702,9 @@
         </summary>
         <div class="sg-body">
           <ol class="sg-steps">
-            <li><b>Set the Length and Width</b> — type an exact size (48–2400 mm), or use <b>−/+</b> to step to the next standard moulded size. Off-size dimensions are cut to fit and show open teeth on the cut edge.</li>
+            <li><b>Set the Length and Width</b> — type an exact size (48–2400 mm), or use <b>−/+</b> to step to the next standard moulded size. A size midway between two standard sizes is cut to fit and shows open teeth on the cut edge.</li>
             <li><b>Set the bar height</b> (30 mm or 40 mm) — taller bars carry heavier loads and longer spans.</li>
-            <li><b>The edges are finished to your size.</b> A standard (on-module) size gives a <b>closed / flush edge</b>; a custom size is cut through the bars, so those edges show an <b>open / tooth edge</b>. The preview redraws so you can see the exact edge for your size.</li>
+            <li><b>The edges are finished to your size.</b> A size on or near a standard moulded size gives a <b>closed / flush edge</b>; a size that lands midway between two standards is cut through the bars, so that edge shows an <b>open / tooth edge</b>. The preview redraws so you can see the exact edge for your size.</li>
             <li>Note your <b>Overall size</b> and <b>Edge finish</b> from the summary, then send them with your enquiry.</li>
           </ol>
           <div class="sg-sub">Common sizes (mm) — tap to set length</div>
@@ -1961,13 +1961,14 @@ const clampMM = v => Math.max(MIN, Math.min(MAX, Math.round(v)));
 const nextFlush = v => sizeChart.find(x => x > v + 0.5) ?? MAX;
 const prevFlush = v => [...sizeChart].reverse().find(x => x < v - 0.5) ?? MIN;
 
-// A grating edge can be finished flush only when the dimension lands on a standard moulded
-// size (a whole number of PITCH cells). Any other (custom) size is cut through the bars, so
-// that edge shows open teeth where the moulded panel was cut down.
+// In practice a moulded panel is supplied at the nearest standard size, so a dimension that is
+// close to a standard size is finished flush (no teeth). Only a size that lands genuinely
+// between two standards — more than FLUSH_TOL from the nearest — has to be cut, and that cut
+// edge shows open teeth. FLUSH_TOL is just under half the pitch so the "cut" band is the narrow
+// zone around the mid-point between two standard sizes.
+const FLUSH_TOL = 18;   // mm; within this of a standard moulded size counts as flush
 function isFlushSize(mm){
-  // Flush edges only when the dimension matches a standard moulded size (the grating pitch).
-  // Any other size is cut through the bars on that axis, so those edges show open teeth.
-  return sizeChart.some(v => Math.abs(v - mm) <= 1);
+  return sizeChart.some(v => Math.abs(v - mm) <= FLUSH_TOL);
 }
 function edgeSummary(e){
   const open=[];
