@@ -692,6 +692,30 @@
     .lc-slider::-webkit-slider-thumb{width:30px; height:30px;}
     .lc-slider::-moz-range-thumb{width:30px; height:30px;}
   }
+  /* Product configurator — quantity + multi-product list */
+  .qty-row{margin:16px 0 4px;}
+  .qty-stepper{display:inline-flex; align-items:stretch; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:#fff;}
+  .qty-stepper button{width:46px; border:0; background:var(--paper); color:var(--navy); font-size:20px; font-weight:700; cursor:pointer; transition:background .15s;}
+  .qty-stepper button:hover{background:var(--paper-2);}
+  .qty-stepper input{width:70px; border:0; text-align:center; font-family:'Manrope',sans-serif; font-weight:700; font-size:15px; color:var(--ink); -moz-appearance:textfield; background:#fff;}
+  .qty-stepper input::-webkit-outer-spin-button,.qty-stepper input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+  .btn-add{
+    display:flex; align-items:center; justify-content:center; gap:9px; width:100%; margin:16px 0 4px;
+    padding:13px 20px; border:1.5px dashed rgba(28,63,134,.5); border-radius:11px; background:rgba(28,63,134,.05);
+    color:var(--navy); font-family:'Manrope',sans-serif; font-weight:700; font-size:14px; cursor:pointer;
+    transition:background .15s, border-color .15s, transform .15s var(--ease);
+  }
+  .btn-add:hover{background:rgba(28,63,134,.1); border-color:var(--navy); transform:translateY(-1px);}
+  .btn-add:active{transform:translateY(0);}
+  .enq-list{margin:14px 0 4px; display:flex; flex-direction:column; gap:8px;}
+  .enq-list-head{font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:700; margin-bottom:2px;}
+  .eli{display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:var(--paper);}
+  .eli-main{flex:1; min-width:0;}
+  .eli-name{font-family:'Manrope',sans-serif; font-weight:700; font-size:13.5px; color:var(--navy-ink);}
+  .eli-meta{color:var(--ink-soft); font-size:12px; margin-top:2px; overflow-wrap:anywhere;}
+  .eli-qty{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:13px; color:var(--navy); white-space:nowrap;}
+  .eli-del{border:0; background:none; color:var(--muted); font-size:20px; line-height:1; cursor:pointer; padding:2px 5px; border-radius:6px; transition:color .15s, background .15s;}
+  .eli-del:hover{color:var(--red); background:rgba(226,56,43,.08);}
   .spec-table{border-top:1px solid var(--line); margin-top:4px;}
   .spec-row{display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:12px 0; border-bottom:1px solid var(--line-soft); font-size:13.5px;}
   .spec-row .k{color:var(--muted); font-weight:500; flex:none;}
@@ -947,6 +971,8 @@
     .es-mail{animation:none; box-shadow:0 0 20px rgba(226,56,43,.55), 0 0 42px rgba(226,56,43,.32);}
     .es-wa{animation:none; box-shadow:inset 1px 0 0 rgba(255,255,255,.35), 0 0 20px rgba(37,211,102,.6), 0 0 42px rgba(37,211,102,.35);}
   }
+  .grating-qty{flex:1 1 100%; display:flex; align-items:center; gap:14px;}
+  .grating-qty .pick-label{margin:0;}
   .config-enquire-note{flex:1 1 100%; font-size:12.5px; color:#a9770a; font-weight:600;}
   @media (max-width:640px){
     .config-enquire{flex-direction:column; align-items:stretch; text-align:left;}
@@ -1653,9 +1679,22 @@
           </div>
 
           <div class="spec-table" id="specTable"></div>
+
+          <div class="picker qty-row">
+            <label class="pick-label" for="qtyInput">Quantity</label>
+            <div class="qty-stepper">
+              <button type="button" id="qtyMinus" aria-label="Decrease quantity">−</button>
+              <input id="qtyInput" type="number" min="1" value="1" inputmode="numeric" aria-label="Quantity">
+              <button type="button" id="qtyPlus" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+
+          <button type="button" class="btn-add" id="addProductBtn">＋ Add another product</button>
+          <div class="enq-list" id="enqList" hidden></div>
+
           <a id="inquiryBtn" class="btn-inquiry" href="mailto:thermodrain@frpmanholecover.com">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            Send inquiry
+            <span class="inq-label">Send inquiry</span>
           </a>
         </div>
       </div>
@@ -1726,6 +1765,14 @@
       <div class="chart-note">Type any length &amp; width from <b>48 mm to 2400 mm</b>, or use <b>−/+</b> to grow the panel <b>10 mm at a time</b> (bars mould at a <b>~40 mm pitch</b>). A standard size is flush; an in-between size is cut to fit, so that edge fills in as open teeth until the next standard row completes. The panel redraws live at true proportions.</div>
 
       <div class="config-enquire">
+        <div class="grating-qty">
+          <label class="pick-label" for="gratingQty">Quantity</label>
+          <div class="qty-stepper">
+            <button type="button" id="gQtyMinus" aria-label="Decrease quantity">−</button>
+            <input id="gratingQty" type="number" min="1" value="1" inputmode="numeric" aria-label="Quantity">
+            <button type="button" id="gQtyPlus" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
         <div class="enquire-split">
           <button type="button" class="es-btn es-mail" id="configEnquireBtn" data-enquiry-open>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -1736,7 +1783,7 @@
             WhatsApp
           </a>
         </div>
-        <span class="config-enquire-note">We'll include your configured size &amp; edge finish automatically.</span>
+        <span class="config-enquire-note">We'll include your configured size, edge finish &amp; quantity automatically.</span>
       </div>
 
       <details class="size-guide">
@@ -2166,9 +2213,17 @@ renderGrating();
     const size = document.getElementById('roSize').textContent;
     const h    = document.getElementById('roHeight').textContent;
     const edge = document.getElementById('roEdge').textContent;
-    const msg  = `Hi THERMODRAIN, I'd like to enquire about an FRP grating.\nOverall size: ${size}\nBar height: ${h}\nEdge finish: ${edge}`;
+    const qtyEl = document.getElementById('gratingQty');
+    const qty = Math.max(1, parseInt(qtyEl && qtyEl.value, 10) || 1);
+    const msg  = `Hi THERMODRAIN, I'd like to enquire about an FRP grating.\nOverall size: ${size}\nBar height: ${h}\nEdge finish: ${edge}\nQuantity: ${qty}`;
     wa.href = 'https://wa.me/917021650820?text=' + encodeURIComponent(msg);
   });
+  // quantity steppers
+  const q = document.getElementById('gratingQty');
+  const val = () => Math.max(1, parseInt(q.value, 10) || 1);
+  document.getElementById('gQtyMinus').onclick = () => { q.value = Math.max(1, val() - 1); };
+  document.getElementById('gQtyPlus').onclick  = () => { q.value = val() + 1; };
+  q.addEventListener('blur', () => { q.value = val(); });
 })();
 
 /* ---- Size feedback (stored locally; wire to a backend when live) ---- */
@@ -2401,12 +2456,7 @@ function render(){
       <div class="spec-row"><div class="k">Load class</div><div class="v">Not applicable</div></div>
       <div class="spec-row"><div class="k">Made to order</div><div class="v">Custom-engineered to opening</div></div>
     `;
-    const subj = `Product enquiry: , `;
-    const lines = ['Hello Thermodrain team,','','Please send me a quotation for:','',
-      `Product: ${p.name}`, `Size: ${sizeLabel}`, '', 'Quantity: ', 'Delivery location: ', '', 'Thank you.'];
-    document.getElementById('inquiryBtn').href =
-      'mailto:thermodrain@frpmanholecover.com?subject=' + encodeURIComponent(subj) +
-      '&body=' + encodeURIComponent(lines.join('\n'));
+    buildInquiry();
     return;
   }
 
@@ -2425,23 +2475,75 @@ function render(){
     <div class="spec-row"><div class="k">Standard</div><div class="v">BS EN 124 / IS 1726</div></div>
   `;
 
-  // pre-fill the inquiry email with the current selection
-  const subject = `Product enquiry: , , `;
-  const bodyLines = [
-    'Hello Thermodrain team,', '',
-    'Please send me a quotation for:', '',
-    `Product: ${p.name}`,
-    `Size (clear opening): ${sizeLabel}`,
-    `Load class: ${curClass} (${d.ton} T / ${d.kn} kN)`,
-    'Standard: BS EN 124 / IS 1726', '',
-    'Quantity: ',
-    'Delivery location: ', '',
-    'Thank you.'
-  ];
-  document.getElementById('inquiryBtn').href =
-    'mailto:thermodrain@frpmanholecover.com?subject=' + encodeURIComponent(subject) +
-    '&body=' + encodeURIComponent(bodyLines.join('\n'));
+  // pre-fill the inquiry email with the current selection (or the whole list)
+  buildInquiry();
 }
+
+/* ---- Quantity + multi-product enquiry list ---- */
+let enqItems = [];
+function currentItem(){
+  const p = products[curProd];
+  const size = sizeSel.value;
+  const sizeLabel = /request|custom/i.test(size) ? size : size + ' mm';
+  const qtyEl = document.getElementById('qtyInput');
+  const qty = Math.max(1, parseInt(qtyEl && qtyEl.value, 10) || 1);
+  if(p.noClass) return {name:p.name, size:sizeLabel, cls:null, clsRate:null, qty};
+  const d = classData[curClass];
+  return {name:p.name, size:sizeLabel, cls:curClass, clsRate:`${d.ton} T / ${d.kn} kN`, qty};
+}
+function renderEnqList(){
+  const box = document.getElementById('enqList');
+  if(!box) return;
+  if(!enqItems.length){ box.hidden = true; box.innerHTML = ''; return; }
+  box.hidden = false;
+  box.innerHTML = `<div class="enq-list-head">Your list (${enqItems.length})</div>` + enqItems.map((it,i)=>`
+    <div class="eli">
+      <div class="eli-main">
+        <div class="eli-name">${it.name}</div>
+        <div class="eli-meta">${it.size}${it.cls ? ' · ' + it.cls : ''}</div>
+      </div>
+      <span class="eli-qty">× ${it.qty}</span>
+      <button type="button" class="eli-del" data-i="${i}" aria-label="Remove ${it.name} from list">×</button>
+    </div>`).join('');
+}
+function buildInquiry(){
+  const items = enqItems.length ? enqItems : [currentItem()];
+  const many = items.length > 1;
+  const subject = many
+    ? `Product enquiry: ${items.length} products`
+    : `Product enquiry: ${items[0].name}, ${items[0].size}${items[0].cls ? ', ' + items[0].cls : ''}`;
+  const lines = ['Hello Thermodrain team,', '', 'Please send me a quotation for:', ''];
+  items.forEach((it,i)=>{
+    lines.push(many ? `${i+1}. ${it.name}` : `Product: ${it.name}`);
+    lines.push(`   Size: ${it.size}`);
+    lines.push(`   Load class: ${it.cls ? it.cls + (it.clsRate ? ' (' + it.clsRate + ')' : '') : 'Not applicable'}`);
+    lines.push(`   Quantity: ${it.qty}`);
+    lines.push('');
+  });
+  lines.push('Delivery location: ', '', 'Thank you.');
+  const btn = document.getElementById('inquiryBtn');
+  if(!btn) return;
+  btn.href = 'mailto:thermodrain@frpmanholecover.com?subject=' + encodeURIComponent(subject) +
+             '&body=' + encodeURIComponent(lines.join('\n'));
+  const label = btn.querySelector('.inq-label');
+  if(label) label.textContent = enqItems.length ? `Send inquiry (${enqItems.length})` : 'Send inquiry';
+}
+(function(){
+  const qtyEl = document.getElementById('qtyInput');
+  const minus = document.getElementById('qtyMinus'), plus = document.getElementById('qtyPlus');
+  const add = document.getElementById('addProductBtn'), list = document.getElementById('enqList');
+  if(!qtyEl) return;
+  const val = () => Math.max(1, parseInt(qtyEl.value, 10) || 1);
+  minus.onclick = () => { qtyEl.value = Math.max(1, val() - 1); buildInquiry(); };
+  plus.onclick  = () => { qtyEl.value = val() + 1; buildInquiry(); };
+  qtyEl.addEventListener('input', buildInquiry);
+  qtyEl.addEventListener('blur', () => { qtyEl.value = val(); buildInquiry(); });
+  add.addEventListener('click', () => { enqItems.push(currentItem()); qtyEl.value = 1; renderEnqList(); buildInquiry(); });
+  list.addEventListener('click', e => {
+    const b = e.target.closest('.eli-del'); if(!b) return;
+    enqItems.splice(+b.dataset.i, 1); renderEnqList(); buildInquiry();
+  });
+})();
 
 document.getElementById('classPhoto').decoding = 'async';
 prodSel.value = curProd; fillSizes(); applyClassLimits(); preloadProduct(curProd); selectClass(products[curProd].photo); refreshGallery();
@@ -2690,8 +2792,10 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance, N
   function gratingPrefill(){
     const g = id => (document.getElementById(id)||{}).textContent || '';
     const size = g('roSize'), edge = g('roEdge'), h = g('roHeight');
+    const qtyEl = document.getElementById('gratingQty');
+    const qty = Math.max(1, parseInt(qtyEl && qtyEl.value, 10) || 1);
     if(!size) return '';
-    return `Grating enquiry\nOverall size: ${size}\nBar height: ${h}\nEdge finish: ${edge}\n\nQuantity: \nDelivery location: \n`;
+    return `Grating enquiry\nOverall size: ${size}\nBar height: ${h}\nEdge finish: ${edge}\nQuantity: ${qty}\n\nDelivery location: \n`;
   }
 
   if(configBtn) configBtn.addEventListener('click', () => open(gratingPrefill()));
