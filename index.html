@@ -829,16 +829,11 @@
   .cmp tbody tr:last-child td{border-bottom:none;}
   .cmp td.col-frp{background:rgba(246,188,22,.07); font-weight:700; color:var(--navy-ink);}
   .cmp-sub{font-family:'Manrope',sans-serif; font-weight:800; font-size:18px; color:var(--navy-ink); margin:38px 0 16px;}
-  /* Comparison material photos */
-  .cmp-photos{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:28px;}
-  .cmp-photos.two{grid-template-columns:repeat(2,1fr); max-width:720px;}
-  .cmp-photo{margin:0; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff; box-shadow:var(--shadow-md); transition:transform .18s var(--ease), box-shadow .18s;}
-  .cmp-photo:hover{transform:translateY(-3px); box-shadow:var(--shadow-lg);}
-  .cmp-photo img{display:block; width:100%; aspect-ratio:1/1; object-fit:cover;}
-  .cmp-photo figcaption{padding:13px 14px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13.5px; letter-spacing:.01em; color:var(--navy-ink); text-align:center; border-top:1px solid var(--line-soft);}
-  .cmp-photo.is-frp{border-color:rgba(226,56,43,.45); box-shadow:0 16px 36px -14px rgba(226,56,43,.4);}
-  .cmp-photo.is-frp figcaption{color:var(--red);}
-  @media (max-width:640px){ .cmp-photos{grid-template-columns:1fr; gap:14px; max-width:340px; margin-left:auto; margin-right:auto;} }
+  /* Comparison material photo in each column header */
+  .cmp thead th.has-photo{text-align:center; vertical-align:bottom; padding-top:14px;}
+  .th-photo{display:block; width:60px; height:60px; object-fit:cover; border-radius:9px;
+    margin:0 auto 9px; background:#fff; box-shadow:0 5px 14px -5px rgba(0,0,0,.5), 0 0 0 2px rgba(255,255,255,.25);}
+  @media (max-width:560px){ .th-photo{width:50px; height:50px;} }
 
   /* ============ APPLICATIONS ============ */
   .app-chips{display:flex; flex-wrap:wrap; gap:10px;}
@@ -1609,16 +1604,16 @@
       <h2 class="title">THERMODRAIN FRP vs traditional materials</h2>
       <p class="lede">How composite covers and gratings stack up against cast iron, ductile iron and concrete.</p>
     </div>
-    <div class="cmp-photos" data-reveal>
-      <figure class="cmp-photo is-frp"><img loading="lazy" decoding="async" src="images/cmp-frp.webp" alt="THERMODRAIN FRP / GRP manhole cover" onerror="this.closest('.cmp-photo').style.display='none'"><figcaption>THERMODRAIN FRP / GRP</figcaption></figure>
-      <figure class="cmp-photo"><img loading="lazy" decoding="async" src="images/cmp-iron.webp" alt="Cast / ductile iron manhole cover" onerror="this.closest('.cmp-photo').style.display='none'"><figcaption>Cast / Ductile Iron</figcaption></figure>
-      <figure class="cmp-photo"><img loading="lazy" decoding="async" src="images/cmp-concrete.webp" alt="Concrete (RCC) manhole cover" onerror="this.closest('.cmp-photo').style.display='none'"><figcaption>Concrete</figcaption></figure>
-    </div>
     <div class="cmp" data-reveal data-delay="1">
       <div class="cmp-scroll">
         <table>
           <thead>
-            <tr><th></th><th class="hl">THERMODRAIN FRP / GRP</th><th>Cast / Ductile Iron</th><th>Concrete</th></tr>
+            <tr>
+              <th></th>
+              <th class="hl has-photo"><img class="th-photo" loading="lazy" decoding="async" src="images/cmp-frp.webp" alt="THERMODRAIN FRP / GRP cover" onerror="this.style.display='none'">THERMODRAIN FRP / GRP</th>
+              <th class="has-photo"><img class="th-photo" loading="lazy" decoding="async" src="images/cmp-iron.webp" alt="Cast / ductile iron cover" onerror="this.style.display='none'">Cast / Ductile Iron</th>
+              <th class="has-photo"><img class="th-photo" loading="lazy" decoding="async" src="images/cmp-concrete.webp" alt="Concrete cover" onerror="this.style.display='none'">Concrete</th>
+            </tr>
           </thead>
           <tbody>
             <tr><td>Strength-to-weight</td><td class="col-frp">High</td><td>Low</td><td>Low</td></tr>
@@ -1635,14 +1630,14 @@
     </div>
 
     <h3 class="cmp-sub" data-reveal>THERMODRAIN FRP / GRP gratings vs mild-steel gratings</h3>
-    <div class="cmp-photos two" data-reveal>
-      <figure class="cmp-photo is-frp"><img loading="lazy" decoding="async" src="images/gr-frp.webp" alt="THERMODRAIN FRP / GRP moulded grating" onerror="this.closest('.cmp-photo').style.display='none'"><figcaption>THERMODRAIN FRP / GRP grating</figcaption></figure>
-      <figure class="cmp-photo"><img loading="lazy" decoding="async" src="images/gr-steel.webp" alt="Mild-steel welded grating" onerror="this.closest('.cmp-photo').style.display='none'"><figcaption>Mild-steel grating</figcaption></figure>
-    </div>
     <div class="cmp" data-reveal>
       <div class="cmp-scroll">
         <table>
-          <thead><tr><th></th><th class="hl">THERMODRAIN FRP / GRP grating</th><th>Mild-steel grating</th></tr></thead>
+          <thead><tr>
+            <th></th>
+            <th class="hl has-photo"><img class="th-photo" loading="lazy" decoding="async" src="images/gr-frp.webp" alt="THERMODRAIN FRP / GRP grating" onerror="this.style.display='none'">THERMODRAIN FRP / GRP grating</th>
+            <th class="has-photo"><img class="th-photo" loading="lazy" decoding="async" src="images/gr-steel.webp" alt="Mild-steel grating" onerror="this.style.display='none'">Mild-steel grating</th>
+          </tr></thead>
           <tbody>
             <tr><td>Strength-to-weight</td><td class="col-frp">High</td><td>Low</td></tr>
             <tr><td>Theft risk</td><td class="col-frp">None, no scrap value</td><td>High</td></tr>
