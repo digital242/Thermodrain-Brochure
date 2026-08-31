@@ -831,6 +831,7 @@
   .cmp-sub{font-family:'Manrope',sans-serif; font-weight:800; font-size:18px; color:var(--navy-ink); margin:38px 0 16px;}
   /* Comparison material photos */
   .cmp-photos{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:28px;}
+  .cmp-photos.two{grid-template-columns:repeat(2,1fr); max-width:720px;}
   .cmp-photo{margin:0; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff; box-shadow:var(--shadow-md); transition:transform .18s var(--ease), box-shadow .18s;}
   .cmp-photo:hover{transform:translateY(-3px); box-shadow:var(--shadow-lg);}
   .cmp-photo img{display:block; width:100%; aspect-ratio:1/1; object-fit:cover;}
@@ -1634,6 +1635,10 @@
     </div>
 
     <h3 class="cmp-sub" data-reveal>THERMODRAIN FRP / GRP gratings vs mild-steel gratings</h3>
+    <div class="cmp-photos two" data-reveal>
+      <figure class="cmp-photo is-frp"><img loading="lazy" decoding="async" src="images/gr-frp.webp" alt="THERMODRAIN FRP / GRP moulded grating" onerror="this.closest('.cmp-photo').style.display='none'"><figcaption>THERMODRAIN FRP / GRP grating</figcaption></figure>
+      <figure class="cmp-photo"><img loading="lazy" decoding="async" src="images/gr-steel.webp" alt="Mild-steel welded grating" onerror="this.closest('.cmp-photo').style.display='none'"><figcaption>Mild-steel grating</figcaption></figure>
+    </div>
     <div class="cmp" data-reveal>
       <div class="cmp-scroll">
         <table>
