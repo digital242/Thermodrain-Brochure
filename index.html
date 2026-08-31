@@ -832,8 +832,20 @@
   /* Comparison material photo in each column header */
   .cmp thead th.has-photo{text-align:center; vertical-align:bottom; padding-top:12px;}
   .th-photo{display:block; width:50px; height:50px; object-fit:cover; border-radius:8px;
-    margin:0 auto 8px; background:#fff; box-shadow:0 0 0 2px rgba(255,255,255,.3);}
+    margin:0 auto 8px; background:#fff; box-shadow:0 0 0 2px rgba(255,255,255,.3);
+    cursor:zoom-in; transition:transform .16s var(--ease), box-shadow .16s;}
+  .th-photo:hover{transform:scale(1.08); box-shadow:0 0 0 2px #fff, 0 8px 20px -6px rgba(0,0,0,.55);}
   @media (max-width:560px){ .th-photo{width:42px; height:42px;} }
+  /* Image lightbox */
+  .img-lightbox{position:fixed; inset:0; z-index:210; display:flex; align-items:center; justify-content:center;
+    padding:24px; background:#0b1c3f; cursor:zoom-out;}
+  .img-lightbox[hidden]{display:none;}
+  .img-lightbox figure{margin:0; max-width:min(680px,92vw); max-height:88vh; display:flex; flex-direction:column; gap:12px; cursor:auto;}
+  .img-lightbox img{width:100%; height:auto; max-height:78vh; object-fit:contain; border-radius:14px; box-shadow:var(--shadow-xl); background:#fff;}
+  .img-lightbox figcaption{color:#eaf0ff; font-family:'Manrope',sans-serif; font-weight:700; font-size:14px; text-align:center;}
+  .img-lightbox .lb-close{position:absolute; top:18px; right:20px; width:42px; height:42px; border:0; border-radius:50%;
+    background:rgba(255,255,255,.14); color:#fff; font-size:24px; line-height:1; cursor:pointer; transition:background .15s;}
+  .img-lightbox .lb-close:hover{background:rgba(255,255,255,.28);}
 
   /* ============ APPLICATIONS ============ */
   .app-chips{display:flex; flex-wrap:wrap; gap:10px;}
@@ -1909,6 +1921,12 @@
   <div class="fbar">© <span id="year"></span> Thermoset Poly Products (I) Pvt. Ltd. · THERMODRAIN®</div>
 </footer>
 
+<!-- ============ IMAGE LIGHTBOX ============ -->
+<div class="img-lightbox" id="imgLightbox" hidden role="dialog" aria-modal="true" aria-label="Image preview">
+  <button type="button" class="lb-close" id="lbClose" aria-label="Close preview">×</button>
+  <figure><img id="lbImg" src="" alt=""><figcaption id="lbCap"></figcaption></figure>
+</div>
+
 <!-- ============ FLOATING WHATSAPP ============ -->
 <a class="wa-float" href="https://wa.me/917021650820" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
   <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35zM12.05 21.5h-.01a9.4 9.4 0 0 1-4.8-1.32l-.34-.2-3.57.94.95-3.48-.22-.36a9.4 9.4 0 0 1-1.44-5.01c0-5.2 4.24-9.44 9.46-9.44 2.52 0 4.9.99 6.68 2.77a9.38 9.38 0 0 1 2.77 6.68c0 5.2-4.24 9.44-9.46 9.44zm8.04-17.49A11.32 11.32 0 0 0 12.05.5C5.82.5.76 5.56.76 11.78c0 2 .52 3.94 1.51 5.66L.66 23.5l6.2-1.63a11.3 11.3 0 0 0 5.19 1.32h.01c6.23 0 11.29-5.06 11.29-11.28 0-3.02-1.17-5.85-3.3-7.9z"/></svg>
@@ -2899,6 +2917,21 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance, N
     close();
   });
   form.addEventListener('input', e => { if(e.target.classList.contains('field-err')) e.target.classList.remove('field-err'); });
+})();
+
+/* ---- Image lightbox for the comparison header photos ---- */
+(function(){
+  const box = document.getElementById('imgLightbox');
+  const img = document.getElementById('lbImg'), cap = document.getElementById('lbCap');
+  if(!box) return;
+  function open(src, alt){ img.src = src; img.alt = alt || ''; cap.textContent = alt || ''; box.hidden = false; document.body.style.overflow = 'hidden'; }
+  function close(){ box.hidden = true; img.src = ''; document.body.style.overflow = ''; }
+  document.querySelectorAll('.th-photo').forEach(el => {
+    el.addEventListener('click', () => open(el.currentSrc || el.src, el.alt));
+  });
+  box.addEventListener('click', e => { if(e.target === box || e.target.id === 'lbClose') close(); });
+  document.getElementById('lbClose').addEventListener('click', close);
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && !box.hidden) close(); });
 })();
 </script>
 <!-- Vercel Web Analytics (anonymous traffic stats; enable Analytics in the Vercel project) -->
