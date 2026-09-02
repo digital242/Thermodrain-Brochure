@@ -1776,19 +1776,19 @@
           <div class="panel-head"><span class="idx">01</span><h3>Configure your grating</h3></div>
 
           <div class="dim-row">
-            <div class="dim-label">Length <span class="dim-hint">· type any size · 49–2430 mm</span></div>
+            <div class="dim-label">Length <span class="dim-hint">· type any size · 48–2430 mm</span></div>
             <div class="stepper">
               <button id="lenMinus" aria-label="Remove one section from length">−</button>
-              <div class="val"><input id="lenVal" class="szin" type="number" min="49" max="2430" step="1" value="1000" inputmode="numeric" aria-label="Length in millimetres"><small>mm</small></div>
+              <div class="val"><input id="lenVal" class="szin" type="number" min="48" max="2430" step="1" value="1000" inputmode="numeric" aria-label="Length in millimetres"><small>mm</small></div>
               <button id="lenPlus" aria-label="Add one section to length">+</button>
             </div>
           </div>
 
           <div class="dim-row">
-            <div class="dim-label">Width <span class="dim-hint">· type any size · 49–2430 mm</span></div>
+            <div class="dim-label">Width <span class="dim-hint">· type any size · 48–2430 mm</span></div>
             <div class="stepper">
               <button id="widMinus" aria-label="Remove one section from width">−</button>
-              <div class="val"><input id="widVal" class="szin" type="number" min="49" max="2430" step="1" value="400" inputmode="numeric" aria-label="Width in millimetres"><small>mm</small></div>
+              <div class="val"><input id="widVal" class="szin" type="number" min="48" max="2430" step="1" value="400" inputmode="numeric" aria-label="Width in millimetres"><small>mm</small></div>
               <button id="widPlus" aria-label="Add one section to width">+</button>
             </div>
           </div>
@@ -1831,7 +1831,7 @@
           </div>
         </div>
       </div>
-      <div class="chart-note">Type any length &amp; width from <b>49 mm to 2430 mm</b>, or use <b>−/+</b> to grow the panel <b>10 mm at a time</b> (bars mould at a <b>~40 mm pitch</b>). A standard size is flush; an in-between size is cut to fit, so that edge fills in as open teeth until the next standard row completes. The panel redraws live at true proportions.</div>
+      <div class="chart-note">Type any length &amp; width from <b>48 mm to 2430 mm</b>, or use <b>−/+</b> to grow the panel <b>10 mm at a time</b> (bars mould at a <b>~40 mm pitch</b>). A standard size is flush; an in-between size is cut to fit, so that edge fills in as open teeth until the next standard row completes. The panel redraws live at true proportions.</div>
 
       <div class="config-enquire">
         <div class="enquire-split">
@@ -1855,7 +1855,7 @@
         </summary>
         <div class="sg-body">
           <ol class="sg-steps">
-            <li><b>Set the Length and Width</b>: type an exact size (49–2430 mm), or use <b>−/+</b> to grow the panel 10 mm at a time. An in-between size is cut to fit and shows open teeth on the growing edge until it reaches the next standard size.</li>
+            <li><b>Set the Length and Width</b>: type an exact size (48–2430 mm), or use <b>−/+</b> to grow the panel 10 mm at a time. An in-between size is cut to fit and shows open teeth on the growing edge until it reaches the next standard size.</li>
             <li><b>Set the bar height</b> (30 mm or 40 mm); taller bars carry heavier loads and longer spans.</li>
             <li><b>The edges are finished to your size.</b> A standard moulded size gives a <b>closed / flush edge</b>; an in-between size is cut through the bars, so that edge shows an <b>open / tooth edge</b> that grows a little at a time until the next standard row completes. The preview redraws so you can see the exact edge for your size.</li>
             <li>Note your <b>Overall size</b> and <b>Edge finish</b> from the summary, then send them with your enquiry.</li>
@@ -1971,9 +1971,10 @@
 </div>
 
 <script>
-/* Standard MS-mould grating sizes (40 mm height), from the factory size list. Open teeth
-   appear whenever a dimension falls between two of these moulded sizes. Max panel 2430 mm. */
-const sizeChart = [49,88,128,168,207,247,287,327,366,406,446,485,525,565,604,644,684,724,763,803,843,882,922,962,1001,1041,1081,1121,1160,1200,1240,1279,1319,1359,1398,1438,1478,1518,1557,1597,1637,1676,1716,1756,1795,1835,1875,1915,1954,1994,2034,2073,2113,2153,2192,2232,2272,2312,2351,2391,2430];
+/* Standard grating sizes (40 mm height), from the factory size sheet. A dimension that matches
+   one of these moulded sizes has a closed (flush) edge; any size above a listed size (i.e. between
+   two of them) is cut to fit and shows open teeth. Max panel 2430 mm. */
+const sizeChart = [48,88,128,167,207,247,286,326,366,406,445,485,525,564,604,644,684,723,763,803,843,882,922,962,1001,1041,1081,1121,1160,1200,1240,1279,1319,1359,1399,1438,1478,1518,1557,1597,1637,1677,1716,1756,1796,1836,1875,1914,1955,1993,2034,2074,2114,2154,2194,2234,2273,2314,2353,2393,2430];
 
 const classData = {
   '2.5T':{ton:"2.5", kn:"25",  use:"Pedestrian & cyclist areas",         ex:"Footpaths, cycle tracks",             color:"#F6BC16"},
@@ -2119,7 +2120,7 @@ const productGallery = {
   ],
 };
 /* ---------- Grating configurator ---------- */
-const MIN = 49, MAX = 2430, PITCH = 39.7;   // real moulded bar pitch (mm), from the size chart
+const MIN = 48, MAX = 2430, PITCH = 39.7;   // real moulded bar pitch (mm), from the size chart
 let lenMM = 1001, widMM = 406;   // a standard moulded size → flush edges on load
 let barHeight = 30;
 const clampMM = v => Math.max(MIN, Math.min(MAX, Math.round(v)));
@@ -2244,7 +2245,7 @@ document.getElementById('lenPlus').onclick  = () => { lenMM = clampMM(lenMM + ST
 document.getElementById('widMinus').onclick = () => { widMM = clampMM(widMM - STEP); renderGrating(); };
 document.getElementById('widPlus').onclick  = () => { widMM = clampMM(widMM + STEP); renderGrating(); };
 
-// Type a size directly: live preview while typing, snapped into the 49–2430 mm range on blur/Enter.
+// Type a size directly: live preview while typing, snapped into the 48–2430 mm range on blur/Enter.
 (function(){
   const li = document.getElementById('lenVal'), wi = document.getElementById('widVal');
   function wire(el, get, set){
