@@ -1767,7 +1767,7 @@
     <div class="sec-head" data-reveal>
       <span class="eyebrow">Grating configurator</span>
       <h2 class="title">Grating size configurator</h2>
-      <p class="lede">Type any length and width, or use −/+ to grow the panel 10 mm at a time. An off-size edge fills in as open teeth until it reaches the next standard size and turns flush. Switch bar height too; the panel redraws live at true proportions.</p>
+      <p class="lede">Type any length and width, or use −/+ to change the size 1 mm at a time. An off-size edge fills in as open teeth until it reaches the next standard size and turns flush. Switch bar height too; the panel redraws live at true proportions.</p>
     </div>
 
     <div class="demo" data-reveal data-delay="1">
@@ -1831,7 +1831,7 @@
           </div>
         </div>
       </div>
-      <div class="chart-note">Type any length &amp; width from <b>48 mm to 2430 mm</b>, or use <b>−/+</b> to grow the panel <b>10 mm at a time</b> (bars mould at a <b>~40 mm pitch</b>). A standard size is flush; an in-between size is cut to fit, so that edge fills in as open teeth until the next standard row completes. The panel redraws live at true proportions.</div>
+      <div class="chart-note">Type any length &amp; width from <b>48 mm to 2430 mm</b>, or use <b>−/+</b> to change the size <b>1 mm at a time</b> (bars mould at a <b>~40 mm pitch</b>). A standard size is flush; an in-between size is cut to fit, so that edge fills in as open teeth until the next standard row completes. The panel redraws live at true proportions.</div>
 
       <div class="config-enquire">
         <div class="enquire-split">
@@ -1855,7 +1855,7 @@
         </summary>
         <div class="sg-body">
           <ol class="sg-steps">
-            <li><b>Set the Length and Width</b>: type an exact size (48–2430 mm), or use <b>−/+</b> to grow the panel 10 mm at a time. An in-between size is cut to fit and shows open teeth on the growing edge until it reaches the next standard size.</li>
+            <li><b>Set the Length and Width</b>: type an exact size (48–2430 mm), or use <b>−/+</b> to change the size 1 mm at a time. An in-between size is cut to fit and shows open teeth on the growing edge until it reaches the next standard size.</li>
             <li><b>Set the bar height</b> (30 mm or 40 mm); taller bars carry heavier loads and longer spans.</li>
             <li><b>The edges are finished to your size.</b> A standard moulded size gives a <b>closed / flush edge</b>; an in-between size is cut through the bars, so that edge shows an <b>open / tooth edge</b> that grows a little at a time until the next standard row completes. The preview redraws so you can see the exact edge for your size.</li>
             <li>Note your <b>Overall size</b> and <b>Edge finish</b> from the summary, then send them with your enquiry.</li>
@@ -2124,14 +2124,12 @@ const MIN = 48, MAX = 2430, PITCH = 39.7;   // real moulded bar pitch (mm), from
 let lenMM = 1001, widMM = 406;   // a standard moulded size → flush edges on load
 let barHeight = 30;
 const clampMM = v => Math.max(MIN, Math.min(MAX, Math.round(v)));
-const STEP = 10;   // −/+ grow/shrink a little at a time so the cut edge fills in gradually
+const STEP = 1;   // −/+ change the size 1 mm at a time
 
-// A dimension is finished flush only when it sits on (or within FLUSH_TOL of) a standard moulded
-// size. Any size between two standards is cut, and that cut edge shows open teeth — a partial
-// row that grows a little at a time as the size increases until it completes the next flush row.
-const FLUSH_TOL = 6;   // mm; within this of a standard moulded size counts as flush
+// A dimension is finished flush only when it exactly matches a listed moulded size. Even 1 mm
+// more (any size between two listed sizes) is cut, so that edge shows open teeth.
 function isFlushSize(mm){
-  return sizeChart.some(v => Math.abs(v - mm) <= FLUSH_TOL);
+  return sizeChart.some(v => v === mm);
 }
 function edgeSummary(e){
   const open=[];
