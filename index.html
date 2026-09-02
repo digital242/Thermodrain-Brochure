@@ -2201,18 +2201,30 @@ function renderGrating(){
     bars+=`<rect x="${oX}" y="${y}" width="${bW}" height="${bar}" fill="url(#barH)"/>`;
     hi  +=`<rect x="${oX}" y="${y}" width="${bW}" height="0.8" fill="rgba(255,255,255,.14)"/>`; });
 
+  // How far a cut dimension has grown from the previous listed size toward the next one (0..1).
+  // The open teeth lengthen with this fraction, so they fill in little by little as the size
+  // increases and complete into a closed row exactly at the next listed size.
+  function gapFrac(mm){
+    let prev = sizeChart[0], next = sizeChart[sizeChart.length-1];
+    for(const v of sizeChart){ if(v <= mm) prev = v; if(v > mm){ next = v; break; } }
+    return next > prev ? Math.min(1, Math.max(0, (mm - prev) / (next - prev))) : 0;
+  }
+  const toothLen = frac => 4 + frac * (tooth + 15);   // grows from a stub to ~a full cut
+  const tlLen = toothLen(gapFrac(L));   // right/left (length-axis) teeth length
+  const twLen = toothLen(gapFrac(W));   // top/bottom (width-axis) teeth length
+
   // closed edges → flush rails; open edges → teeth aligned to the same grid lines
   const railV=x=>`<rect x="${f(x)}" y="${oY}" width="${bar}" height="${bH}" fill="url(#barV)"/>`;
   const railH=y=>`<rect x="${oX}" y="${f(y)}" width="${bW}" height="${bar}" fill="url(#barH)"/>`;
   // teeth sit on the interior grid lines of the perpendicular axis — the cut cross-bar ends
-  const teethTB=atY=>{ let s=''; xl.forEach(dx=>{ s+=`<rect x="${f(originX+dx-bar/2)}" y="${f(atY)}" width="${bar}" height="${tooth}" fill="url(#barV)"/>`; }); return s; };
-  const teethLR=atX=>{ let s=''; yl.forEach(dy=>{ s+=`<rect x="${f(atX)}" y="${f(originY+dy-bar/2)}" width="${tooth}" height="${bar}" fill="url(#barH)"/>`; }); return s; };
+  const teethTB=(atY,len)=>{ let s=''; xl.forEach(dx=>{ s+=`<rect x="${f(originX+dx-bar/2)}" y="${f(atY)}" width="${bar}" height="${f(len)}" fill="url(#barV)"/>`; }); return s; };
+  const teethLR=(atX,len)=>{ let s=''; yl.forEach(dy=>{ s+=`<rect x="${f(atX)}" y="${f(originY+dy-bar/2)}" width="${f(len)}" height="${bar}" fill="url(#barH)"/>`; }); return s; };
 
   let rails='', openTeeth='';
-  if(eff.t) rails+=railH(oY);     else openTeeth+=teethTB(originY-tooth);
-  if(eff.b) rails+=railH(rY-bar); else openTeeth+=teethTB(rY);
-  if(eff.l) rails+=railV(oX);     else openTeeth+=teethLR(originX-tooth);
-  if(eff.r) rails+=railV(rX-bar); else openTeeth+=teethLR(rX);
+  if(eff.t) rails+=railH(oY);     else openTeeth+=teethTB(originY-twLen, twLen);
+  if(eff.b) rails+=railH(rY-bar); else openTeeth+=teethTB(rY, twLen);
+  if(eff.l) rails+=railV(oX);     else openTeeth+=teethLR(originX-tlLen, tlLen);
+  if(eff.r) rails+=railV(rX-bar); else openTeeth+=teethLR(rX, tlLen);
 
   document.getElementById('gratingSvg').innerHTML = `
     <defs>
