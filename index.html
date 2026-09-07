@@ -2209,7 +2209,7 @@ function renderGrating(){
     for(const v of sizeChart){ if(v <= mm) prev = v; if(v > mm){ next = v; break; } }
     return next > prev ? Math.min(1, Math.max(0, (mm - prev) / (next - prev))) : 0;
   }
-  const toothLen = frac => 2 + frac * cellPx;   // true-to-scale overhang: grows across one pitch cell, then snaps flush
+  const toothLen = frac => Math.max(1.5, frac * cellPx);   // overhang never exceeds one lattice box (~1 pitch cell); grows then snaps flush
   const tlLen = toothLen(gapFrac(L));   // right/left (length-axis) teeth length
   const twLen = toothLen(gapFrac(W));   // top/bottom (width-axis) teeth length
 
