@@ -250,6 +250,9 @@
   .btn-primary:hover{filter:brightness(1.05); box-shadow:0 24px 46px -14px rgba(226,56,43,.85), inset 0 1px 0 rgba(255,255,255,.28);}
   .btn-ghost{background:rgba(255,255,255,.06); color:#eaf0ff; border-color:rgba(255,255,255,.18);}
   .btn-ghost:hover{background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.3);}
+  .btn-gold{background:var(--gold-grad); color:var(--navy-ink);
+    box-shadow:0 16px 34px -12px rgba(246,188,22,.7), inset 0 1px 0 rgba(255,255,255,.35);}
+  .btn-gold:hover{filter:brightness(1.04); box-shadow:0 24px 46px -14px rgba(246,188,22,.8), inset 0 1px 0 rgba(255,255,255,.4);}
   .hero-stats{display:flex; gap:26px; flex-wrap:wrap;}
   .hero-stats .stat{position:relative; padding-right:26px;}
   .hero-stats .stat:not(:last-child)::after{
@@ -1091,6 +1094,7 @@
       <div class="hero-actions" data-reveal data-delay="2">
         <a href="#configurator" class="btn btn-primary">Grating configurator →</a>
         <a href="#explorer" class="btn btn-ghost">Browse products</a>
+        <button type="button" class="btn btn-gold" data-enquiry-open>Send enquiry</button>
       </div>
       <div class="hero-stats" data-reveal data-delay="3">
         <div class="stat"><div class="n">60<small>+</small></div><div class="l">Catalogue grating sizes</div></div>
