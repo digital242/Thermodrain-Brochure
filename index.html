@@ -2900,10 +2900,26 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance, N
     const qtyEl = document.getElementById('gratingQty');
     const qty = Math.max(1, parseInt(qtyEl && qtyEl.value, 10) || 1);
     if(!size) return '';
-    return `Grating enquiry\nOverall size: ${size}\nBar height: ${h}\nEdge finish: ${edge}\nQuantity: ${qty}\n\nDelivery location: \n`;
+    return `Grating enquiry\nOverall size: ${size}\nBar height: ${h}\nEdge finish: ${edge}\nQuantity: ${qty}\n`;
+  }
+
+  // configured product list → prefill the requirement box (contact fields come from the form)
+  function productPrefill(){
+    const items = (typeof enqItems !== 'undefined' && enqItems.length) ? enqItems : [currentItem()];
+    const many = items.length > 1;
+    const lines = [many ? `Product enquiry (${items.length} products)` : 'Product enquiry'];
+    items.forEach((it,i) => {
+      lines.push(many ? `${i+1}. ${it.name}` : `Product: ${it.name}`);
+      lines.push(`   Size: ${it.size}`);
+      lines.push(`   Load class: ${it.cls ? it.cls + (it.clsRate ? ' (' + it.clsRate + ')' : '') : 'Not applicable'}`);
+      lines.push(`   Quantity: ${it.qty}`);
+    });
+    return lines.join('\n') + '\n';
   }
 
   if(configBtn) configBtn.addEventListener('click', () => open(gratingPrefill()));
+  const inquiryBtn = document.getElementById('inquiryBtn');
+  if(inquiryBtn) inquiryBtn.addEventListener('click', e => { e.preventDefault(); open(productPrefill()); });
   document.querySelectorAll('[data-enquiry-open]').forEach(b => { if(b !== configBtn) b.addEventListener('click', () => open('')); });
   closeBtn.addEventListener('click', close);
   overlay.addEventListener('click', e => { if(e.target === overlay) close(); });
