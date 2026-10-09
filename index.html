@@ -2779,7 +2779,19 @@ const factoryPhotos = [{"src":"images/factory-1.webp","cap":"Factory entrance, N
   // in-page links that target a panel switch tabs (desktop) or scroll to it (mobile)
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     const id = a.getAttribute('href').slice(1);
-    if(ids.includes(id)) a.addEventListener('click', e => { e.preventDefault(); activate(id, true); });
+    if(ids.includes(id)){
+      a.addEventListener('click', e => { e.preventDefault(); activate(id, true); });
+    } else {
+      // non-tab anchors (the logo "#", the footer "#contact") — scroll without
+      // leaving a bare "#" or stray fragment in the address bar
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = id ? document.getElementById(id) : null;
+        if(target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+        else window.scrollTo({ top:0, behavior:'smooth' });
+        if(history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+      });
+    }
   });
 
   // activate the initial tab without moving the page off the hero
